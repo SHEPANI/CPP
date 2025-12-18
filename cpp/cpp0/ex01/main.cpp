@@ -18,7 +18,7 @@ int main(int ac, char *av[])
 {
     PhoneBook phonebook;
     std::string input;
-
+    (void)ac,(void)av;
     while (true)
     {
         std::cout << "You have to set 3 type of input ADD | SEARCH | EXIT\nEnter one type : ";
@@ -32,7 +32,7 @@ int main(int ac, char *av[])
             phonebook.one_field_info = 3;
             phonebook.SEARCH();
             phonebook.SEARCH_BY_INDEX();
-            phonebook.target_index = 0; // check if its darrori
+            phonebook.target_index = 0;
         }
     }
     return 0;

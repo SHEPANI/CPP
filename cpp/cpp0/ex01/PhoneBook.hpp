@@ -14,10 +14,14 @@
 #define PHONEBOOK_HPP
 
 #include "Contact.hpp"
+#include <iostream>
+#include <string>
 #include <iomanip>
+#include <cstdlib>
 
 class PhoneBook{
     public:
+        PhoneBook();
         void ADD();
         void SEARCH();
         void SEARCH_BY_INDEX();

@@ -10,8 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "PhoneBook.hpp" 
+#include "PhoneBook.hpp"
 
+PhoneBook::PhoneBook()
+{
+    count = 0;
+    one_field_info = 0;
+    target_index = 0;
+}
 void PhoneBook::ADD()
 {
     int index = count % 8;
@@ -31,13 +37,11 @@ void PhoneBook::ADD()
         std::getline(std::cin, input);
         PhoneBooks[index].set_info(input, i);
         if (PhoneBooks[index].get_info(i).empty()) { 
-            std::cout << " Emty field\n";
+            std::cout << "Empty field\n";
             i -= 1;
         }
     }
     count++;
-    if (count > 8)
-        count = 8;
 }
 
 void PhoneBook::SEARCH_BY_INDEX()
@@ -46,9 +50,9 @@ void PhoneBook::SEARCH_BY_INDEX()
     std::cout << "Index of the entry to display : ";
     std::getline(std::cin, target_index_chars);
     target_index = std::atoi(target_index_chars.c_str());
-    if (target_index < 1 || target_index > count)
+    if (target_index < 1 || target_index > count || target_index_chars.length() > 1)
     {        
-        std::cout << "Index Is Out Of Range Or Wrong" << std::endl;
+        std::cout << "Index is out of Range or wrong" << std::endl;
         one_field_info = 3;
         return ;       
     }
@@ -60,15 +64,18 @@ void PhoneBook::SEARCH_BY_INDEX()
 void PhoneBook::SEARCH()
 {
     int j;
+    int max_index;
+
+    max_index = (count > 8) ? 8 : count;
     if (PhoneBooks[0].get_info(0).empty())
     {
-        std::cout << " fields are emty\n";
+        std::cout << "fields are empty" << std::endl;
         return;
     }
     j = 0;
     if (target_index > 0)
         j = target_index - 1;
-    while (j < count)
+    while (j < max_index)
     {
         if (one_field_info == 3)
         {

@@ -13,7 +13,6 @@
 
 #include "PhoneBook.hpp"
 
-
 int main(int ac, char *av[])
 {
     PhoneBook phonebook;
@@ -23,6 +22,8 @@ int main(int ac, char *av[])
     {
         std::cout << "You have to set 3 type of input ADD | SEARCH | EXIT\nEnter one type : ";
         std::getline(std::cin, input);
+        if (check_enfofile())
+            std::exit(0);
         if (input == "EXIT")
             return(EXIT_SUCCESS);
         else if (input == "ADD")

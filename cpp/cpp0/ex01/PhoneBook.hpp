@@ -18,6 +18,7 @@
 #include <string>
 #include <iomanip>
 #include <cstdlib>
+int check_enfofile();
 
 class PhoneBook{
     public:

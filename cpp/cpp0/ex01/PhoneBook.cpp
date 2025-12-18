@@ -35,6 +35,8 @@ void PhoneBook::ADD()
         if (i == 4)
             std::cout << "Enter your darkest secret : ";
         std::getline(std::cin, input);
+        if (check_enfofile())
+            std::exit(0);
         PhoneBooks[index].set_info(input, i);
         if (PhoneBooks[index].get_info(i).empty()) { 
             std::cout << "Empty field\n";
@@ -44,11 +46,23 @@ void PhoneBook::ADD()
     count++;
 }
 
+int check_enfofile()
+{
+    if (std::cin.eof())
+    {
+        std::cout << "\nEnd of file reached. Exiting program." << std::endl;
+        return 1;
+    }
+    return 0;
+}
+
 void PhoneBook::SEARCH_BY_INDEX()
 {
     std::string target_index_chars;
     std::cout << "Index of the entry to display : ";
     std::getline(std::cin, target_index_chars);
+    if (check_enfofile())
+        std::exit(0);
     target_index = std::atoi(target_index_chars.c_str());
     if (target_index < 1 || target_index > count || target_index_chars.length() > 1)
     {        

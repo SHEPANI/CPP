@@ -12,12 +12,23 @@
 
 #include "PhoneBook.hpp"
 
+int has_nonprintable(const std::string& str)
+{
+    for (size_t i = 0; i < str.length(); i++)
+    {
+        if (!std::isprint(static_cast<unsigned char>(str[i])))
+            return 1;
+    }
+    return 0;
+}
+
 PhoneBook::PhoneBook()
 {
     count = 0;
     one_field_info = 0;
     target_index = 0;
 }
+
 void PhoneBook::ADD()
 {
     int index = count % 8;
@@ -37,11 +48,12 @@ void PhoneBook::ADD()
         std::getline(std::cin, input);
         if (check_enfofile())
             std::exit(0);
-        PhoneBooks[index].set_info(input, i);
-        if (PhoneBooks[index].get_info(i).empty()) { 
-            std::cout << "Empty field\n";
+        if (input.empty() || has_nonprintable(input)) { 
+            std::cout << "Invalid input: field is empty or contains non-printable characters\n";
             i -= 1;
+            continue;
         }
+        PhoneBooks[index].set_info(input, i);
     }
     count++;
 }

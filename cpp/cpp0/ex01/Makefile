@@ -1,7 +1,8 @@
 NAME	= PhoneBook
 SRC		= PhoneBook.cpp Contact.cpp main.cpp
 OBJ		= $(SRC:.cpp=.o)
-FLAGS	= -Wall -Wextra -Werror -std=c++98
+DEPS	= $(OBJ:.o=.d)
+FLAGS	= -Wall -Wextra -Werror -std=c++98 -MMD
 CC		= c++
 RM		= rm -rf
 
@@ -13,11 +14,13 @@ all: $(NAME)
 $(NAME): $(OBJ)
 		$(CC) $(FLAGS) $(OBJ) -o $(NAME)
 clean:
-	$(RM) $(OBJ)
+	$(RM) $(OBJ) $(DEPS)
 
 fclean: clean
 	$(RM) $(NAME)
 
 re: fclean all
+
+-include $(DEPS)
 
 .PHONY:	all clean fclean re

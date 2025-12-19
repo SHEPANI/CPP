@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #ifndef PHONEBOOK_HPP
-#define PHONEBOOK_HPP
+# define PHONEBOOK_HPP
 
 #include "Contact.hpp"
 #include <iostream>
@@ -19,6 +19,7 @@
 #include <iomanip>
 #include <cstdlib>
 int check_enfofile();
+int has_nonprintable(const std::string& str);
 
 class PhoneBook{
     public:

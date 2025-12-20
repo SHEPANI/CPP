@@ -39,7 +39,8 @@ make re     # Clean rebuild
 ### Header Format (required)
 42-school standard header with metadata (see [PhoneBook.hpp](cpp/cpp0/ex01/PhoneBook.hpp#L1-L9)):
 - License notice, creation date, author, update timestamps
-- Always use `#ifndef` guards with uppercase filename (`PHONEBOOK_HPP`)
+- Use `#ifndef` guards with uppercase filename (e.g., `PHONEBOOK_HPP` or `Contact_HPP`)
+- Format: `#ifndef FILENAME_HPP` followed by `#define FILENAME_HPP` and closing `#endif`
 
 ### Class Structure
 - **Public methods**: Command handlers (ADD, SEARCH) and accessors
@@ -68,10 +69,24 @@ make re     # Clean rebuild
 - **No STL containers**: Arrays fixed-size (`Contact[8]`)
 - **Manual index management**: PhoneBook tracks count; SEARCH displays indexed list for user selection
 
+## Common Implementation Patterns
+
+### Field Validation
+- Contact fields can be set to empty strings; ADD() checks with `.empty()` and re-prompts on validation failure
+- PhoneBook tracks entries with modulo arithmetic: `index = count % 8` (circular buffer for 8 max contacts)
+- SEARCH validates user-selected indices against actual count
+
+### EOF Handling Pattern
+Always call `check_enfofile()` after `std::getline()` in loops. This function:
+- Checks `std::cin.eof()` flag
+- Prints user-friendly exit message
+- Returns 1 on EOF (Ctrl+D), triggering `std::exit(0)` in caller
+
 ## When Implementing New Features
 1. Maintain 42-school header format with updated timestamps
-2. Follow strict compilation without warnings
-3. Keep C++98 compatibility (no auto, range-for, nullptr, etc.)
-4. Use Makefile pattern for new exercises
-5. Store contact data in Contact class; manage in PhoneBook class
-6. Test with: `make clean && make && make re` (catch compilation issues early)
+2. Follow strict compilation without warnings (test immediately: `make clean && make`)
+3. Keep C++98 compatibility (no auto, range-for, nullptr, string literals as char*, etc.)
+4. Use identical Makefile pattern for new exercises (NAME, SRC, FLAGS variables)
+5. For Contact management: store data in Contact; logic in PhoneBook
+6. Add EOF checks to all user input loops
+7. Test with: `make clean && make && make re` to catch compilation issues early

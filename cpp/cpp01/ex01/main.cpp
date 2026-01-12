@@ -7,7 +7,7 @@
 #include "Zombie.hpp"
 
 int main() {
-    Zombie* newZombie_horde = zombieHorde(3 , "Bar");
+    Zombie* newZombie_horde("hello");
     newZombie_horde->announce();
     delete[] newZombie_horde;
     return 0;

@@ -96,3 +96,50 @@ s.setValue(10);   // ❌ ERROR
 
 Why?
 ➡️ A const object can only call const member functi*/
+
+/*
+4️⃣ static concept (Module 00 level)
+🔹 What does static mean in a class?
+It means shared between all objects.
+
+Example
+class Sample {
+public:
+    static int count;
+};
+
+int Sample::count = 0;
+
+Usage
+Sample a;
+Sample b;
+
+Sample::count = 2;
+
+std::cout << a.count << std::endl; // 2
+std::cout << b.count << std::endl; // 2
+
+➡️ There is only ONE count, not one per object.
+static member function
+class Sample {
+public:
+    static void sayHello() {
+        std::cout << "Hello" << std::endl;
+    }
+};
+
+Usage:
+
+Sample::sayHello(); // ✅ No object needed
+
+Rule:
+
+❌ Static functions cannot access non-static members
+
+static void test() {
+    _value = 10; // ❌ ERROR
+}
+
+Why?
+➡️ Because static functions don’t belong to any object
+*/

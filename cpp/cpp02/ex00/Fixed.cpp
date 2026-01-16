@@ -1,4 +1,14 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Fixed.cpp                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/01/15 00:50:36 by lhchiban          #+#    #+#             */
+/*   Updated: 2026/01/16 02:02:43 by lhchiban         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 
 #include "Fixed.hpp"
@@ -8,24 +18,27 @@ Fixed::Fixed() : _fixed(0)
     std::cout << "Default constructor called" << std::endl;
 }
 
-Fixed::~Fixed()
-{
-    std::cout << "Destructor called" << std::endl;
-}
-
-Fixed& Fixed::operator=(const Fixed& fixOther)
-{
-    std::cout << "Copy assignment operator called" << std::endl;
-    if (this != &fixOther)
-        this->_fixed = fixOther.getRawBits();
-    return (*this);
-}
 
 Fixed::Fixed(const Fixed& fixOther)
 {
     std::cout << "Copy constructor called" << std::endl;
     *this = fixOther;
 }
+
+Fixed& Fixed::operator=(const Fixed& fixOther)
+{
+    std::cout << "Copy assignment operator called" << std::endl;
+    // if (this != &fixOther) // way this protection
+        this->_fixed = fixOther.getRawBits();
+    return (*this);
+}
+
+Fixed::~Fixed()
+{
+    std::cout << "Destructor called" << std::endl;
+}
+
+
 
 int Fixed::getRawBits(void) const
 {

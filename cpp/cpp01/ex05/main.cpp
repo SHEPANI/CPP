@@ -1,16 +1,28 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/01/09 15:18:39 by lhchiban          #+#    #+#             */
+/*   Updated: 2026/01/15 15:31:31 by lhchiban         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "Harl.hpp"
-#include <iostream>
 
 int main()
 {
     Harl harl; 
-    harl.complain("DEBUG");
-    std::cout << std::endl;
+    Harl harl1(harl);
+    
     harl.complain("INFO");
-    std::cout << std::endl;
+    std::cout << "\n";
     harl.complain("WARNING");
-    std::cout << std::endl;
+    std::cout << "\n";
     harl.complain("ERROR"); 
+    std::cout << "\n";
+    harl.complain("DEBUG");
     return 0;
 }

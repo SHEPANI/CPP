@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/01/09 15:18:06 by lhchiban          #+#    #+#             */
+/*   Updated: 2026/01/14 23:39:13 by lhchiban         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include <iostream>
 #include <fstream>
@@ -16,14 +27,8 @@ void SetError(std::string ErrorType)
         std::cout << "Usage: ./replace <filename> <s1> <s2>" << std::endl;
 }
 
-int main(int ac, char **av)
+int replace(std::string& filename, std::string& s1, std::string& s2)
 {
-    if (ac != 4)
-        return (SetError("arguments"), 1);
-
-    std::string filename = av[1];
-    std::string s1 = av[2];
-    std::string s2 = av[3];
     size_t pos = 0;
 
     if (s1.empty())
@@ -37,11 +42,10 @@ int main(int ac, char **av)
     std::stringstream buffer;
     buffer << infile.rdbuf();
     std::string content = buffer.str();
-    if (content.empty())
-        return (SetError("read"), 1);
     infile.close();
 
-    while ((pos = content.find(s1, pos)) != std::string::npos) {
+    while ((pos = content.find(s1, pos)) != std::string::npos)
+    {
         content.erase(pos, s1.length());
         content.insert(pos, s2);
         pos += s2.length();
@@ -53,4 +57,16 @@ int main(int ac, char **av)
     outfile << content;
     outfile.close();
     return 0;
+}
+
+int main(int ac, char **av)
+{
+    if (ac != 4)
+        return (SetError("arguments"), 1);
+
+    std::string filename = av[1];
+    std::string s1 = av[2];
+    std::string s2 = av[3];
+
+    return (replace(filename, s1, s2));
 }

@@ -1,4 +1,4 @@
-NAME	= zombieHorde
+NAME	= Moar_brainz
 SRC		= Zombie.cpp main.cpp zombieHorde.cpp
 OBJ		= $(SRC:.cpp=.o)
 DEPS	= $(OBJ:.o=.d)

@@ -1,4 +1,4 @@
-NAME	= main
+NAME	= HI_THIS_IS_BRAIN
 SRC		= main.cpp
 OBJ		= $(SRC:.cpp=.o)
 FLAGS	= -Wall -Wextra -Werror -std=c++98

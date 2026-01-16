@@ -1,4 +1,4 @@
-NAME	= main
+NAME	= Unnecessary_violence
 SRC		= HumanA.cpp main.cpp HumanB.cpp Weapon.cpp
 OBJ		= $(SRC:.cpp=.o)
 DEPS	= $(OBJ:.o=.d)

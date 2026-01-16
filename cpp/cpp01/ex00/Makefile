@@ -1,4 +1,4 @@
-NAME	= Zombie
+NAME	= BraiiiiiiinnnzzzZ
 SRC		= Zombie.cpp main.cpp newZombie.cpp randomChump.cpp
 OBJ		= $(SRC:.cpp=.o)
 DEPS	= $(OBJ:.o=.d)

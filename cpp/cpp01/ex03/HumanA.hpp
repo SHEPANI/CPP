@@ -1,4 +1,14 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   HumanA.hpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/01/09 16:12:58 by lhchiban          #+#    #+#             */
+/*   Updated: 2026/01/11 18:16:31 by lhchiban         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #ifndef HUMANA_HPP
 #define HUMANA_HPP
@@ -9,12 +19,12 @@
 class HumanA
 {
     public:
-        HumanA(std::string name, Weapon& weapon);
+        HumanA(std::string Newname, Weapon& Neweapon);
         ~HumanA();
         void attack();
     private:
-        std::string _name;
-        Weapon &_weapon;
+        std::string name;
+        Weapon &weapon;
 };
 
 #endif

@@ -1,24 +1,34 @@
-
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   HumanB.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/01/09 15:16:56 by lhchiban          #+#    #+#             */
+/*   Updated: 2026/01/11 19:18:36 by lhchiban         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "HumanB.hpp"
 
-HumanB::HumanB(std::string name) : _weapon(NULL)
+HumanB::HumanB(const std::string& Newname) : weapon(NULL)
 {
-    _name = name;
+    name = Newname;
 }
 
 HumanB::~HumanB ()
 {
 }
 
-void HumanB::setWeapon(Weapon &weapon)
+void HumanB::setWeapon(Weapon &Neweapon)
 {
-    _weapon = &weapon;
+    weapon = &Neweapon;
 }
 
 
 void HumanB::attack()
 {
-    std::cout << _name << " attacks with their " << _weapon->getType() << "\n";
+    if (weapon)
+        std::cout << name << " attacks with their " << weapon->getType() << std::endl;
 }

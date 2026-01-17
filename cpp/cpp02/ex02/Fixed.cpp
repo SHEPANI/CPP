@@ -46,6 +46,7 @@ int Fixed::getRawBits(void) const
 {
     return (this->_fixed);
 }
+
 void Fixed::setRawBits(int const raw)
 {
     this->_fixed = raw;
@@ -67,27 +68,31 @@ std::ostream& operator<<(std::ostream& os, const Fixed& fix)
     return os;
 }
 
-
 bool Fixed::operator>(const Fixed& fixOther) const
 {
     return (this->_fixed > fixOther._fixed);
 }
+
 bool Fixed::operator<(const Fixed& fixOther) const
 {
     return (this->_fixed < fixOther._fixed);
 }
+
 bool Fixed::operator!=(const Fixed& fixOther) const
 {
     return (this->_fixed != fixOther._fixed);
 }
+
 bool Fixed::operator==(const Fixed& fixOther) const
 {
     return (this->_fixed == fixOther._fixed);
 }
+
 bool Fixed::operator>=(const Fixed& fixOther) const
 {
     return (this->_fixed >= fixOther._fixed);
 }
+
 bool Fixed::operator<=(const Fixed& fixOther) const
 {
     return (this->_fixed <= fixOther._fixed);

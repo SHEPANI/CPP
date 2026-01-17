@@ -6,7 +6,7 @@ class Fixed
 {
     private:
         int _fixed;
-        static const int _fraction = 8;
+        static const int _fraction = 30;
     public:
         Fixed();
         Fixed(const Fixed& fixOther);
@@ -37,9 +37,9 @@ class Fixed
         Fixed operator*(const Fixed& fixOther) const;
     
         Fixed operator++(int);
-        Fixed operator++();
+        Fixed& operator++();
         Fixed operator--(int);
-        Fixed operator--();
+        Fixed& operator--();
 };
 
 std::ostream& operator<<(std::ostream& os, const Fixed& fix);

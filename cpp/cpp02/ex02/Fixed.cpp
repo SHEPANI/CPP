@@ -6,7 +6,7 @@
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 00:50:59 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/01/16 05:47:16 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/01/17 22:31:09 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ Fixed::Fixed() : _fixed(0)
 {
 }
 
-
 Fixed::Fixed(const Fixed& fixOther)
 {
     this->_fixed = fixOther.getRawBits();
@@ -24,7 +23,7 @@ Fixed::Fixed(const Fixed& fixOther)
 
 Fixed& Fixed::operator=(const Fixed& fixOther)
 {
-    // if (this != &fixOther)
+    if (this != &fixOther)
         this->_fixed = fixOther.getRawBits();
     return (*this);
 }
@@ -36,19 +35,17 @@ Fixed::Fixed(int const raw)
 
 Fixed::Fixed(float const raw)
 {
-    this->_fixed = roundf(raw * (1 << _fraction)); //  roundf()
+    this->_fixed = roundf(raw * (1 << _fraction));
 }
 
 Fixed::~Fixed()
 {
 }
 
-
 int Fixed::getRawBits(void) const
 {
     return (this->_fixed);
 }
-
 void Fixed::setRawBits(int const raw)
 {
     this->_fixed = raw;
@@ -56,7 +53,7 @@ void Fixed::setRawBits(int const raw)
 
 float Fixed::toFloat(void) const
 {
-    return (static_cast<float>(_fixed) / (1 << _fraction));
+    return (float(_fixed) / (1 << _fraction));
 }
 
 int Fixed::toInt(void) const
@@ -96,7 +93,6 @@ bool Fixed::operator<=(const Fixed& fixOther) const
     return (this->_fixed <= fixOther._fixed);
 }
 
-
 Fixed Fixed::operator+(const Fixed& fixOther) const
 {
     return (Fixed(toFloat() + fixOther.toFloat()));
@@ -107,41 +103,41 @@ Fixed Fixed::operator-(const Fixed& fixOther) const
     return (Fixed(toFloat() - fixOther.toFloat()));
 }
 
-// Fixed Fixed::operator/(const Fixed& fixOther) const
-// {
-    
-// }
-// Fixed Fixed::operator*(const Fixed& fixOther) const
-// {
-    
-// }
+Fixed Fixed::operator/(const Fixed& fixOther) const
+{
+    return (Fixed(toFloat() / fixOther.toFloat()));
+}
 
+Fixed Fixed::operator*(const Fixed& fixOther) const
+{
+    return (Fixed(toFloat() * fixOther.toFloat()));        
+}
 
-Fixed Fixed::operator++() // way void
+Fixed& Fixed::operator++()
 {
     this->_fixed += 1;
     return *this;
 }
 
-Fixed Fixed::operator++(int) // way int
+Fixed Fixed::operator++(int)
 {
     Fixed tmp(*this);
     this->_fixed += 1;
     return tmp;
 }
 
-Fixed Fixed::operator--()
+Fixed& Fixed::operator--()
 {
     this->_fixed -= 1;
     return *this;    
 }
+
 Fixed Fixed::operator--(int)
 {
     Fixed tmp(*this);
     this->_fixed -= 1;
     return tmp;
 }
-
 
 const Fixed& Fixed::max(const Fixed& a,const Fixed& b)
 {

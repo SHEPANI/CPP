@@ -6,12 +6,12 @@
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 00:50:43 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/01/16 02:00:50 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/01/17 18:38:12 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
-
+ 
 class Fixed
 {
     private:

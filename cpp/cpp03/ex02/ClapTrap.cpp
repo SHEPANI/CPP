@@ -5,16 +5,16 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/21 21:17:59 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/01/21 23:14:35 by lhchiban         ###   ########.fr       */
+/*   Created: 2026/01/21 21:22:42 by lhchiban          #+#    #+#             */
+/*   Updated: 2026/01/21 21:22:44 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ClapTrap.hpp"
 
-ClapTrap::ClapTrap() : name("Default"), hitPoints(10), energyPoints(10), attackDamage(0)
+ClapTrap::ClapTrap() : name("Default"), hitPoints(10), energyPoints(10), attackDamage(0) // default
 {
-    std::cout << "ClapTrap " << this->name << " constructed!" << std::endl;
+    std::cout << "ClapTrap " << this->name << " constructed" << std::endl;
 }
 
 ClapTrap::ClapTrap(std::string name) : name(name), hitPoints(10), energyPoints(10), attackDamage(0)

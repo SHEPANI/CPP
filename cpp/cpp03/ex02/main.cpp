@@ -1,27 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Fixed.hpp                                          :+:      :+:    :+:   */
+/*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/15 00:50:43 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/01/17 18:38:12 by lhchiban         ###   ########.fr       */
+/*   Created: 2026/01/21 21:23:59 by lhchiban          #+#    #+#             */
+/*   Updated: 2026/01/21 21:24:04 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "FragTrap.hpp"
 #include <iostream>
- 
-class Fixed
-{
-    private:
-        int _fixed;
-        static const int _fraction = 8;
-    public:
-        Fixed();
-        Fixed(const Fixed& fixOther);
-        Fixed& operator=(const Fixed& fixOther);
-        ~Fixed();
-        int getRawBits(void) const;
-        void setRawBits(int const raw);
-};
+
+int main() {
+    FragTrap a;
+    a.highFivesGuys();
+    return 0;
+}

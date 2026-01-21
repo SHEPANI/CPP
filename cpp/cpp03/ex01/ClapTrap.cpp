@@ -1,21 +1,45 @@
-#include "ClapTrap.hpp"
-#include <iostream>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ClapTrap.cpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/01/21 21:18:29 by lhchiban          #+#    #+#             */
+/*   Updated: 2026/01/21 23:14:20 by lhchiban         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-ClapTrap::ClapTrap() 
-    : name("Default"), hitPoints(10), energyPoints(10), attackDamage(0)
+#include "ClapTrap.hpp"
+
+ClapTrap::ClapTrap() : name("Default"), hitPoints(10), energyPoints(10), attackDamage(0)
 {
     std::cout << "ClapTrap " << this->name << " constructed!" << std::endl;
 }
 
-ClapTrap::ClapTrap(std::string name) 
-    : name(name), hitPoints(10), energyPoints(10), attackDamage(0)
+ClapTrap::ClapTrap(std::string name) : name(name), hitPoints(10), energyPoints(10), attackDamage(0)
 {
-    std::cout << "ClapTrap " << this->name << " constructed!" << std::endl;
+    std::cout << "ClapTrap " << this->name << "constructed by parameterized contructer" << std::endl;
 }
 
 ClapTrap::~ClapTrap()
 {
     std::cout << "ClapTrap " << this->name << " destructed!" << std::endl;
+}
+
+ClapTrap::ClapTrap(const ClapTrap& Other)
+{
+    *this = Other;
+    std::cout << "ClapTrap " << this->name << " copy contructer called" << std::endl;
+}
+
+ClapTrap& ClapTrap::operator=(const ClapTrap& Other)
+{
+    this->energyPoints = Other.energyPoints;
+    this->name = Other.name;
+    this->hitPoints = Other.hitPoints;
+    this->attackDamage = Other.attackDamage;
+    return (*this);
 }
 
 void ClapTrap::attack(const std::string& target)

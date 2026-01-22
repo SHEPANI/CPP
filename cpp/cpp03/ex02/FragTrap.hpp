@@ -29,4 +29,3 @@ class FragTrap : public ClapTrap
 };
 
 #endif
-#endif

@@ -19,7 +19,7 @@ ClapTrap::ClapTrap() : name("Default"), hitPoints(10), energyPoints(10), attackD
 
 ClapTrap::ClapTrap(std::string name) : name(name), hitPoints(10), energyPoints(10), attackDamage(0)
 {
-    std::cout << "ClapTrap " << this->name << "constructed by parameterized contructer" << std::endl;
+    std::cout << "ClapTrap " << this->name << " constructed by parameterized constructor" << std::endl;
 }
 
 ClapTrap::~ClapTrap()
@@ -30,7 +30,7 @@ ClapTrap::~ClapTrap()
 ClapTrap::ClapTrap(const ClapTrap& Other)
 {
     *this = Other;
-    std::cout << "ClapTrap " << this->name << " copy contructer called" << std::endl;
+    std::cout << "ClapTrap " << this->name << " copy constructor called" << std::endl;
 }
 
 ClapTrap& ClapTrap::operator=(const ClapTrap& Other)

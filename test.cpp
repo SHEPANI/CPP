@@ -1,6 +1,7 @@
 #include <string>
 #include <iostream>
 
+class 
 
 
 int main()
@@ -143,3 +144,5 @@ static void test() {
 Why?
 ➡️ Because static functions don’t belong to any object
 */
+
+

@@ -24,6 +24,7 @@ class ClapTrap
         unsigned int energyPoints ;
         unsigned int attackDamage;
     public:
+        ClapTrap();
         ClapTrap(std::string name);
         ClapTrap(const ClapTrap& Other);
         ClapTrap& operator=(const ClapTrap& other);

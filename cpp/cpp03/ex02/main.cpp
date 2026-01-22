@@ -6,14 +6,12 @@
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 21:23:59 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/01/21 21:24:04 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/01/22 05:19:14 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "FragTrap.hpp"
 #include "ScavTrap.hpp"
-#include "ClapTrap.hpp"
-#include <iostream>
 
 int main()
 {

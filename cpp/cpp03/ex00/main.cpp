@@ -6,12 +6,11 @@
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 21:18:18 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/01/22 04:41:38 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/01/22 05:19:32 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ClapTrap.hpp"
-#include <iostream>
 
 int main() {
     std::cout << "\n\033[33m=== HARD TEST: CLAPTRAP ===\033[0m\n\n";

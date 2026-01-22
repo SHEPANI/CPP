@@ -6,7 +6,7 @@
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 21:18:29 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/01/21 23:14:20 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/01/22 05:15:59 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,8 @@ ClapTrap::~ClapTrap()
     std::cout << "ClapTrap " << this->name << " destructed!" << std::endl;
 }
 
-ClapTrap::ClapTrap(const ClapTrap& Other) : name(Other.name), hitPoints(Other.hitPoints), energyPoints(Other.energyPoints), attackDamage(Other.attackDamage)
+ClapTrap::ClapTrap(const ClapTrap& Other) : name(Other.name), hitPoints(Other.hitPoints), 
+                                            energyPoints(Other.energyPoints), attackDamage(Other.attackDamage)
 {
     std::cout << "ClapTrap " << this->name << " copy constructor called" << std::endl;
 }
@@ -72,7 +73,8 @@ void ClapTrap::beRepaired(unsigned int amount)
 {
     if (this->energyPoints == 0 || this->hitPoints == 0)
     {
-        std::cout << "ClapTrap " << this->name << " has no energy or hit points left to repair." << std::endl;
+        std::cout << "ClapTrap " << this->name 
+        << " has no energy or hit points left to repair." << std::endl;
         return;
     }
     this->energyPoints--;

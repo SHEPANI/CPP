@@ -6,7 +6,7 @@
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 21:22:42 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/01/22 04:46:42 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/01/22 05:15:07 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@ ClapTrap::ClapTrap() : name("Default"), hitPoints(10), energyPoints(10), attackD
 
 ClapTrap::ClapTrap(std::string name) : name(name), hitPoints(10), energyPoints(10), attackDamage(0)
 {
-    std::cout << "ClapTrap " << this->name << " constructed by parameterized constructor" << std::endl;
+    std::cout << "ClapTrap " << this->name 
+        << " constructed by parameterized constructor" << std::endl;
 }
 
 ClapTrap::~ClapTrap()
@@ -27,7 +28,8 @@ ClapTrap::~ClapTrap()
     std::cout << "ClapTrap " << this->name << " destructed!" << std::endl;
 }
 
-ClapTrap::ClapTrap(const ClapTrap& Other) : name(Other.name), hitPoints(Other.hitPoints), energyPoints(Other.energyPoints), attackDamage(Other.attackDamage)
+ClapTrap::ClapTrap(const ClapTrap& Other) : name(Other.name), hitPoints(Other.hitPoints),
+                                                energyPoints(Other.energyPoints), attackDamage(Other.attackDamage)
 {
     std::cout << "ClapTrap " << this->name << " copy constructor called" << std::endl;
 }

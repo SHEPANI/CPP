@@ -6,7 +6,7 @@
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 17:53:35 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/01/21 21:56:57 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/01/22 04:50:12 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ ScavTrap::ScavTrap(const ScavTrap& Other) : ClapTrap(Other)
     *this = Other;
 }
 
-ScavTrap::ScavTrap(std::string Name)
+ScavTrap::ScavTrap(std::string Name) : ClapTrap(Name)
 {
     this->name = Name;
     this->hitPoints = 100;

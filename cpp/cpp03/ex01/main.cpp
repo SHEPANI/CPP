@@ -6,7 +6,7 @@
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 21:18:45 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/01/21 21:52:26 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/01/22 04:42:41 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,9 @@ int main() {
     }
 
     std::cout << "\n-- Test 3: Damage beyond HP --\n";
-    beta.takeDamage(100); // Should drop HP to 0
-    beta.attack("Alpha");  // Should not attack if no energy or dead
-    beta.beRepaired(10);   // Repair after death (check logic)
+    beta.takeDamage(100);
+    beta.attack("Alpha"); 
+    beta.beRepaired(10);  
 
     std::cout << "\n-- Test 4: Self repair and multiple small attacks --\n";
     ClapTrap gamma("Gamma");
@@ -51,9 +51,9 @@ int main() {
 
     std::cout << "\n-- Test 6: Edge cases --\n";
     ClapTrap zeroEnergy("Zero");
-    zeroEnergy.takeDamage(0); // 0 damage
-    zeroEnergy.beRepaired(0); // 0 repair
-    zeroEnergy.attack("Alpha"); // Normal attack
+    zeroEnergy.takeDamage(0);
+    zeroEnergy.beRepaired(0);
+    zeroEnergy.attack("Alpha");
 
     std::cout << "\n-- Test 7: ScavTrap construction and destruction --\n";
     ScavTrap scav("Scavenger");

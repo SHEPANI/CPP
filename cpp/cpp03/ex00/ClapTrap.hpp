@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#ifndef CLAPTRAP_HPP
+#define CLAPTRAP_HPP
 
 #include <string>
 #include <iostream>
@@ -34,4 +35,4 @@ class ClapTrap
         void beRepaired(unsigned int amount);
 };
 
-#pragma endregion
+#endif

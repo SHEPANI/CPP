@@ -23,8 +23,7 @@ ScavTrap::ScavTrap() : ClapTrap()
 
 ScavTrap::ScavTrap(const ScavTrap& Other) : ClapTrap(Other)
 {
-    std::cout << "ScavTrap " << this->name << " copy contructer called" << std::endl;
-    *this = Other;
+    std::cout << "ScavTrap " << this->name << " copy constructor called" << std::endl;
 }
 
 ScavTrap::ScavTrap(std::string Name) : ClapTrap(Name)
@@ -33,7 +32,7 @@ ScavTrap::ScavTrap(std::string Name) : ClapTrap(Name)
     this->hitPoints = 100;
     this->energyPoints = 50;
     this->attackDamage = 20;
-    std::cout << "ScavTrap " << this->name << " constructed by parameterized contructer" << std::endl;
+    std::cout << "ScavTrap " << this->name << " constructed by parameterized constructor" << std::endl;
 }
 
 ScavTrap::~ScavTrap()

@@ -24,8 +24,7 @@ FragTrap::FragTrap() : ClapTrap()
 
 FragTrap::FragTrap(const FragTrap& Other) : ClapTrap(Other)
 {
-    std::cout << "FragTrap " << this->name << " copy contructer called" << std::endl;
-    *this = Other;
+    std::cout << "FragTrap " << this->name << " copy constructor called" << std::endl;
 }
 
 
@@ -35,7 +34,7 @@ FragTrap::FragTrap(std::string Name) : ClapTrap(Name)
     this->hitPoints = 100;
     this->energyPoints = 100;
     this->attackDamage = 30;
-    std::cout << "FragTrap " << this->name << " constructed by parameterized contructer" << std::endl;
+    std::cout << "FragTrap " << this->name << " constructed by parameterized constructor" << std::endl;
 }
 
 FragTrap::~FragTrap()
@@ -45,14 +44,11 @@ FragTrap::~FragTrap()
 
 FragTrap& FragTrap::operator=(const FragTrap& Other)
 {
-    this->energyPoints = Other.energyPoints;
-    this->name = Other.name;
-    this->hitPoints = Other.hitPoints;
-    this->attackDamage = Other.attackDamage;
+    ClapTrap::operator=(Other);
     return (*this);
 }
 
 void FragTrap::highFivesGuys()
 {
-    std::cout << "FragTrap " << this->name << " raises its hand: \"High fives, guys! Give me some love!\" 🙏" << std::endl;
+    std::cout << "FragTrap " << this->name << " raises its hand: \"High fives, guys! Give me some love!\"" << std::endl;
 }

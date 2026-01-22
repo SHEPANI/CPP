@@ -11,11 +11,14 @@
 /* ************************************************************************** */
 
 
+#ifndef FRAGTRAP_HPP
+#define FRAGTRAP_HPP
+
 #include "ClapTrap.hpp"
 
 class FragTrap : public ClapTrap
 {
-    public :
+    public:
         FragTrap();
         FragTrap(std::string Name);
         FragTrap(const FragTrap& Other);
@@ -24,3 +27,6 @@ class FragTrap : public ClapTrap
 
         void highFivesGuys(void);
 };
+
+#endif
+#endif

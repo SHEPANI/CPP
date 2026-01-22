@@ -27,9 +27,8 @@ ClapTrap::~ClapTrap()
     std::cout << "ClapTrap " << this->name << " destructed!" << std::endl;
 }
 
-ClapTrap::ClapTrap(const ClapTrap& Other)
+ClapTrap::ClapTrap(const ClapTrap& Other) : name(Other.name), hitPoints(Other.hitPoints), energyPoints(Other.energyPoints), attackDamage(Other.attackDamage)
 {
-    *this = Other;
     std::cout << "ClapTrap " << this->name << " copy constructor called" << std::endl;
 }
 

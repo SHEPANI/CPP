@@ -11,11 +11,6 @@
 /* ************************************************************************** */
 
 #include "ScavTrap.hpp"
-
-
-
-#include "ClapTrap.hpp"
-#include "ClapTrap.hpp"
 #include <iostream>
 
 int main() {
@@ -59,9 +54,14 @@ int main() {
     zeroEnergy.takeDamage(0); // 0 damage
     zeroEnergy.beRepaired(0); // 0 repair
     zeroEnergy.attack("Alpha"); // Normal attack
-    ClapTrap *a  = &ScavTrap();
-    a->attack("PPP");
-    a->takeDamage(10);
+
+    std::cout << "\n-- Test 7: ScavTrap construction and destruction --\n";
+    ScavTrap scav("Scavenger");
+    scav.attack("Enemy");
+    scav.takeDamage(20);
+    scav.beRepaired(10);
+    scav.guardGate();
+
     std::cout << "\n\033[33m=== END OF HARD TEST ===\033[0m\n";
     return 0;
 }

@@ -11,14 +11,9 @@
 /* ************************************************************************** */
 
 #include "ClapTrap.hpp"
-
-
-
-#include "ClapTrap.hpp"
 #include <iostream>
 
 int main() {
-    ClapTrap a("jds;");
     std::cout << "\n\033[33m=== HARD TEST: CLAPTRAP ===\033[0m\n\n";
 
     ClapTrap alpha("Alpha");

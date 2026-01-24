@@ -19,6 +19,7 @@
 int main()
 {
     std::cout << "=== Test 1: Basic construction and destruction ==="  << std::endl;
+    std::cout << "(Animals can only be created through Dog or Cat)\n";
     {
         const Animal* j = new Dog();
         const Animal* i = new Cat();
@@ -109,7 +110,25 @@ int main()
         std::cout << "\n--- Dogs going out of scope ---" << std::endl;
     }
 
+    std::cout << "\n=== Test 6: Polymorphism still works with abstract class ===" << std::endl;
+    {
+        std::cout << "\n--- Creating polymorphic array ---" << std::endl;
+        Animal* animal1 = new Dog();
+        Animal* animal2 = new Cat();
+        
+        std::cout << "\n--- Calling makeSound() through base class pointers ---" << std::endl;
+        std::cout << "animal1 (" << animal1->getType() << "): ";
+        animal1->makeSound();
+        std::cout << "animal2 (" << animal2->getType() << "): ";
+        animal2->makeSound();
+        
+        std::cout << "\n--- Cleanup ---" << std::endl;
+        delete animal1;
+        delete animal2;
+    }
+
     std::cout << "\n=== All tests completed successfully ===" << std::endl;
+    std::cout << "Note: Animal class is abstract - cannot be instantiated directly!" << std::endl;
     
     return 0;
 }

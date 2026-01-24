@@ -6,10 +6,9 @@
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/23 21:06:49 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/01/24 02:29:02 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/01/24 02:33:09 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "Animal.hpp"
 #include "Cat.hpp"

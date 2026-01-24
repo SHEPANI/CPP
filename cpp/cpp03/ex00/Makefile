@@ -1,4 +1,5 @@
-NAME	= ClapTrap
+
+N  AME	= ClapTrap
 SRC		= ClapTrap.cpp main.cpp
 OBJ		= $(SRC:.cpp=.o)
 DEPS	= $(OBJ:.o=.d)

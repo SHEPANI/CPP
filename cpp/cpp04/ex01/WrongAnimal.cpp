@@ -1,29 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Animal.cpp                                         :+:      :+:    :+:   */
+/*   WrongAnimal.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 05:40:32 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/01/24 02:28:04 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/01/24 02:02:56 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Animal.hpp"
+#include "WrongAnimal.hpp"
 
-Animal::Animal()
+WrongAnimal::WrongAnimal()
 {
-    std::cout << "Animal  Constracted\n";
+    std::cout << "WrongAnimal  Constracted\n";
 }
 
-Animal::Animal(const Animal& Other)
+WrongAnimal::WrongAnimal(const WrongAnimal& Other)
 {
-    std::cout << "Animal copy constractor  called\n";
+    std::cout << "WrongAnimal copy constractor  called\n";
     this->type = Other.type;
 }
 
-Animal& Animal::operator=(const Animal& Other)
+WrongAnimal& WrongAnimal::operator=(const WrongAnimal& Other)
 {
     if (this == &Other) // slove self assignment and Dynamic memory 
                         //allocation are delete for the same obj (this and other)
@@ -32,17 +32,17 @@ Animal& Animal::operator=(const Animal& Other)
     return (*this);
 }
 
-Animal::~Animal()
+WrongAnimal::~WrongAnimal()
 {
-    std::cout << "Animal destructed\n";
+    std::cout << "WrongAnimal destructed\n";
 }
 
-void Animal::makeSound() const
+void WrongAnimal::makeSound() const
 {
-    std::cout << "Animal don't make sound\n";
+    std::cout << "WrongAnimal don't make sound\n";
 }
 
-std::string Animal::getType() const
+std::string WrongAnimal::getType() const
 {
     return (this->type);
 }

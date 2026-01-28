@@ -56,7 +56,7 @@ In C++, we use the `try` keyword to define a block of statements (called a **try
     {
         // Statements that may throw exceptions you want to handle go here
         throw -1; // here's a trivial throw statement
-        // ta9der tkon function muhim trowi
+        // ta9der tkon function muhim throwi
     }
 }
 ```

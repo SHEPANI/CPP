@@ -1,6 +1,7 @@
 
 
 ////////////////////////////////////////////////////////
+
 What are Exception Classes?
 ----------------------------------------------------------------
 Exception classes are special classes used to represent errors.
@@ -16,6 +17,7 @@ cppclass MyException : public std::exception {
 ```
 ```
 ////////////////////////////////////////////////////////
+
 Why This Exception?
 ----------------------------------
 Exception classes are typically:
@@ -30,6 +32,7 @@ The exception classes are simple and don't need the full OCF treatment
 
 
 ////////////////////////////////////////////////////////
+
 Throwing exceptions?
 ----------------------------------
 In C++, a throw statement is used to signal that an exception or error case has occurred 
@@ -50,6 +53,7 @@ be an error code, a description of the problem, or a custom exception class.
 }
 
 ////////////////////////////////////////////////////////
+
 Looking for exceptions?
 -----------------------------------
 In C++, we use the try keyword to define a block of statements (called a try block).
@@ -71,6 +75,7 @@ this try block throws an exception, grab it!”.
 
 ////////////////////////////////////////////////////////
 
+
 Handling exceptions?
 
 Actually handling exceptions is the job of the catch block(s).
@@ -86,6 +91,7 @@ catch           Handler - receives and handles the signal       Catching the bal
 
 
 /////////////////////////////////////////////////////////
+
 
 ```
 ```
@@ -256,6 +262,7 @@ Standard Conversion
 User-Defined Conversion
 Ellipsis (...)"
 /////////////////////////////
+
 1. Exact Match (Allowed)
 This is the gold standard. If you throw an int, you catch an int.
 
@@ -264,6 +271,7 @@ C++
 throw 10;      // Caught by catch(int)
 throw "Error"; // Caught by catch(const char*)
 /////////////////////////////
+
 2. Promotion (NOT Allowed)
 In normal code, a char is automatically "promoted" to an int for math. In exceptions, this is disabled.
 
@@ -278,6 +286,7 @@ catch (int x) {
     // In normal functions this works, but here it is strictly forbidden.
 }
 /////////////////////////////
+
 3. Standard Conversion (NOT Allowed for Numbers)
 In normal code, an int converts to a double. In exceptions, this is disabled.
 
@@ -329,6 +338,7 @@ int main() {
 ```
 Why this works: The compiler sees that ConnectionTimeout is a ServerError, so the catch block accepts it.
 /////////////////////////////////////////////////////
+
 If you throw a char* (string), it CAN be caught by void*
 ```
 ```
@@ -363,6 +373,7 @@ int main() {
 Why this works: char* automatically converts to void* in standard C++. The exception system respects this specific pointer conversion.
 
 /////////////////////////////////////////////////////
+
 4. User-Defined Conversion (NOT Allowed)
 Even if you have a class that can be created from an integer, the exception system won't do it for you.
 
@@ -381,6 +392,7 @@ catch (MyError e) {
 }
 
 /////////////////////////////
+
 5. Ellipsis (...) (Allowed)
 This is a special C++ feature (often called "catch-all"). It matches any type of exception, no matter what the signal is.
 
@@ -403,6 +415,7 @@ If an exception is routed to a catch block, it is considered “handled” even 
 First, catch blocks may print an error (either to the console, or a log file) and then allow the function to proceed.
 
 Second, catch blocks may return a value or error code back to the caller.////
+
 
 Third, a catch block may throw another exception. Because the catch block is outside of the try block, the newly thrown exception in this case is not handled by the preceding try block -- it’s handled by the next enclosing try block.
 

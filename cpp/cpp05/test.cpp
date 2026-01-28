@@ -74,37 +74,119 @@
 // }
 
 
+// #include <iostream>
+// #include <string>
+
+// int main()
+// {
+//     try
+//     {
+//        const  char *s = "s";
+//        char *s1 = const_cast<char*>(s);;
+//         // Statements that may throw exceptions you want to handle go here
+//         throw (s1); // here's a trivial example
+//     }
+//     catch (double) // no variable name since we don't use the exception itself in the catch block below
+//     {
+//         // Any exceptions of type double thrown within the above try block get sent here
+//         std::cerr << "We caught an exception of type double\n";
+//     }
+//     catch ( char*)
+//     {
+//         // throw -1;
+//         // Any exceptions of type int thrown within the above try block get sent here
+//         std::cerr << "We caught an int exception with value: " << '\n';
+//     }
+//     catch (const std::string&) // catch classes by const reference
+//     {
+//         // Any exceptions of type std::string thrown within the above try block get sent here
+//         std::cerr << "We caught an exception of type std::string\n";
+//     }
+
+//     // Execution continues here after the exception has been handled by any of the above catch blocks
+//     std::cout << "Continuing on our merry way\n";
+
+//     return 0;
+// }
+
+
 #include <iostream>
-#include <string>
+
+void D() // called by C()
+{
+    std::cout << "Start D\n";
+    std::cout << "D throwing int exception\n";
+
+    throw - 1;
+
+    std::cout << "End D\n"; // skipped over
+}
+
+void C() // called by B()
+{
+    std::cout << "Start C\n";
+    D();
+    std::cout << "End C\n";
+}
+
+void B() // called by A()
+{
+    std::cout << "Start B\n";
+
+    try
+    {
+        C();
+    }
+    catch (double) // not caught: exception type mismatch
+    {
+        std::cerr << "B caught double exception\n";
+    }
+
+    try
+    {
+    }
+    catch (int) // not caught: exception not thrown within try
+    {
+        std::cerr << "B caught int exception\n";
+    }
+
+    std::cout << "End B\n";
+}
+
+void A() // called by main()
+{
+    std::cout << "Start A\n";
+
+    try
+    {
+        B();
+    }
+    catch (int) // exception caught here and handled
+    {
+        std::cerr << "A caught int exception\n";
+    }
+    catch (double) // not called because exception was handled by prior catch block
+    {
+        std::cerr << "A caught double exception\n";
+    }
+
+    // execution continues here after the exception is handled
+    std::cout << "End A\n";
+}
 
 int main()
 {
+    std::cout << "Start main\n";
+
     try
     {
-       const  char *s = "s";
-       char *s1 = const_cast<char*>(s);;
-        // Statements that may throw exceptions you want to handle go here
-        throw (s1); // here's a trivial example
+        A();
     }
-    catch (double) // no variable name since we don't use the exception itself in the catch block below
+    catch (int) // not called because exception was handled by A
     {
-        // Any exceptions of type double thrown within the above try block get sent here
-        std::cerr << "We caught an exception of type double\n";
+        std::cerr << "main caught int exception\n";
     }
-    catch ( char*)
-    {
-        // throw -1;
-        // Any exceptions of type int thrown within the above try block get sent here
-        std::cerr << "We caught an int exception with value: " << '\n';
-    }
-    catch (const std::string&) // catch classes by const reference
-    {
-        // Any exceptions of type std::string thrown within the above try block get sent here
-        std::cerr << "We caught an exception of type std::string\n";
-    }
-
-    // Execution continues here after the exception has been handled by any of the above catch blocks
-    std::cout << "Continuing on our merry way\n";
+    std::cout << "End main\n";
 
     return 0;
 }

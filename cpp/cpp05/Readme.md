@@ -8,12 +8,13 @@ Exception classes are special classes used to represent errors.
 
 In C++, you throw and catch these to handle problems gracefully. For example:
 
-'''
+```
+```
 cppclass MyException : public std::exception {
     // This is an exception class
 };
-'''
-
+```
+```
 ////////////////////////////////////////////////////////
 Why This Exception?
 ----------------------------------
@@ -86,7 +87,8 @@ catch           Handler - receives and handles the signal       Catching the bal
 
 /////////////////////////////////////////////////////////
 
-'''
+```
+```
 class a
 {
     private:
@@ -133,7 +135,8 @@ int main()
     }
     // s.fl();
 }
-'''
+```
+```
 
 -------------- Final distilled explanation (exam-ready) -----------------
 Exception handling uses runtime type identity, not compile-time conversion rules.
@@ -291,7 +294,8 @@ The "Inheritance" Exception: There is one specific type of standard conversion t
 
 If you throw a Child object, it CAN be caught by a Parent handler.
 
-'''
+```
+```
 #include <iostream>
 
 // 1. The Parent Class (Base)
@@ -321,11 +325,13 @@ int main() {
     
     return 0;
 }
-'''
+```
+```
 Why this works: The compiler sees that ConnectionTimeout is a ServerError, so the catch block accepts it.
 /////////////////////////////////////////////////////
 If you throw a char* (string), it CAN be caught by void*
-'''
+```
+```
 C++ allows any non-const data pointer to be caught by a void* (a generic pointer), because void* is the "universal" pointer type in C++.
 
 Note: This does not work for const char* (string literals like "hello"), only for mutable char* variables.
@@ -353,7 +359,7 @@ int main() {
 
     return 0;
 }
-''''
+```'
 Why this works: char* automatically converts to void* in standard C++. The exception system respects this specific pointer conversion.
 
 /////////////////////////////////////////////////////
@@ -379,13 +385,16 @@ catch (MyError e) {
 This is a special C++ feature (often called "catch-all"). It matches any type of exception, no matter what the signal is.
 
 C++
-
+```
 try {
     throw 500;
 }
 catch (...) {
     // SUCCESS: This catches anything.
 }
+```
+```
+`
 ---------------------------------------------------------------------------------------------------
 What catch blocks typically do
 
@@ -399,3 +408,243 @@ Third, a catch block may throw another exception. Because the catch block is out
 
 Fourth, a catch block in main() may be used to catch fatal errors and terminate the program in a clean way.
 ---------------------------------------------------------------------------------------------------
+Key insight
+
+Try blocks catch exceptions not only from statements within the try block, but also from functions that are called within the try block.
+```
+```
+#include <cmath> // for sqrt() function
+#include <iostream>
+
+// A modular square root function
+double mySqrt(double x)
+{
+    // If the user entered a negative number, this is an error condition
+    if (x < 0.0)
+        throw "Can not take sqrt of negative number"; // throw exception of type const char*
+
+    return std::sqrt(x);
+}
+
+int main()
+{
+    std::cout << "Enter a number: ";
+    double x {};
+    std::cin >> x;
+
+    try // Look for exceptions that occur within try block and route to attached catch block(s)
+    {
+        double d = mySqrt(x);
+        std::cout << "The sqrt of " << x << " is " << d << '\n';
+    }
+    catch (const char* exception) // catch exceptions of type const char*
+    {
+        std::cerr << "Error: " << exception << std::endl;
+    }
+
+    return 0;
+}
+```
+```
+- At this point, some of you are probably wondering why it’s a good idea to pass errors back to the caller. Why not just make MySqrt() handle its own error? The problem is that different applications may want to handle errors in different ways. A console application may want to print a text message. A windows application may want to pop up an error dialog. In one application, this may be a fatal error, and in another application it may not be. By passing the error out of the function, each application can handle an error from mySqrt() in a way that is the most context appropriate for it! Ultimately, this keeps mySqrt() as modular as possible, and the error handling can be placed in the less-modular parts of the code.
+
+- o zid 3liha kma gal liya 3akroud tsawar ila canty cat2aloki f function li katrowi fiha o katcatchi
+fiha fnafs rah normal howa anak ma tkamalch exeution tama hit 4atkamal lkhadma o nta 3endak error 
+li mabaghihch, b7ala ma b9itich 3ati i3tibar l crash lmohim exception is exceptional
+---------------------------------------------------------------------------------------------------
+Exception handling and stack unwinding?
+ the program first looks to see if the exception can be handled immediately inside the current function (meaning the exception was thrown within a try block inside the current function, and there is a corresponding catch block associated).
+ If not, the program next checks whether the function’s caller (the next function up the call stack) can handle the exception. In order for the function’s caller to handle the exception, the call to the current function must be inside a try block, and a matching catch block must be associated. If no match is found, then the caller’s caller (two functions up the call stack) is checked. Similarly, in order for the caller’s caller to handle the exception, the call to the caller must be inside a try block, and a matching catch block must be associated.
+The process of checking each function up the call stack continues until either a handler is found,
+or all of the functions on the call stack have been checked and no handler can be found.
+- (important):
+    If a matching exception handler is found, then execution jumps from the point where the exception is thrown to the top of the matching catch block. This requires unwinding the stack (removing the current function from the call stack) as many times as necessary to make the function handling the exception the top function on the call stack.
+--- If no matching exception handler is found, the stack may or may not be unwound. We will talk more about this case in the next (-- Uncaught exceptions and catch-all handlers)  --
+
+- (important):
+When the current function is removed from the call stack, all local variables are destroyed as usual,
+but no value is returned.
+
+- Key insight
+Unwinding the stack destroys local variables in the functions that are unwound (which is good,
+because it ensures their destructors execute).
+---------------------------------------------------------------------------------------------------
+Another stack unwinding example:
+```
+```
+#include <iostream>
+
+void D() // called by C()
+{
+    std::cout << "Start D\n";
+    std::cout << "D throwing int exception\n";
+
+    throw - 1;
+
+    std::cout << "End D\n"; // skipped over
+}
+
+void C() // called by B()
+{
+    std::cout << "Start C\n";
+    D();
+    std::cout << "End C\n";
+}
+
+void B() // called by A()
+{
+    std::cout << "Start B\n";
+
+    try
+    {
+        C();
+    }
+    catch (double) // not caught: exception type mismatch
+    {
+        std::cerr << "B caught double exception\n";
+    }
+
+    try
+    {
+    }
+    catch (int) // not caught: exception not thrown within try
+    {
+        std::cerr << "B caught int exception\n";
+    }
+
+    std::cout << "End B\n";
+}
+
+void A() // called by main()
+{
+    std::cout << "Start A\n";
+
+    try
+    {
+        B();
+    }
+    catch (int) // exception caught here and handled
+    {
+        std::cerr << "A caught int exception\n";
+    }
+    catch (double) // not called because exception was handled by prior catch block
+    {
+        std::cerr << "A caught double exception\n";
+    }
+
+    // execution continues here after the exception is handled
+    std::cout << "End A\n";
+}
+
+int main()
+{
+    std::cout << "Start main\n";
+
+    try
+    {
+        A();
+    }
+    catch (int) // not called because exception was handled by A
+    {
+        std::cerr << "main caught int exception\n";
+    }
+    std::cout << "End main\n";
+
+    return 0;
+}
+```
+```
+As you can see, stack unwinding provides us with some very useful behavior -- if a function does not want to handle an exception, it doesn’t have to. The exception will propagate up the stack until it finds someone who will! 
+This allows us to decide where in the call stack is the most appropriate place to handle any errors that may occur.
+---------------------------------------------------------------------------------------------------------------
+- What is __cxa_allocate_exception?
+
+It is a runtime library function defined by the Itanium C++ ABI
+(used by GCC & Clang on Linux/macOS).
+- Its job:
+    Allocate memory for an exception object that must survive stack unwinding.
+
+- In simple words:
+    It allocates space where the thrown object will live outside the stack.
+┌──────────────────────────────┐
+│ ABI exception header         │  ← used by runtime
+│------------------------------│
+│ type_info*                   │
+│ destructor pointer           │
+│ handler count                │
+└──────────────────────────────┘
+│ user exception object        │
+│ std::runtime_error           │
+│ vptr + message               │
+└──────────────────────────────┘
+- This memory is:
+    Not stack
+    Not regular new
+    Controlled by the C++ runtime
+- Why not just use new?
+Because exceptions need extra metadata:
+    RTTI (type_info)
+    Destructor callback
+    Handler tracking
+    Thread-local chaining
+- new only allocates raw memory — it doesn’t integrate with: ?????????/????
+    stack unwinding
+    landing pads
+    catch matching
+- What __cxa_throw really does (important)
+
+Conceptually, __cxa_throw does this:
+```
+void __cxa_throw(void* obj, type_info* tinfo, destructor dtor) {
+    _Unwind_RaiseException(exception_object);
+    std::terminate(); // only if no handler found
+}
+```
+- So the real unwinder is:
+   " _Unwind_RaiseException" , This is part of the Itanium C++ ABI (used by Clang/GCC).
+
+- Final mental timeline (source → runtime):
+    throw -1
+    ↓
+    __cxa_allocate_exception (heap)
+    ↓
+    store int value
+    ↓
+    attach typeinfo(int)
+    ↓
+    __cxa_throw
+    ↓
+    destroy D frame
+    ↓
+    destroy C frame
+    ↓
+    check B handlers → no match
+    ↓
+    check A handlers → MATCH
+    ↓
+    execute catch(int)
+    ↓
+    resume normal execution
+
+- so but all to gather:
+throw -1
+↓
+VISIBLE ASM:
+call __cxa_allocate_exception
+call __cxa_throw
+↓
+INVISIBLE RUNTIME:
+_Unwind_RaiseException
+↓
+METADATA:
+.eh_frame + personality functions
+↓
+MEMORY:
+destroy stack frames
+keep heap exception alive
+↓
+CONTROL FLOW:
+jump to landing pad
+↓
+NORMAL EXECUTION RESUMES
+------------------------------------------------------------------------------------

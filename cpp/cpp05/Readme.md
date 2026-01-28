@@ -9,13 +9,11 @@ Exception classes are special classes used to represent errors.
 
 In C++, you throw and catch these to handle problems gracefully. For example:
 
-```
-```
+
 cppclass MyException : public std::exception {
     // This is an exception class
 };
-```
-```
+
 ////////////////////////////////////////////////////////
 
 Why This Exception?
@@ -93,8 +91,7 @@ catch           Handler - receives and handles the signal       Catching the bal
 /////////////////////////////////////////////////////////
 
 
-```
-```
+
 class a
 {
     private:
@@ -141,8 +138,7 @@ int main()
     }
     // s.fl();
 }
-```
-```
+
 
 -------------- Final distilled explanation (exam-ready) -----------------
 Exception handling uses runtime type identity, not compile-time conversion rules.
@@ -303,8 +299,7 @@ The "Inheritance" Exception: There is one specific type of standard conversion t
 
 If you throw a Child object, it CAN be caught by a Parent handler.
 
-```
-```
+
 #include <iostream>
 
 // 1. The Parent Class (Base)
@@ -334,14 +329,12 @@ int main() {
     
     return 0;
 }
-```
-```
+
 Why this works: The compiler sees that ConnectionTimeout is a ServerError, so the catch block accepts it.
 /////////////////////////////////////////////////////
 
 If you throw a char* (string), it CAN be caught by void*
-```
-```
+
 C++ allows any non-const data pointer to be caught by a void* (a generic pointer), because void* is the "universal" pointer type in C++.
 
 Note: This does not work for const char* (string literals like "hello"), only for mutable char* variables.
@@ -404,8 +397,7 @@ try {
 catch (...) {
     // SUCCESS: This catches anything.
 }
-```
-```
+
 `
 ---------------------------------------------------------------------------------------------------
 What catch blocks typically do
@@ -424,8 +416,7 @@ Fourth, a catch block in main() may be used to catch fatal errors and terminate 
 Key insight
 
 Try blocks catch exceptions not only from statements within the try block, but also from functions that are called within the try block.
-```
-```
+
 #include <cmath> // for sqrt() function
 #include <iostream>
 
@@ -457,8 +448,7 @@ int main()
 
     return 0;
 }
-```
-```
+
 - At this point, some of you are probably wondering why it’s a good idea to pass errors back to the caller. Why not just make MySqrt() handle its own error? The problem is that different applications may want to handle errors in different ways. A console application may want to print a text message. A windows application may want to pop up an error dialog. In one application, this may be a fatal error, and in another application it may not be. By passing the error out of the function, each application can handle an error from mySqrt() in a way that is the most context appropriate for it! Ultimately, this keeps mySqrt() as modular as possible, and the error handling can be placed in the less-modular parts of the code.
 
 - o zid 3liha kma gal liya 3akroud tsawar ila canty cat2aloki f function li katrowi fiha o katcatchi
@@ -483,8 +473,7 @@ Unwinding the stack destroys local variables in the functions that are unwound (
 because it ensures their destructors execute).
 ---------------------------------------------------------------------------------------------------
 Another stack unwinding example:
-```
-```
+
 #include <iostream>
 
 void D() // called by C()
@@ -565,8 +554,7 @@ int main()
 
     return 0;
 }
-```
-```
+
 As you can see, stack unwinding provides us with some very useful behavior -- if a function does not want to handle an exception, it doesn’t have to. The exception will propagate up the stack until it finds someone who will! 
 This allows us to decide where in the call stack is the most appropriate place to handle any errors that may occur.
 ---------------------------------------------------------------------------------------------------------------

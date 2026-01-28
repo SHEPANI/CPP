@@ -6,7 +6,7 @@
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/23 21:06:49 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/01/24 02:33:09 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/01/24 04:33:29 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int main()
     {
         const Animal* j = new Dog();
         const Animal* i = new Cat();
-        delete j; // should not create a leak
+        delete j;
         delete i;
     }
 
@@ -99,10 +99,10 @@ int main()
         std::cout << "\n--- Creating Dog1 and Dog2 ---" << std::endl;
         Dog dog1;
         Dog dog2;
-        
+
         std::cout << "\n--- Assigning dog1 to dog2 ---" << std::endl;
         dog2 = dog1;
-        
+
         std::cout << "\n--- Both dogs make sound ---" << std::endl;
         dog1.makeSound();
         dog2.makeSound();
@@ -126,9 +126,6 @@ int main()
         delete animal1;
         delete animal2;
     }
-
-    std::cout << "\n=== All tests completed successfully ===" << std::endl;
-    std::cout << "Note: Animal class is abstract - cannot be instantiated directly!" << std::endl;
     
     return 0;
 }

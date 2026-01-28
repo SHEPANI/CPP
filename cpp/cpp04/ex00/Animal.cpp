@@ -6,7 +6,7 @@
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 05:40:32 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/01/24 02:28:04 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/01/24 05:28:16 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,6 @@ Animal::Animal(const Animal& Other)
 
 Animal& Animal::operator=(const Animal& Other)
 {
-    if (this == &Other) // slove self assignment and Dynamic memory 
-                        //allocation are delete for the same obj (this and other)
-        return (*this);
     this->type = Other.type;
     return (*this);
 }

@@ -6,7 +6,7 @@
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/23 21:54:19 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/01/24 02:08:16 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/01/24 05:28:28 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,6 @@ Dog::Dog(const Dog& Other) : Animal(Other)
 
 Dog& Dog::operator=(const Dog& Other)
 {
-    if (this == &Other)
-        return (*this);
     this->type = Other.type;
     return (*this);
 }

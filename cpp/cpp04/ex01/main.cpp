@@ -6,7 +6,7 @@
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/23 21:06:49 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/01/24 02:33:09 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/01/24 05:33:49 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,17 +18,9 @@
 
 int main()
 {
-    std::cout << "=== Test 1: Basic construction and destruction ==="  << std::endl;
-    {
-        const Animal* j = new Dog();
-        const Animal* i = new Cat();
-        delete j; // should not create a leak
-        delete i;
-    }
-
     std::cout << "\n=== Test 2: Array of Animals (half Dog, half Cat) ===" << std::endl;
     {
-        const int arraySize = 10;
+        int arraySize = 10;
         Animal* animals[arraySize];
         
         std::cout << "\n--- Creating Dogs ---" << std::endl;
@@ -107,9 +99,6 @@ int main()
         dog2.makeSound();
         
         std::cout << "\n--- Dogs going out of scope ---" << std::endl;
-    }
-
-    std::cout << "\n=== All tests completed successfully ===" << std::endl;
-    
+    }    
     return 0;
 }

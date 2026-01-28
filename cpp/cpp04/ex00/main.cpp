@@ -6,7 +6,7 @@
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/23 21:06:49 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/01/24 02:29:02 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/01/24 04:35:32 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int main()
         const WrongAnimal* i = new WrongCat();
         
         std::cout << i->getType() << " " << std::endl;
-        i->makeSound(); // Should output WrongAnimal sound, not WrongCat!
+        i->makeSound();
         meta->makeSound();
         
         delete meta;

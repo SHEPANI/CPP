@@ -6,7 +6,7 @@
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/24 02:33:19 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/01/24 02:33:20 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/01/24 04:50:43 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ Brain::Brain(const Brain& Other)
 
 Brain& Brain::operator=(const Brain& Other)
 {
-    std::cout << "Brain Copy Assignment Operator called" << std::endl;
     if (this != &Other)
     {
         for (int i = 0; i < 100; i++)

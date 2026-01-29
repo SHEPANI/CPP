@@ -6,7 +6,7 @@
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/24 23:41:18 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/01/27 15:39:25 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/01/29 13:02:09 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,14 @@ Bureaucrat::Bureaucrat()
 {
 }
 
-Bureaucrat::Bureaucrat(unsigned int newGrade)
+Bureaucrat::Bureaucrat(int newGrade, const std::string& newName) : name(newName)
 {
-    if (newGrade > 150 || newGrade < 1)
-        throw -1;
+    if (newGrade > 150)
+        throw GradeTooLowException();
+    if (newGrade < 1)
+        throw GradeTooHighException();
     this->grade = newGrade;
 }
-
 
 Bureaucrat::Bureaucrat(const Bureaucrat& Other) : name(Other.name)
 {
@@ -51,10 +52,25 @@ int Bureaucrat::getGrade() const
 
 void Bureaucrat::inc_burGrade(int inc_grade)
 {
-    grade -= inc_grade;
+    this->grade += inc_grade;
+    if (this->grade > 150)
+    {
+        this->grade -= inc_grade;
+        throw GradeTooLowException();
+    }
 }
 
 void Bureaucrat::dec_burGrade(int dec_grade)
 {
-    grade -= dec_grade;
+    this->grade -= dec_grade;
+    if (this->grade < 1)
+    {
+        this->grade += dec_grade;
+        throw GradeTooHighException();
+    }
+}
+
+std::ostream& Bureaucrat::operator<<(std::ostream& os,const Bureaucrat& Other)
+{
+    this->getName() 
 }

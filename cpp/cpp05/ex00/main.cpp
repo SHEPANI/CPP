@@ -6,7 +6,7 @@
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 13:41:27 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/01/26 13:57:13 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/01/29 13:00:49 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,16 @@ int main()
 {
     try
     {
-        Bureaucrat(0);
+        Bureaucrat b(1, "SPI");
+        std::cout << b.getGrade() << "\n";
+        b.inc_burGrade( 150);
+        std::cout << b.getGrade() << "\n";
+        b.dec_burGrade(150); 
+        std::cout << b.getGrade() << "\n";
     }
-    catch (int x)
+    catch (std::exception& e)
     {
-        std::cout << "invalid number\n";
+        std::cout << "Custom Error Caught: " << e.what();
     }
     return 0;
 }

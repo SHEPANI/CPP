@@ -724,3 +724,6 @@ C++ exception handling provides a robust mechanism for error handling with:
 - Flexible error propagation up the call stack
 
 Remember: exceptions are for exceptional circumstances, not regular control flow!
+
+## Exceptions and member functions: (IMPORTANT)
+

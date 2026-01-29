@@ -17,6 +17,8 @@ $(NAME) : $(OBJ)
 clean:
 		$(RM) $(OBJ) $(DEPS)
 
+-include $(DEPS)
+
 fclean: clean
 		$(RM) $(NAME)
 

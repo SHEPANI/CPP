@@ -220,6 +220,7 @@ int main() {
     catch (std::exception& e) {
         // No copying happens. 'e' is just a pointer/reference to the original object.
         // Polymorphism works, so it calls YOUR function.
+        throw -1;
         std::cout << "By Ref  : " << e.what() << std::endl;
     }
 

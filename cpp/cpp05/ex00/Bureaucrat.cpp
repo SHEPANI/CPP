@@ -6,7 +6,7 @@
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/24 23:41:18 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/01/29 13:02:09 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/01/30 10:21:56 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,8 @@ void Bureaucrat::dec_burGrade(int dec_grade)
     }
 }
 
-std::ostream& Bureaucrat::operator<<(std::ostream& os,const Bureaucrat& Other)
+std::ostream& operator<<(std::ostream& os,const Bureaucrat& Other)
 {
-    this->getName() 
+    os << Other.getName() << ", bureaucrat grade " << Other.getGrade(); 
+    return os;
 }

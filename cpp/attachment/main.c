@@ -6,36 +6,18 @@
 #include <string.h>
 #include <fcntl.h>
 
-int win()
-{
-	char flag[256];
-	int fd = open("./flag.txt", 0);
-	read(fd, flag, sizeof(flag));
-	write(1, flag, strlen(flag));
-}
-
 int main()
 {
 	setvbuf(stdin, NULL, _IONBF, 0);
 	setvbuf(stdout, NULL, _IONBF, 0);
 
-	char name[16];
-	char password[16];
+	puts("Instead of me coding the whole thing, why not you do a little bit of work on you own 🙃!");
+	printf("Just to help you out a bit 👉 %p\n", puts);
 
-	int length;
+	void* foo[2];
 
-	puts("Instead of getting my password leaked somewhere why not ask for the password in the first place! think outside the box lil bro 📦!");
-	puts("Anyway what's you name length?");
-	scanf("%d", &length);
+	read(0, foo, sizeof(foo));
 
-	puts("Now what's your name?");
-	read(0, name, length);
-
-	if (!strcmp(password, "THIS IS SO EASY"))
-	{
-		win();
-	}
-
-	puts("Goodbye!");
+	((int (*)(char *))foo[0])((char *)foo[1]);
 	return 0;
 }

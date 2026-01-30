@@ -6,7 +6,7 @@
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/24 23:41:18 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/01/30 10:21:56 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/01/30 12:16:37 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,3 +75,4 @@ std::ostream& operator<<(std::ostream& os,const Bureaucrat& Other)
     os << Other.getName() << ", bureaucrat grade " << Other.getGrade(); 
     return os;
 }
+

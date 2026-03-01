@@ -1,6 +1,93 @@
  # C++ Exception Handling Guide
 
 ---
+## What are Exception?
+
+**Handling errors in functions**
+
+    There are 4 general strategies that can be used:
+
+        * Handle the error within the function
+        * Pass the error back to the caller to deal with
+        * Halt the program
+        * Throw an exception
+
+An exception in C++ is a control-flow mechanism used to report and handle runtime errors separately from normal return values.
+
+Exception handling provides a mechanism to decouple handling of errors or other exceptional circumstances from the typical control flow of your code. This allows more freedom to handle errors when and how ever is most useful for a given situation, alleviating most (if not all) of the messiness that return codes cause.
+
+Because returning an error from a function back to the caller is complicated (and the many different ways to do so leads to inconsistency, and inconsistency leads to mistakes), C++ offers an entirely separate way to pass errors back to the caller: exceptions.
+
+The basic idea is that when an error occurs, an exception is “thrown”. If the current function does not “catch” the error, the caller of the function has a chance to catch the error. If the caller does not catch the error, the caller’s caller has a chance to catch the error. The error progressively moves up the call stack until it is either caught and handled (at which point execution continues normally), or until main() fails to handle the error (at which point the program is terminated with an exception error).
+
+## Example Code
+
+```cpp
+Normal execution:
+    
+    main → A → B → C → return → B → return → A → return → main
+
+With exception thrown in C++:
+
+    main → A → B → C → throw
+             ↑
+       unwinding destroys C locals
+       unwinding destroys B locals
+       unwinding destroys A locals
+       caught in main (or program terminates)
+
+```
+## Why exceptions exist
+
+    * Separate error handling from business logic.
+
+    * Avoid manual propagation of error codes.
+
+    * Enforce cleanup via destructors during failure.
+
+    * Centralize error handling at higher abstraction levels.
+
+**Core issue**
+
+    Return-code systems:
+    Interleave success logic with error plumbing.
+    Require manual propagation.
+    Depend on consistent checking.
+    Overload return values.
+    Increase cognitive load.
+
+    Exceptions:
+
+    Separate error path from main logic.
+    Automatically propagate upward.
+    Automatically clean resources.
+    Keep interfaces semantically clean.
+
+- Chatgpt Example:
+        https://chatgpt.com/s/t_69a451332a608191a8f8419a1b3b4323
+## Condensed decision
+
+    Is failure rare and cannot be handled locally, and should propagate automatically?
+
+## Throw an exception
+
+    Use this when:
+
+        Failure is exceptional, not routine.
+        Error must propagate across multiple layers.
+        Local function cannot fix it.
+        Return-based error propagation would pollute many interfaces.
+        You need automatic stack unwinding and cleanup.
+
+    Examples:
+
+        Constructor fails to establish a valid object.
+        Resource acquisition fails.
+        Deep library code detects violation.
+        Invariant breach inside a class.
+        Exceptions are for structural failure across abstraction boundaries.
+
+---
 
 ## What are Exception Classes?
 
@@ -726,4 +813,5 @@ C++ exception handling provides a robust mechanism for error handling with:
 Remember: exceptions are for exceptional circumstances, not regular control flow!
 
 ## Exceptions and member functions: (IMPORTANT)
+
 

@@ -50,26 +50,24 @@ With exception thrown in C++:
 **Core issue**
 
     Return-code systems:
-    Interleave success logic with error plumbing.
-    Require manual propagation.
-    Depend on consistent checking.
-    Overload return values.
-    Increase cognitive load.
+        Interleave success logic with error plumbing.
+        Require manual propagation.
+        Depend on consistent checking.
+        Overload return values.
+        Increase cognitive load.
 
     Exceptions:
 
-    Separate error path from main logic.
-    Automatically propagate upward.
-    Automatically clean resources.
-    Keep interfaces semantically clean.
+        Separate error path from main logic.
+        Automatically propagate upward.
+        Automatically clean resources.
+        Keep interfaces semantically clean.
 
 - Chatgpt Example:
         https://chatgpt.com/s/t_69a451332a608191a8f8419a1b3b4323
 ## Condensed decision
 
     Is failure rare and cannot be handled locally, and should propagate automatically?
-
-## Throw an exception
 
     Use this when:
 
@@ -87,35 +85,9 @@ With exception thrown in C++:
         Invariant breach inside a class.
         Exceptions are for structural failure across abstraction boundaries.
 
----
-
-## What are Exception Classes?
-
-**Exception classes are special classes used to represent errors.**
-
-In C++, you throw and catch these to handle problems gracefully. For example:
-
-```cpp
-class MyException : public std::exception {
-    // This is an exception class
-};
-```
-
----
-
-## Why This Exception?
-
-**Exception classes are typically:**
-
-- Lightweight objects used temporarily during error handling.
-- Often thrown and caught by value or reference.
-- Designed to carry error information, not manage resources.
-
-The exception classes are simple and don't need the full OCF treatment - they just need to inherit from `std::exception` and override the `what()` method.
-
----
-
 ## Throwing Exceptions
+
+Exceptions in C++ are implemented using three keywords that work in conjunction with each other: throw, try, and catch.
 
 In C++, a `throw` statement is used to signal that an exception or error case has occurred (think of throwing a penalty flag). Signaling that an exception has occurred is also commonly called **raising an exception**.
 
@@ -815,3 +787,30 @@ Remember: exceptions are for exceptional circumstances, not regular control flow
 ## Exceptions and member functions: (IMPORTANT)
 
 
+---
+
+## What are Exception Classes?
+
+**Exception classes are special classes used to represent errors.**
+
+In C++, you throw and catch these to handle problems gracefully. For example:
+
+```cpp
+class MyException : public std::exception {
+    // This is an exception class
+};
+```
+
+---
+
+## Why This Exception?
+
+**Exception classes are typically:**
+
+- Lightweight objects used temporarily during error handling.
+- Often thrown and caught by value or reference.
+- Designed to carry error information, not manage resources.
+
+The exception classes are simple and don't need the full OCF treatment - they just need to inherit from `std::exception` and override the `what()` method.
+
+---

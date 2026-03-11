@@ -180,7 +180,7 @@
 
 //     try
 //     {
-//         A();
+//         throw 1;
 //     }
 //     catch (int) // not called because exception was handled by A
 //     {
@@ -192,37 +192,143 @@
 // }
 
 
-#include <iostream>
-#include <exception>
+// #include <iostream>
+// #include <exception>
 
-class MyCustomError : public std::exception {
-public:
-    virtual const char* what() const throw() {
-        return "!!! My Custom Critical Error !!!";
-    }
+// class MyCustomError : public std::exception {
+// public:
+//     virtual const char* what() const throw() {
+//         return "!!! My Custom Critical Error !!!";
+//     }
+// };
+
+// int main() {
+//     try {
+//         throw MyCustomError(); // Throwing the Child
+//     }
+//     // WRONG WAY: Catching by Value (No &)
+//     catch (std::exception e) { 
+//         // C++ "Slices" the object. It converts MyCustomError into a plain std::exception.
+//         // It forgets your virtual function override.
+//         std::cout << "By Value: " << e.what() << std::endl; 
+//     }
+
+//     try {
+//         throw std::runtime_error(""); // Throwing the Child /// way we use throwing with exception
+//     }
+//     // RIGHT WAY: Catching by Reference (With &)
+//     catch (std::exception& e) {
+//         // No copying happens. 'e' is just a pointer/reference to the original object.
+//         // Polymorphism works, so it calls YOUR function.
+//         // throw -1;
+//         std::cout << "By Ref  : " << e.what() << std::endl;
+//     }
+
+//     return 0;
+// }
+
+
+
+// #include <iostream>
+
+// class A { 
+//     public:
+//     A();
+//     ~A()
+//     { 
+//         std::cout<<"A destroyed\n";
+//     }
+// };
+// A::A()
+// {
+// }
+// class B 
+// { 
+//     public:
+//     B();
+//     ~B()
+//     {
+//          std::cout<<"B destroyed\n";
+//     }
+// };
+// B::B()
+// {
+// }
+// void g() {
+//     B b;
+//     throw 1;
+// }
+
+// void f() {
+//     A a;
+//     g();
+// }
+
+// int main() {
+//     try{
+//         f();
+//     }
+//     catch(...)
+//     {
+//     }
+// }
+
+#include <iostream>
+class B
+{
+    public:
+        int a;
+        B(void)
+        {
+            a = 15;
+            // throw(a);
+        }
+
 };
 
-int main() {
-    try {
-        throw MyCustomError(); // Throwing the Child
-    }
-    // WRONG WAY: Catching by Value (No &)
-    catch (std::exception e) { 
-        // C++ "Slices" the object. It converts MyCustomError into a plain std::exception.
-        // It forgets your virtual function override.
-        std::cout << "By Value: " << e.what() << std::endl; 
-    }
+class A : public B
+{
+    public:
+        A(void)
+        : B()
+        {
+        }
+        // catch(float a)
+        // {
+        //     std::cout << "oops\n";
+        // }
+        ~A(void)
+        {
+            std::cout << "A destructor called.\n";
+        }
+};
 
-    try {
-        throw MyCustomError(); // Throwing the Child
-    }
-    // RIGHT WAY: Catching by Reference (With &)
-    catch (std::exception& e) {
-        // No copying happens. 'e' is just a pointer/reference to the original object.
-        // Polymorphism works, so it calls YOUR function.
-        throw -1;
-        std::cout << "By Ref  : " << e.what() << std::endl;
-    }
+struct Err
+{
+    int a;
+    double b;
+};
+void f(void)
+{
+    A a;
+    Err e;
+    e.a = 5;
+    e.b = 5.9;
+    throw(e);
+}
 
-    return 0;
+int main()
+{
+    try
+    {
+        f();
+    }
+    catch(Err a)
+    {
+        std::cout << "sucess " << 15 << "\n";
+    }
+    catch(Err b)
+    {
+
+    }
 }

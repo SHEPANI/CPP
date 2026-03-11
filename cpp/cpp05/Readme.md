@@ -134,6 +134,18 @@ Actually handling exceptions is the job of the **catch block(s)**. The `catch` k
 | `try`   | Observer - watches for signals         | Standing ready to catch |
 | `catch` | Handler - receives and handles signal  | Catching the ball       |
 
+**What catch blocks typically do**
+
+    If an exception is routed to a catch block, it is considered “handled” even if the catch block is empty. However, typically you’ll want your catch blocks to do something useful. There are four common things that catch blocks do when they catch an exception:
+
+    First, catch blocks may print an error (either to the console, or a log file) and then allow the function to proceed.
+
+    Second, catch blocks may return a value or error code back to the caller.
+
+    Third, a catch block may throw another exception. Because the catch block is outside of the try block, the newly thrown exception in this case is not handled by the preceding try block -- it’s handled by the next enclosing try block.
+
+    Fourth, a catch block in main() may be used to catch fatal errors and terminate the program in a clean way.
+
 ---
 
 ## Example Code
@@ -186,6 +198,16 @@ int main()
     // s.fl();
 }
 ```
+
+## Recapping exception handling
+
+Exception handling is actually quite simple, and the following two paragraphs cover most of what you need to remember about it:
+
+When an exception is raised (using throw), the running program finds the nearest enclosing try block (propagating up the stack if necessary to find an enclosing try block -- we’ll discuss this in more detail next lesson) to see if any of the catch handlers attached to the try block can handle that type of exception. If so, execution jumps to the top of the catch block, the exception is considered handled.
+
+If no appropriate catch handlers exist in the nearest enclosing try block, the program continues to look at subsequent enclosing try blocks for a catch handler. If no appropriate catch handlers can be found before the end of the program, the program will fail with a runtime exception error.
+
+**Note** that the program will not perform implicit conversions or promotions when matching exceptions with catch blocks! For example, a char exception will not match with an int catch block. An int exception will not match a float catch block. However, casts from a derived class to one of its parent classes will be performed.
 
 ---
 
@@ -653,6 +675,18 @@ int main()
 As you can see, stack unwinding provides us with some very useful behavior -- if a function does not want to handle an exception, it doesn't have to. The exception will propagate up the stack until it finds someone who will! This allows us to decide where in the call stack is the most appropriate place to handle any errors that may occur.
 
 ---
+## Itanium C++ ABI
+
+It is a binary-level contract that defines how C++ features work at the machine/runtime level on most Unix-like systems (GCC, Clang on Linux and macOS).
+
+It specifies:
+
+    * Name mangling rules
+    * Object layout
+    * Virtual table layout
+    * RTTI structure
+
+    Exception handling mechanism
 
 ## What is `__cxa_allocate_exception`?
 
@@ -690,16 +724,16 @@ It allocates space where the thrown object will live outside the stack.
 
 Because exceptions need extra metadata:
 
-- RTTI (`type_info`)
-- Destructor callback
-- Handler tracking
-- Thread-local chaining
+    - RTTI (`type_info`)
+    - Destructor callback
+    - Handler tracking
+    - Thread-local chaining
 
 `new` only allocates raw memory — it doesn't integrate with:
 
-- Stack unwinding
-- Landing pads
-- Catch matching
+    - Stack unwinding
+    - Landing pads
+    - Catch matching
 
 ---
 
@@ -752,21 +786,21 @@ resume normal execution
 throw -1
 ↓
 VISIBLE ASM:
-call __cxa_allocate_exception
-call __cxa_throw
+    call __cxa_allocate_exception
+    call __cxa_throw
 ↓
 INVISIBLE RUNTIME:
-_Unwind_RaiseException
+    _Unwind_RaiseException
 ↓
 METADATA:
-.eh_frame + personality functions
+    .eh_frame + personality functions
 ↓
 MEMORY:
-destroy stack frames
-keep heap exception alive
+    destroy stack frames
+    keep heap exception alive
 ↓
 CONTROL FLOW:
-jump to landing pad
+    jump to landing pad
 ↓
 NORMAL EXECUTION RESUMES
 ```
@@ -783,6 +817,76 @@ C++ exception handling provides a robust mechanism for error handling with:
 - Flexible error propagation up the call stack
 
 Remember: exceptions are for exceptional circumstances, not regular control flow!
+
+## Uncaught exceptions
+
+```cpp
+class A : public B
+{
+    public:
+        A(void)
+        : B()
+        {
+        }
+        catch(float a)
+        {
+            std::cout << "oops\n";
+        }
+        ~A(void)
+        {
+            std::cout << "A destructor called.\n";
+        }
+};
+
+void f(void)
+{
+    A a;
+    throw(5);
+}
+
+int main()
+{
+    try
+    {
+        f();
+    }
+    catch(float a)
+    {
+        std::cout << "sucess " << a << "\n";
+    }
+}
+```
+```cpp
+class A : public B
+{
+    public:
+        A(void)
+        : B()
+        {
+        }
+        catch(float a)
+        {
+            std::cout << "oops\n";
+        }
+        ~A(void)
+        {
+            std::cout << "A destructor called.\n";
+        }
+};
+
+void f(void)
+{
+    A a;
+    throw(5);
+}
+
+int main()
+{
+
+    f();
+    std::cout << "sucess " << a << "\n";
+}
+```
 
 ## Exceptions and member functions: (IMPORTANT)
 

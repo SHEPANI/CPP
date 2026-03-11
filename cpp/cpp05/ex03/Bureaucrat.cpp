@@ -6,7 +6,7 @@
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/24 23:41:18 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/03/04 13:28:42 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/03/11 21:58:49 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,19 @@ void Bureaucrat::dec_burGrade(int dec_grade)
         this->grade -= dec_grade;
         throw GradeTooLowException();
     }
+}
+
+void Bureaucrat::signForm(Form& form)
+{
+    try
+    {
+        form.beSigned(*this);    
+    }
+    catch (std::exception& e)
+    {
+        std::cout << this->getName() << " couldn’t sign " << form.getName() << " because " << e.what() << "\n";
+    }
+    std::cout << this->getName() << " signed " << form.getName() << "\n";
 }
 
 std::ostream& operator<<(std::ostream& os,const Bureaucrat& Other)

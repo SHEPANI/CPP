@@ -21,7 +21,7 @@
 
 class Bureaucrat
 {
-    protected://??
+    protected:
 
         const std::string name;
         int   grade;
@@ -36,14 +36,14 @@ class Bureaucrat
                                  
         const std::string& getName() const;
         int getGrade() const;
-        void inc_burGrade(int inc_grade);
-        void dec_burGrade(int dec_grade);
+        void inc_burGrade();
+        void dec_burGrade();
         void signForm(Form& form);
     
         class GradeTooHighException : public std::exception
         {
-            public : // way 
-                virtual const char* what() const throw()
+            public :
+                const char* what() const throw()
                 {   
                     return ("Error: Grade cannot be higher\n");
                 }
@@ -51,8 +51,8 @@ class Bureaucrat
 
         class GradeTooLowException : public std::exception
         {
-            private :  // way
-                virtual const char* what() const throw()
+            private :
+                const char* what() const throw()
                 {
                     return ("Error: Grade cannot be lower\n");
                 }

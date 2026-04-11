@@ -2,8 +2,6 @@
 
 #include <Form.hpp>
 
-
-
 Form::Form() : name("default"), signGrade(150), exeGrade(150)
 {
     sign = false;
@@ -44,12 +42,12 @@ const std::string& Form::getName() const
     return (this->name);
 }
 
-const int Form::getGradeToSign() const // check name of func of currect
+const int Form::getGradeToSign() const // check name of func in currect
 {
    return (this->signGrade); 
 }
 
-const int Form::getGradeToExecute() const // check name of func of currect
+const int Form::getGradeToExecute() const // check name of func in currect sheet
 {
     return (this->exeGrade);
 }

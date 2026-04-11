@@ -20,7 +20,7 @@
 
 class Bureaucrat
 {
-    private://??
+    private:
 
         const std::string name;
         int   grade;
@@ -31,11 +31,13 @@ class Bureaucrat
         Bureaucrat(int newGrade, const std::string& newName);
         Bureaucrat(const Bureaucrat& Other);
         Bureaucrat& operator=(const Bureaucrat& Other);
-        ~Bureaucrat();                                
+        ~Bureaucrat();
+
         const std::string& getName() const;
         int getGrade() const;
         void inc_burGrade();
         void dec_burGrade();
+        
         class GradeTooHighException : public std::exception
         {
             private :

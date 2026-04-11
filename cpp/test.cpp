@@ -1,74 +1,148 @@
-
-// What Happens Without virtual
-// If a function is not declared as virtual, the compiler uses static dispatch
-// or early binding to resolve the function call. This means that the compiler 
-// determines the function to be called at compile-time based on the type of the 
-// pointer or reference being used.
-
-// In your example, if speak() were not declared as virtual in Animal, 
-// the compiler would resolve the call a->speak() to Animal::speak() at compile-time,
-//  because a is a pointer to Animal. The fact that a is actually pointing to a Dog object
-//   at runtime would not be taken into account.
-
-// So, without virtual, the steps I described earlier would not occur:
-
-// No vtable lookup would be performed.
-// The compiler would have already determined that Animal::speak() should be called.
-
-// ----------------------
-
-// How the Correct Implementation is Chosen
-// At runtime, when a->speak() is called, the program follows these steps:
-
-// It looks at the object being pointed to by a, which is a Dog object.
-// It checks the vtable of the Dog class.
-// It finds that Dog provides an override for speak(), so it calls Dog::speak().
-
-// If Dog hadn't provided an override, it would have called Animal::speak(), 
-// which is the implementation provided by the base class.
-
-// #include <iostream>
-
-// class Animal {
-//     char* name;
-// public:
-//     Animal() { name = new char[10]; }
-//     ~Animal() { 
-//         delete[] name;
-//         std::cout << "Destroyed\n"; 
-//     }
-//     void getName()
-//     {
-//         std::cout << this->name << "\n" ;
-//     }
-// };
-
-// int main()
-// {
-//     Animal A;
-//     A.~Animal();     // Deletes 'name'
-//     A.getName();     // ❌ Access deleted memory!
-//     // When A goes out of scope: delete[] name AGAIN → CRASH!
-// }
 #include <string>
+#include <iostream>
 
-class Animal {
-    char* name;
+class 
+
+
+int main()
+{
+    std::string color ="hello";
+    color += "bldssd";
+    std::cout << color;
+
+    return 0;
+}
+
+/*The hidden this pointer
+Inside every member function, the keyword "this"
+is a const pointer that holds the address of the current implicit object.
+Most of the time, we don’t mention this explicitly, but just to prove we can:
+*/
+
+/*  If std::string doesn’t have enough memory to store a string,
+ it will request additional memory (at runtime) using a form of memory allocation known as dynamic memory allocation.
+ This ability to acquire additional memory is part of what makes std::string so flexible, but also comparatively slow.*/
+
+/*std::string s = "Hello";
+What happens internally in C++98:
+The string literal "Hello" exists in read-only memory
+std::string:
+allocates memory on the heap (enough for 6 chars including '\0')
+copies 'H' 'e' 'l' 'l' 'o' '\0' one by one
+
+📌 This is the “expensive” part
+Heap allocation + character copy = time + CPU*/
+
+/*
+TECHNICAL DIFFERENCES (What the compiler sees)
+1. Default Access Level
+struct: Members are public by default
+class: Members are private by default
+2. Default Inheritance (minor)
+struct: Inherits publicly by default
+class: Inherits privately by default
+That's literally it from a technical standpoint!
+
+PRACTICAL DIFFERENCES (How we use them)
+
+Use struct when ALL of these are true:
+✅ Simple collection of data - no complex logic
+✅ No need to restrict access - all members can be public
+✅ Aggregate initialization is sufficient - can use {} to initialize
+✅ No invariants/setup/cleanup needed - no special initialization or destruction logic
+
+Use class in ALL other cases:
+✅ When you need data hiding (private members)
+✅ When you need member functions that do more than simple operations
+✅ When you have class invariants to maintain (rules about valid states)
+✅ When you need constructors for complex initialization
+✅ When you need destructors for cleanup
+
+*/
+
+/*
+
+2️⃣ const with member functions (super important for 42)
+Why do we need it?
+It guarantees that the function does NOT modify the object.
+
+Example
+class Sample {
+    int _value;
+
 public:
-    Animal(){
-        this->name = new char;
+    int getValue() const {
+        return _value;
     }
-    Animal& operator=(const Animal& Other) {   
-        delete[] this->name;
-        this->name = new char[strlen(Other.name) + 1];
-        strcpy(this->name, Other.name);
-        return (*this);
+
+    void setValue(int v) {
+        _value = v;
     }
 };
 
-int main ()
-{
-    Animal a;
-    Animal b;
-    a = b;
+What does getValue() const mean?
+
+➡️ Inside this function, you cannot change any member variable.
+
+int getValue() const {
+    _value = 10; // ❌ COMPILATION ERROR
 }
+
+42 likes this a LOT because it shows discipline and correctness.
+
+3️⃣ const object
+const Sample s;
+s.getValue();     // ✅ OK
+s.setValue(10);   // ❌ ERROR
+
+Why?
+➡️ A const object can only call const member functi*/
+
+/*
+4️⃣ static concept (Module 00 level)
+🔹 What does static mean in a class?
+It means shared between all objects.
+
+Example
+class Sample {
+public:
+    static int count;
+};
+
+int Sample::count = 0;
+
+Usage
+Sample a;
+Sample b;
+
+Sample::count = 2;
+
+std::cout << a.count << std::endl; // 2
+std::cout << b.count << std::endl; // 2
+
+➡️ There is only ONE count, not one per object.
+static member function
+class Sample {
+public:
+    static void sayHello() {
+        std::cout << "Hello" << std::endl;
+    }
+};
+
+Usage:
+
+Sample::sayHello(); // ✅ No object needed
+
+Rule:
+
+❌ Static functions cannot access non-static members
+
+static void test() {
+    _value = 10; // ❌ ERROR
+}
+
+Why?
+➡️ Because static functions don’t belong to any object
+*/
+
+

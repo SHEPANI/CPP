@@ -6,7 +6,7 @@
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 13:41:27 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/03/04 13:14:16 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/04/12 16:29:39 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,67 @@
 
 int main()
 {
-    try
-    {
+    try{
         Bureaucrat a;
-        a.inc_burGrade(1);
-        // Bureaucrat b(5, "SPI");
-        // std::cout << b.getGrade() << "\n";
-        // // b.inc_burGrade( 150);
-        // std::cout << b.getGrade() << "\n";
-        // // b.dec_burGrade(150); 
-        // std::cout << b << "\n";
+        std::cout << a;
+        Form b;
+        std::cout << b;
+        a.signForm(b);        
+        std::cout << b;   
     }
     catch (std::exception& e)
     {
         std::cout << "Custom Error Caught: " << e.what();
     }
-    std::cout << "her\n";
+    
+    try{
+        Bureaucrat a(15, "ahmed");
+        std::cout << a;
+        Form b("Form1", 10,13);
+        std::cout << b;
+        a.signForm(b);
+    }
+    catch (std::exception& e)
+    {
+        std::cout << "Custom Error Caught: " << e.what();
+    }
+
+    try{
+        Bureaucrat a(13, "Mohamed");
+        std::cout << a;
+        Form b("Form2", 13,13);
+        std::cout << b;    
+        a.signForm(b);
+    }
+    catch (std::exception& e)
+    {
+        std::cout << "Custom Error Caught: " << e.what();
+    }
+
+    try{
+        Bureaucrat a(100, "Mohamed");
+        std::cout << a;
+        Form b("Form2", 151,13);
+        std::cout << b;    
+        a.signForm(b);
+    }
+
+    catch (std::exception& e)
+    {
+        std::cout << "Custom Error Caught: " << e.what();
+    }
+
+    try{
+        Bureaucrat a(100, "Mohamed");
+        std::cout << a;
+        Form b("Form2", 0,13);
+        std::cout << b;    
+        a.signForm(b);
+    }
+    catch (std::exception& e)
+    {
+        std::cout << "Custom Error Caught: " << e.what();
+    }
+
     return 0;
 }

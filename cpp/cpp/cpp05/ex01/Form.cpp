@@ -1,18 +1,16 @@
+#include "Bureaucrat.hpp"
 
-
-#include <Form.hpp>
-
-Form::Form() : name("default"), signGrade(150), exeGrade(150)
+Form::Form() : name("defaultForm"), signGrade(150), exeGrade(150)
 {
     sign = false;
 }
 
-Form::Form(const std::string& newName, int newSignG, int newExeG) : name(newName),
-            signGrade(newSignG), exeGrade(newExeG)
+Form::Form(const std::string& newName, int newSignGrade, int newExeGrade) : name(newName),
+            signGrade(newSignGrade), exeGrade(newExeGrade)
 {
-    if (newSignG > 150 || newExeG > 150)
+    if (newSignGrade > 150 || newExeGrade > 150)
         throw GradeTooLowException();
-    if (newSignG < 1 || newExeG < 1)
+    if (newSignGrade < 1 || newExeGrade < 1)
         throw GradeTooHighException();
 }
 
@@ -24,7 +22,7 @@ Form::Form(const Form& Other) : name(Other.name), signGrade(Other.signGrade)
 
 Form& Form::operator=(const Form& Other) 
 {
-    *this = Other;
+    this->sign = Other.sign;
     return (*this);
 }
 
@@ -42,12 +40,12 @@ const std::string& Form::getName() const
     return (this->name);
 }
 
-const int Form::getGradeToSign() const // check name of func in currect
+int Form::getGradeToSign() const 
 {
    return (this->signGrade); 
 }
 
-const int Form::getGradeToExecute() const // check name of func in currect sheet
+int Form::getGradeToExecute() const
 {
     return (this->exeGrade);
 }
@@ -64,9 +62,9 @@ void Form::beSigned(Bureaucrat& bureaucrat)
 
 std::ostream& operator<<(std::ostream& os, const Form& Other)
 {
-    os << "Form name is " << Other.getName() << "\n Form sign : " << Other.getSign() 
+    os << "Form name is " << Other.getName() << "\nForm sign : " << Other.getSign() 
     << "\nForm sign grade : " << Other.getGradeToSign() 
-    << "\nForm execute grade : " << Other.getGradeToSign();
+    << "\nForm execute grade : " << Other.getGradeToSign() << "\n";
     return os;
 }
 

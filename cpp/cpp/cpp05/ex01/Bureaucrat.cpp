@@ -6,13 +6,13 @@
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/24 23:41:18 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/03/11 21:58:49 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/04/12 15:56:35 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Bureaucrat.hpp"
 
-Bureaucrat::Bureaucrat() : name("Default")
+Bureaucrat::Bureaucrat() : name("DefaultBureaucrat")
 {
     grade = 150;
 }
@@ -74,18 +74,18 @@ void Bureaucrat::signForm(Form& form)
 {
     try
     {
-        form.beSigned(*this);    
+        form.beSigned(*this);
+        std::cout << this->getName() << " signed " << form.getName() << "\n";
     }
     catch (std::exception& e)
     {
-        std::cout << this->getName() << " couldn’t sign " << form.getName() << " because " << e.what() << "\n";
+        std::cout << this->getName() << " couldn’t sign " << form.getName() << " because " << e.what();
     }
-    std::cout << this->getName() << " signed " << form.getName() << "\n";
 }
 
 std::ostream& operator<<(std::ostream& os,const Bureaucrat& Other)
 {
-    os << Other.getName() << ", bureaucrat grade " << Other.getGrade(); 
+    os << Other.getName() << ", bureaucrat grade " << Other.getGrade() << "\n"; 
     return os;
 }
 

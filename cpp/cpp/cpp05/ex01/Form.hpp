@@ -1,20 +1,23 @@
-#include "Bureaucrat.hpp"
+#include <iostream>
+#include <string>
+#include <exception>
+
 class Bureaucrat;
 
-class Form
+class Form 
 {
     private:
 
         const std::string name;
         bool sign;
-        int const signGrade; 
-        int const exeGrade;
+        const int signGrade; 
+        const int exeGrade;
 
     public:
 
         Form();
         Form(const Form& Other);
-        Form(const std::string& newName, int newSignG, int newExeG);
+        Form(const std::string& newName, int newSignGrade, int newExeGrade);
         Form& operator=(const Form& Other);
         ~Form();
 
@@ -26,8 +29,8 @@ class Form
 
         class GradeTooHighException : public std::exception
         {
-            public : // way 
-                virtual const char* what() const throw()
+            public : 
+                const char* what() const throw()
                 {   
                     return ("Error: Grade cannot be higher\n");
                 }
@@ -35,8 +38,8 @@ class Form
 
         class GradeTooLowException : public std::exception
         {
-            private :  // way
-                virtual const char* what() const throw()
+            public : 
+                const char* what() const throw()
                 {
                     return ("Error: Grade cannot be lower\n");
                 }

@@ -1,5 +1,5 @@
 NAME	= Bureaucrat
-SRC		= Bureaucrat.cpp main.cpp
+SRC		= Bureaucrat.cpp main.cpp Form.cpp
 FLAGS	= -Wall -Wextra -Werror -std=c++98 -MMD
 OBJ		= $(SRC:.cpp=.o)
 DEPS	= $(OBJ:.o=.d)

@@ -1,10 +1,8 @@
 
 
-#include <AForm.hpp>
+#include "Bureaucrat.hpp"
 
-
-
-AForm::AForm() : name("default"), signGrade(150), exeGrade(150)
+AForm::AForm() : name("defaultForm"), signGrade(150), exeGrade(150)
 {
     sign = false;
 }
@@ -26,7 +24,7 @@ AForm::AForm(const AForm& Other) : name(Other.name), signGrade(Other.signGrade)
 
 AForm& AForm::operator=(const AForm& Other) 
 {
-    *this = Other;
+    this->sign = Other.sign;
     return (*this);
 }
 
@@ -44,12 +42,12 @@ const std::string& AForm::getName() const
     return (this->name);
 }
 
-const int AForm::getGradeToSign() const // check name of func of currect
+int AForm::getGradeToSign() const
 {
    return (this->signGrade); 
 }
 
-const int AForm::getGradeToExecute() const // check name of func of currect
+int AForm::getGradeToExecute() const
 {
     return (this->exeGrade);
 }
@@ -68,7 +66,7 @@ std::ostream& operator<<(std::ostream& os, const AForm& Other)
 {
     os << "AForm name is " << Other.getName() << "\n AForm sign : " << Other.getSign() 
     << "\nForm sign grade : " << Other.getGradeToSign() 
-    << "\nForm execute grade : " << Other.getGradeToSign();
+    << "\nForm execute grade : " << Other.getGradeToSign() << "\n";
     return os;
 }
 

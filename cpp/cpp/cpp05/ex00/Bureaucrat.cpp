@@ -6,13 +6,13 @@
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/24 23:41:18 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/03/04 13:28:42 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/04/12 15:38:31 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Bureaucrat.hpp"
 
-Bureaucrat::Bureaucrat() : name("Default")
+Bureaucrat::Bureaucrat() : name("Bureaucrat")
 {
     grade = 150;
 }
@@ -72,7 +72,7 @@ void Bureaucrat::dec_burGrade()
 
 std::ostream& operator<<(std::ostream& os,const Bureaucrat& Other)
 {
-    os << Other.getName() << ", bureaucrat grade " << Other.getGrade(); 
+    os << Other.getName() << ", bureaucrat grade " << Other.getGrade() << "\n"; 
     return os;
 }
 

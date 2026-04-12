@@ -6,7 +6,7 @@
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 13:41:27 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/03/04 13:14:16 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/04/12 14:07:47 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,7 @@ int main()
         std::cout << b << "\n";
         for (int i = 0; i < 150; i++)
             b.dec_burGrade();
-        std::cout << b << "\n";
-        
+        std::cout << b << "\n";        
     }
     catch (std::exception& e)
     {
@@ -61,16 +60,5 @@ int main()
         std::cout << "Custom Error Caught: " << e.what();
     }
 
-    try
-    {
-        std::cout << c << "\n";
-        c.inc_burGrade();
-        std::cout << c << "\n";
-        c.inc_burGrade();
-    }
-    catch (int i)
-    {
-        std::cout << "Custom Error Caught: " << i;
-    }
     return 0;
 }

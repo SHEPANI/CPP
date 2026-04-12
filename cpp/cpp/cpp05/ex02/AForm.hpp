@@ -1,4 +1,8 @@
-#include "Bureaucrat.hpp"
+#include <iostream>
+#include <string>
+#include <exception>
+
+class Bureaucrat;
 
 class AForm
 {
@@ -6,27 +10,27 @@ class AForm
 
         const std::string name;
         bool sign;
-        int const signGrade; 
-        int const exeGrade;
+        const int signGrade; 
+        const int exeGrade;
 
     public:
 
         AForm();
         AForm(const AForm& Other);
-        AForm(const std::string& newName, int newSignG, int newExeG);
+        AForm(const std::string& newName, int newSignGrade, int newExeGrade);
         AForm& operator=(const AForm& Other);
-        ~AForm();
+        virtual ~AForm();
 
         const std::string& getName() const;
         bool getSign() const;
-        const int getGradeToSign() const;
-        const int getGradeToExecute() const;
+        int getGradeToSign() const;
+        int getGradeToExecute() const;
         void beSigned(Bureaucrat& bureaucrat);
         virtual void execute(Bureaucrat const & executor) const = 0;
 
         class GradeTooHighException : public std::exception
         {
-            public : // way 
+            public : 
                 virtual const char* what() const throw()
                 {   
                     return ("Error: Grade cannot be higher\n");
@@ -35,10 +39,19 @@ class AForm
 
         class GradeTooLowException : public std::exception
         {
-            private :  // way
+            public :
                 virtual const char* what() const throw()
                 {
                     return ("Error: Grade cannot be lower\n");
+                }
+        };
+
+        class FormNotSignedExeption : public std::exception
+        {
+            public :
+                virtual const char* what() const throw()
+                {
+                    return ("Error: Form not signed\n");
                 }
         };
 

@@ -6,7 +6,7 @@
 /*   By: lhchiban <lhchiban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/24 23:26:27 by lhchiban          #+#    #+#             */
-/*   Updated: 2026/03/04 12:54:51 by lhchiban         ###   ########.fr       */
+/*   Updated: 2026/04/12 20:35:44 by lhchiban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ class Bureaucrat
             private :
                 const char* what() const throw()
                 {   
-                    return ("Error: Grade cannot be higher\n");
+                    return ("Error: Grade is to higher\n");
                 }
         };
         class GradeTooLowException : public std::exception
@@ -51,7 +51,7 @@ class Bureaucrat
             private :
                 const char* what() const throw()
                 {
-                    return ("Error: Grade cannot be lower\n");
+                    return ("Error: Grade is to lower\n");
                 }
         }; 
 };

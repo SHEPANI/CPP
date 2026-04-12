@@ -32,7 +32,7 @@ class Form
             public : 
                 const char* what() const throw()
                 {   
-                    return ("Error: Grade cannot be higher\n");
+                    return ("Error: Grade is to higher\n");
                 }
         };
 
@@ -41,7 +41,7 @@ class Form
             public : 
                 const char* what() const throw()
                 {
-                    return ("Error: Grade cannot be lower\n");
+                    return ("Error: Grade is to lower\n");
                 }
         };
 

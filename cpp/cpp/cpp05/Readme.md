@@ -67,7 +67,7 @@ With exception thrown in C++:
         https://chatgpt.com/s/t_69a451332a608191a8f8419a1b3b4323
 ## Condensed decision
 
-    Is failure rare and cannot be handled locally, and should propagate automatically?
+    Is failure rare and is to handled locally, and should propagate automatically?
 
     Use this when:
 

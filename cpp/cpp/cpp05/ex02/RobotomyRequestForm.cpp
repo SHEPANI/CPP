@@ -5,7 +5,7 @@ RobotomyRequestForm::RobotomyRequestForm() : AForm("DefaultRobotomyRequestForm",
     this->target = "default";
 }
 
-RobotomyRequestForm::RobotomyRequestForm(std::string& newTarget) : AForm("DefaultRobotomyRequestForm", 72, 45)
+RobotomyRequestForm::RobotomyRequestForm(const std::string& newTarget) : AForm("DefaultRobotomyRequestForm", 72, 45)
 {
     this->target = newTarget;
 }

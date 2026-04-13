@@ -1,3 +1,6 @@
+#ifndef SHRUBBERYCREATIONFORM_HPP
+#define SHRUBBERYCREATIONFORM_HPP
+
 #include "Bureaucrat.hpp"
 
 class ShrubberyCreationForm : public AForm
@@ -13,3 +16,5 @@ class ShrubberyCreationForm : public AForm
     
         void execute(Bureaucrat const & executor) const;
 };
+
+#endif

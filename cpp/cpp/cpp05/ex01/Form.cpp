@@ -6,7 +6,7 @@ Form::Form() : name("defaultForm"), signGrade(150), exeGrade(150)
 }
 
 Form::Form(const std::string& newName, int newSignGrade, int newExeGrade) : name(newName),
-            signGrade(newSignGrade), exeGrade(newExeGrade)
+            signGrade(newSignGrade), exeGrade(newExeGrade), sign(false)
 {
     if (newSignGrade > 150 || newExeGrade > 150)
         throw GradeTooLowException();
@@ -64,7 +64,7 @@ std::ostream& operator<<(std::ostream& os, const Form& Other)
 {
     os << "Form name is " << Other.getName() << "\nForm sign : " << Other.getSign() 
     << "\nForm sign grade : " << Other.getGradeToSign() 
-    << "\nForm execute grade : " << Other.getGradeToSign() << "\n";
+    << "\nForm execute grade : " << Other.getGradeToExecute() << "\n";
     return os;
 }
 

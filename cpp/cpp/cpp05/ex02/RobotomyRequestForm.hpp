@@ -1,3 +1,6 @@
+    #ifndef ROBOTOMYREQUESTFORM_HPP
+#define ROBOTOMYREQUESTFORM_HPP
+
 #include "Bureaucrat.hpp"
 #include <cstdlib>
 #include <ctime>
@@ -8,7 +11,7 @@ class RobotomyRequestForm : public AForm
         std::string target;
     public:
         RobotomyRequestForm();
-        RobotomyRequestForm(std::string& newTarget);
+        RobotomyRequestForm(const std::string& newTarget);
         RobotomyRequestForm(const RobotomyRequestForm& Other);
         RobotomyRequestForm&  operator=(const RobotomyRequestForm& Other);
         ~RobotomyRequestForm();
@@ -16,3 +19,4 @@ class RobotomyRequestForm : public AForm
         void execute(Bureaucrat const & executor) const;
 };
 
+#endif

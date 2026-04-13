@@ -1,3 +1,6 @@
+#ifndef FORM_HPP
+#define FORM_HPP
+
 #include <iostream>
 #include <string>
 #include <exception>
@@ -48,3 +51,5 @@ class Form
 };
 
 std::ostream& operator<<(std::ostream& os,const Form& Other);
+
+#endif

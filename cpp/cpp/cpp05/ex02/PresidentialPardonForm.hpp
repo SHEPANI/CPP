@@ -1,3 +1,6 @@
+#ifndef PRESIDENTIALPARDONFORM_HPP
+#define PRESIDENTIALPARDONFORM_HPP
+
 #include "Bureaucrat.hpp"
 
 class PresidentialPardonForm : public AForm
@@ -6,7 +9,7 @@ class PresidentialPardonForm : public AForm
         std::string target;
     public:
         PresidentialPardonForm();
-        PresidentialPardonForm(std::string& newTarget);
+        PresidentialPardonForm(const std::string& newTarget);
         PresidentialPardonForm(const PresidentialPardonForm& Other);
         PresidentialPardonForm&  operator=(const PresidentialPardonForm& Other);
         ~PresidentialPardonForm();
@@ -14,3 +17,4 @@ class PresidentialPardonForm : public AForm
         void execute(Bureaucrat const & executor) const;
 };
 
+#endif

@@ -63,7 +63,7 @@ AForm *Intern::makeForm(const std::string& name, const std::string& target)
         return ((this->*ptrToMemberFunc[i])(name, target));
     }
     else
-        std::cout << "Error\n";
+        std::cout << "Error : Form not found\n";
     return (NULL);
 }
 

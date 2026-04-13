@@ -18,17 +18,18 @@ int main()
     try
     {
         Intern a;
-        a.makeForm("Presidential pardon for", "HOME");
+        AForm* form;
+        form = a.makeForm("Presidential pardon for", "HOME");
         // std::cout << a;
         // ShrubberyCreationForm B1("Home");
         // a.signForm(B1);
         // B1.execute(a);
+        delete form;
     }
     catch (std::exception& e)
     {
         std::cout << "Custom Error Caught: " << e.what();
     }
 
-    
     return 0;
 }

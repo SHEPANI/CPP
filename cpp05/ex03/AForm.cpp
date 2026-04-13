@@ -8,7 +8,7 @@ AForm::AForm() : name("defaultForm"), signGrade(150), exeGrade(150)
 }
 
 AForm::AForm(const std::string& newName, int newSignG, int newExeG) : name(newName),
-            signGrade(newSignG), exeGrade(newExeG), sign(false)
+            sign(false), signGrade(newSignG), exeGrade(newExeG)
 {
     if (newSignG > 150 || newExeG > 150)
         throw GradeTooLowException();

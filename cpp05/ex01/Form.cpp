@@ -6,7 +6,7 @@ Form::Form() : name("defaultForm"), signGrade(150), exeGrade(150)
 }
 
 Form::Form(const std::string& newName, int newSignGrade, int newExeGrade) : name(newName),
-            signGrade(newSignGrade), exeGrade(newExeGrade), sign(false)
+            sign(false), signGrade(newSignGrade), exeGrade(newExeGrade)
 {
     if (newSignGrade > 150 || newExeGrade > 150)
         throw GradeTooLowException();

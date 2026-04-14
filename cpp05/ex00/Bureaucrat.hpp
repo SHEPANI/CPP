@@ -43,16 +43,13 @@ class Bureaucrat
             private :
                 const char* what() const throw()
                 {   
-                    return ("Error: Grade is to higher\n");
                 }
         };
         class GradeTooLowException : public std::exception
         {
             private :
                 const char* what() const throw()
-                {
-                    return ("Error: Grade is to lower\n");
-                }
+                {}
         }; 
 };
 

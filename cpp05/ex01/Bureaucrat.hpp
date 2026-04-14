@@ -45,7 +45,6 @@ class Bureaucrat
             public :
                 const char* what() const throw()
                 {   
-                    return ("Error: Grade is to higher\n");
                 }
         };
 
@@ -54,7 +53,6 @@ class Bureaucrat
             private :
                 const char* what() const throw()
                 {
-                    return ("Error: Grade is to lower\n");
                 }
         }; 
 };

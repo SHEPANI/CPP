@@ -14,9 +14,9 @@ ShrubberyCreationForm::ShrubberyCreationForm(const std::string& newTarget) : AFo
     this->target = newTarget;
 }
 
-ShrubberyCreationForm::ShrubberyCreationForm(const ShrubberyCreationForm& Other)
+ShrubberyCreationForm::ShrubberyCreationForm(const ShrubberyCreationForm& Other) :  AForm(Other.getName(), Other.getGradeToSign(), Other.getGradeToExecute())
 {
-    *this = Other;
+    this->target = Other.target;
 }
 
 ShrubberyCreationForm& ShrubberyCreationForm::operator=(const ShrubberyCreationForm& Other)

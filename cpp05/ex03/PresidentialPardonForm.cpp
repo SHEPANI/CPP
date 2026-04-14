@@ -8,7 +8,7 @@ PresidentialPardonForm::PresidentialPardonForm(const std::string& newTarget) : A
 {
 }
 
-PresidentialPardonForm::PresidentialPardonForm(const PresidentialPardonForm& Other) :  AForm(Other.getName(), Other.getGradeToSign(), Other.getGradeToExecute())
+PresidentialPardonForm::PresidentialPardonForm(const PresidentialPardonForm& Other) :  AForm(Other)
 {
     this->target = Other.target;
 }

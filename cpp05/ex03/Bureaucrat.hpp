@@ -49,7 +49,7 @@ class Bureaucrat
 
         class GradeTooLowException : public std::exception
         {
-            private :
+            public :
                 const char* what() const throw();
         }; 
 };

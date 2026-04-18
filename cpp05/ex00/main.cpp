@@ -15,49 +15,52 @@
 int main()
 {
     Bureaucrat a(2, "ahmed");
-    std::cout << a << "\n";
+    std::cout << "a : " << a << "\n";
 
     Bureaucrat b;
     b = a;
-    std::cout << b << "\n";
+    b.dec_burGrade();
+    std::cout << "b : " << b << "\n";
 
     Bureaucrat c(a);
-    std::cout << c << "\n";
+    c.inc_burGrade();
+    std::cout << "c : "<< c << "\n";
 
     try
     {
-        std::cout << a << "\n";
+        std::cout << a;
         a.inc_burGrade();
-        std::cout << a << "\n";
+        std::cout << a;
         a.inc_burGrade();
     }
     catch (std::exception& e)
     {
-        std::cout << "Custom Error Caught: " << e.what();
+        std::cout << "Custom Error Caught: " << e.what() << "\n";
     }
 
     try
     {
-        std::cout << b << "\n";
-        for (int i = 0; i < 150; i++)
+        Bureaucrat b(145, "Robot");
+        std::cout << b;
+        for (int i = 0; i < 15; i++)
             b.dec_burGrade();
-        std::cout << b << "\n";        
+        std::cout << b;        
     }
     catch (std::exception& e)
     {
-        std::cout << "Custom Error Caught: " << e.what();
+        std::cout << "Custom Error Caught: " << e.what() << "\n";
     }
 
     try
     {
-        std::cout << c << "\n";
+        std::cout << c;
         c.inc_burGrade();
-        std::cout << c << "\n";
+        std::cout << c;
         c.inc_burGrade();
     }
     catch (std::exception& e)
     {
-        std::cout << "Custom Error Caught: " << e.what();
+        std::cout << "Custom Error Caught: " << e.what() << "\n";
     }
 
     return 0;

@@ -26,17 +26,20 @@ Intern::~Intern(){}
 
 AForm* Intern::ShrubberyCreation(const std::string& name, const std::string& target)
 {
-    std::cout << "Intern creates " << name << "\n";
+    (void)name;
+    std::cout << "Intern creates " << "ShrubberyCreationForm" << "\n";
     return(new ShrubberyCreationForm(target));
 }
 AForm* Intern::RobotomyRequest(const std::string& name, const std::string& target)
 {
-    std::cout << "Intern creates " << name << "\n";
+    (void)name;
+    std::cout << "Intern creates " << "RobotomyRequestForm" << "\n";
     return(new RobotomyRequestForm(target));
 }
 AForm* Intern::PresidentialPardon(const std::string& name, const std::string& target)
 {
-    std::cout << "Intern creates " << name << "\n";
+    (void)name;
+    std::cout << "Intern creates " << "PresidentialPardonForm" << "\n";
     return(new PresidentialPardonForm(target));
 }
 

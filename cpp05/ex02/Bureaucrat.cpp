@@ -82,8 +82,8 @@ void Bureaucrat::signForm(AForm& form)
     }
 }
 
-const char* Bureaucrat::GradeTooLowException::what() const throw(){return ("Error: Grade is to lower\n");}
-const char* Bureaucrat::GradeTooHighException::what() const throw(){return ("Error: Grade is to higher\n");}
+const char* Bureaucrat::GradeTooLowException::what() const throw(){return ("Error: Grade is too lower\n");}
+const char* Bureaucrat::GradeTooHighException::what() const throw(){return ("Error: Grade is too higher\n");}
 
 std::ostream& operator<<(std::ostream& os,const Bureaucrat& Other)
 {
@@ -96,7 +96,7 @@ void Bureaucrat::executeForm(AForm const & form) const
     try
     {
         form.execute(*this);
-        std::cout << this->name << " executed " << form.getName() << std::endl;
+        std::cout << this->name << " executed " << form.getName() << "\n";
     }
     catch(const std::exception& e)
     {

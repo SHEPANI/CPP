@@ -12,7 +12,7 @@
 
 #include "Bureaucrat.hpp"
 
-Bureaucrat::Bureaucrat() : name("Bureaucrat")
+Bureaucrat::Bureaucrat() : name("DefaultBureaucrat")
 {
     grade = 150;
 }
@@ -70,8 +70,8 @@ void Bureaucrat::dec_burGrade()
     }
 }
 
-const char* Bureaucrat::GradeTooLowException::what() const throw(){return ("Error: Grade is to lower\n");}
-const char* Bureaucrat::GradeTooHighException::what() const throw(){return ("Error: Grade is to higher\n");}
+const char* Bureaucrat::GradeTooLowException::what() const throw(){return ("Error: Grade is too lower\n");}
+const char* Bureaucrat::GradeTooHighException::what() const throw(){return ("Error: Grade is too higher\n");}
 
 std::ostream& operator<<(std::ostream& os,const Bureaucrat& Other)
 {

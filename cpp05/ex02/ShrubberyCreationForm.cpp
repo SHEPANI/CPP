@@ -1,15 +1,12 @@
-
-
-
 #include "ShrubberyCreationForm.hpp"
 #include <fstream>
 
-ShrubberyCreationForm::ShrubberyCreationForm() : AForm("defaultShrubberyCreationForm", 145, 137)
+ShrubberyCreationForm::ShrubberyCreationForm() : AForm("ShrubberyCreationForm", 145, 137)
 {
     target = "default";
 }
 
-ShrubberyCreationForm::ShrubberyCreationForm(const std::string& newTarget) : AForm("defaultShrubberyCreationForm", 145, 137)
+ShrubberyCreationForm::ShrubberyCreationForm(const std::string& newTarget) : AForm("ShrubberyCreationForm", 145, 137)
 {
     this->target = newTarget;
 }
@@ -19,9 +16,12 @@ ShrubberyCreationForm::ShrubberyCreationForm(const ShrubberyCreationForm& Other)
     this->target = Other.target;
 }
 
+
 ShrubberyCreationForm& ShrubberyCreationForm::operator=(const ShrubberyCreationForm& Other)
 {
     this->target = Other.target;
+    AForm::operator=(Other);
+
     return(*this);
 }
 
@@ -37,7 +37,7 @@ void ShrubberyCreationForm::execute(Bureaucrat const & executor) const
             throw FormNotSignedExeption();
         throw GradeTooLowException();
     }
-    std::ofstream outFile(this->target + "_shrubbery");
+    std::ofstream outFile((this->target + "_shrubbery").c_str());
     outFile <<
     "       _-_\n"
     "    /~~   ~~\\\n"

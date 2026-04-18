@@ -1,11 +1,11 @@
 #include "RobotomyRequestForm.hpp"
 
-RobotomyRequestForm::RobotomyRequestForm() : AForm("DefaultRobotomyRequestForm", 72, 45)
+RobotomyRequestForm::RobotomyRequestForm() : AForm("RobotomyRequestForm", 72, 45)
 {
     this->target = "default";
 }
 
-RobotomyRequestForm::RobotomyRequestForm(const std::string& newTarget) : AForm("DefaultRobotomyRequestForm", 72, 45)
+RobotomyRequestForm::RobotomyRequestForm(const std::string& newTarget) : AForm("RobotomyRequestForm", 72, 45)
 {
     this->target = newTarget;
 }
@@ -16,9 +16,12 @@ RobotomyRequestForm::RobotomyRequestForm(const RobotomyRequestForm& Other) :  AF
 }
 
 
+
 RobotomyRequestForm& RobotomyRequestForm::operator=(const RobotomyRequestForm& Other)
 {
     this->target = Other.target;
+    AForm::operator=(Other);
+
     return (*this);
 }
 

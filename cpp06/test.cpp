@@ -76,26 +76,71 @@ int main()
 
 */
 
+// #include <iostream>
+// using namespace std;
+
+// class CDummy {
+//     float i=23,j=4;
+// };
+
+// class CAddition {
+// 	int x,y;
+//   public:
+// 	CAddition (int a, int b) { x=a; y=b; }
+// 	int result() { return x+y;}
+// };
+
+// int main () {
+//   CDummy *d;
+//   CDummy a;
+//   d = &a;
+//   CAddition * padd;
+//   padd = (CAddition*) &d;
+//   cout << padd->result();
+//   return 0;
+// }
+
+///////////////////////////
+
 #include <iostream>
-using namespace std;
 
-class CDummy {
-    float i=23,j=4;
-};
+int strparse(std::string& str)
+{
+    int fdtracker = 0;
+    int numtracker = 0;
+    int strsize = str.size();
 
-class CAddition {
-	int x,y;
-  public:
-	CAddition (int a, int b) { x=a; y=b; }
-	int result() { return x+y;}
-};
+    if (strsize==1 && std::isalpha(str[0]))
+        return (std::cout << "char\n", 1);
 
-int main () {
-  CDummy *d;
-  CDummy a;
-  d = &a;
-  CAddition * padd;
-  padd = (CAddition*) &d;
-  cout << padd->result();
-  return 0;
+    if (str[0] == '.' || str[strsize-1]=='.' || str[0]=='f')
+        return(std::cout << "Input is not valid\n", 0);
+
+    if (str[0] == '+' || str[0] == '-')
+        numtracker++;
+
+    for (int i = 0; i < strsize;i++)
+    {
+        if (std::isdigit(str[i]))
+            numtracker++;
+        if ((str[i] == '.'))
+            fdtracker++;
+    }
+
+    if (numtracker == strsize)
+        return (std::cout << "int\n", 1);
+    if (fdtracker == 1 && numtracker == strsize -1)
+        return (std::cout << "double\n", 1);
+    if (fdtracker == 1 && numtracker == strsize -2 
+            && str[strsize-1]=='f' && str[strsize-2]!='.')
+        return (std::cout << "float\n", 1);
+
+    return(std::cout << "Input is not valid\n", 0);
+}
+
+int main(int ac, char **av)
+{
+
+    std::string str;
+    strparse(str.assign(av[1]));
 }

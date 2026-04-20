@@ -3,7 +3,7 @@
 
 class ScalarConverter
 {
-    public:
+    private:
         ScalarConverter();
         ScalarConverter(const ScalarConverter& Other);
         ScalarConverter& operator=(const ScalarConverter& other);

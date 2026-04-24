@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <exception>
+#include <iomanip>
 
 class ScalarConverter
 {
@@ -8,5 +10,6 @@ class ScalarConverter
         ScalarConverter(const ScalarConverter& Other);
         ScalarConverter& operator=(const ScalarConverter& other);
         ~ScalarConverter();
+    public:
         static void convert(std::string& str);
 };

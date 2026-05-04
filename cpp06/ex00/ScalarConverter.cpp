@@ -1,27 +1,10 @@
 #include "ScalarConverter.hpp"
 
-ScalarConverter::ScalarConverter()
-{
-}
-
-ScalarConverter::~ScalarConverter()
-{
-}
-
-ScalarConverter::ScalarConverter(const ScalarConverter& Other)
-{
-    *this = Other;
-}
-
-ScalarConverter& ScalarConverter::operator=(const ScalarConverter& Other)
-{
-    *this = Other;
-    return (*this);
-}
-
 void stringToChar(std::string& currStr)
 {
-    int s = (currStr[0]);
+    double d;
+    std::sscanf(currStr.c_str(), "%lf", &d);
+    int s = static_cast<int>(d);
     if (s < 32 || s > 126)
     {
         if (s > 127 || s < 0)
@@ -35,24 +18,29 @@ void stringToChar(std::string& currStr)
 
 void stringToInt(std::string& currStr)
 {
-    if (currStr[1])
-        std::cout << std::stoi(currStr) << "\n";
-    else
-        std::cout << int(currStr[0]) << "\n";
+    int i = std::atoi(currStr.c_str());
+    std::cout << static_cast<int>(i) << "\n";
 }
 
 void stringToDouble(std::string& currStr)
 {
-    
-    std::cout << std::fixed << std::setprecision(1) << std::stod(currStr) << "\n";
+    double d;
+    std::sscanf(currStr.c_str(), "%lf", &d);
+    if (d == static_cast<int>(d))
+        std::cout << std::fixed << std::setprecision(1) << d << "\n";
+    else
+        std::cout << d << "\n";
 }
 
 void stringToFloat(std::string& currStr)
 {
-    
-    std::cout << std::fixed << std::setprecision(1) << std::stof(currStr) << "f\n";
+    float f;
+    std::sscanf(currStr.c_str(), "%f", &f);
+    if (f == static_cast<int>(f))
+        std::cout << std::fixed << std::setprecision(1) << f << "f\n";
+    else
+        std::cout << f << "f\n";
 }
-
 void invalidInput(std::string& currStr)
 {
     std::cout << currStr << " input is not valid\n";
@@ -77,7 +65,7 @@ int strparse(std::string& str)
     {
         if (std::isdigit(str[i]))
             numtracker++;
-        if ((str[i] == '.'))
+        if (str[i] == '.')
             fdtracker++;
     }
 

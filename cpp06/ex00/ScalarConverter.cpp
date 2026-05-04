@@ -53,7 +53,7 @@ static bool isDecimalLiteral(const std::string &literal)
         else
             return false;
     }
-    return hasDot && hasDigit;
+    return hasDigit && hasDot;
 }
 
 static bool isIntLiteral(const std::string &literal)
@@ -79,7 +79,7 @@ static bool isFloatLiteral(const std::string &literal)
     if (literal.size() < 2 || literal[literal.size() - 1] != 'f')
         return false;
     std::string core = literal.substr(0, literal.size() - 1);
-    return isDecimalLiteral(core);
+    return isDecimalLiteral(core) || isIntLiteral(core);
 }
 
 static bool isDoubleLiteral(const std::string &literal)
@@ -102,39 +102,43 @@ static eLiteralType detectType(const std::string &literal)
     return TYPE_INVALID;
 }
 
-static std::string formatFloat(float value)
+// static std::string formatFloat(float value)
+// {
+//     std::ostringstream oss;
+
+//     if (std::isnan(value))
+//         return "nanf";
+//     if (std::isinf(value))
+//         return (value < 0.0f ? "-inff" : "+inff");
+//     {
+//         double integerPart;
+//         if (std::modf(value, &integerPart) == 0.0)
+//             oss << std::fixed << std::setprecision(1) << value << "f";
+//         else
+//             oss << value << "f";
+//     }
+//     return oss.str();
+// }
+
+static std::string formatDoubleOrFloat(double value, char currType)
 {
     std::ostringstream oss;
 
     if (std::isnan(value))
-        return "nanf";
+        return (currType == 'd' ? "nan" : "nanf");
     if (std::isinf(value))
-        return (value < 0.0f ? "-inff" : "+inff");
-    {
-        double integerPart;
-        if (std::modf(value, &integerPart) == 0.0)
-            oss << std::fixed << std::setprecision(1) << value << "f";
-        else
-            oss << value << "f";
-    }
-    return oss.str();
-}
+        return (currType == 'd'
+            ? (value < 0.0 ? "-inf" : "+inf")
+            : (value < 0.0 ? "-inff" : "+inff"));
 
-static std::string formatDouble(double value)
-{
-    std::ostringstream oss;
+    double integerPart;
+    if (std::modf(value, &integerPart) == 0.0)
+        oss << std::fixed << std::setprecision(1) << value;
+    else
+        oss << value;
+    if (currType == 'f')
+        oss << 'f';
 
-    if (std::isnan(value))
-        return "nan";
-    if (std::isinf(value))
-        return (value < 0.0 ? "-inf" : "+inf");
-    {
-        double integerPart;
-        if (std::modf(value, &integerPart) == 0.0)
-            oss << std::fixed << std::setprecision(1) << value;
-        else
-            oss << value;
-    }
     return oss.str();
 }
 
@@ -179,12 +183,13 @@ static void printFloat(double value)
         std::cout << (value < 0.0 ? "-inff" : "+inff") << "\n";
         return;
     }
-    if (value < -std::numeric_limits<float>::max() || value > std::numeric_limits<float>::max())
+    if (value < static_cast<double>(std::numeric_limits<float>::lowest())
+        || value > static_cast<double>(std::numeric_limits<float>::max()))
     {
         std::cout << "impossible\n";
         return;
     }
-    std::cout << formatFloat(static_cast<float>(value)) << "\n";
+    std::cout << formatDoubleOrFloat(static_cast<float>(value), 'f') << "\n";
 }
 
 static void printDouble(double value)
@@ -200,7 +205,7 @@ static void printDouble(double value)
         std::cout << (value < 0.0 ? "-inf" : "+inf") << "\n";
         return;
     }
-    std::cout << formatDouble(value) << "\n";
+    std::cout << formatDoubleOrFloat(value, 'd') << "\n";
 }
 
 static void printPseudoLiterals(const std::string &literal)

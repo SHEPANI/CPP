@@ -1,19 +1,18 @@
-# ft_irc — Internet Relay Chat Server
+# IRC (Internet Relay Chat)
 
-> *"IRC is a protocol defined in RFC 1459."*  
-> An early form of online communication enabling real-time text-based interactions between users in chat rooms or private messages.
+> "IRC is a protocol defined in RFC 1459."
 
----
-
-## What is IRC?
-
-**IRC (Internet Relay Chat)** is a real-time, text-based communication protocol. It was built on top of **TCP/IP**, but not designed to be locked to it — it could potentially run on other network types too (Private LAN, Tor, Radio/Mesh, etc.).
+IRC is the earliest form of online communication,
+enabling real-time text-based interactions
+between users in chat rooms or private messages.
+We built IRC on top of TCP/IP, but we didn't design it in a way that forces it to stay there — it could potentially work on other network types too (Private LAN, Tor, Radio/Mesh).
 
 ---
 
-## What is RFC?
+## RFC — Request for Comments
 
-**RFC (Request for Comments)** are the official technical documents that define the standards, protocols, and guidelines that power the internet and networked systems.
+RFCs are the official technical documents that define the standards,
+protocols, and guidelines that power the internet and networked systems.
 
 RFCs cover things like:
 - How data is transmitted (TCP, UDP, IP)
@@ -24,97 +23,110 @@ RFCs cover things like:
 
 ---
 
-## Core Components of IRC
+## IRC Protocol Core Components
 
-### 🖥️ Server
+### Server
 
-The **backbone of IRC** — handles client connections, manages channels, and relays messages. IRC servers connect to each other in a **tree (spanning tree) shape**, where each server acts as a hub for those below it, forming one big organized network.
+The backbone of IRC, handling client connections, managing channels, and relaying messages. IRC servers connect to each other in a tree shape, where each server acts as a hub for those below it, forming one big organized network:
+- Lets clients (users) connect and talk to each other.
+- Lets other servers connect to it, building a larger network.
 
-**A server is responsible for:**
+So an IRC server does things like: handling client connections, managing channels, and relaying messages....
 
-| Role | Description |
-|---|---|
-| 🔀 Message Routing | Receives messages and forwards them to the right user or server |
-| 👤 User Auth & Registration | Registers nicknames, prevents duplicates, requires passwords |
-| 🏠 Channel Management | Creates/manages chat rooms, tracks members, enforces rules |
-| 🔒 Permission & Mode Control | Manages operator status, user/channel modes |
-| 🗺️ Network Tracking | Maintains a map of all connected servers and users |
-| 📢 Broadcasting | Sends system messages, join/quit announcements |
-| ⚡ Ping / Keepalive | Pings clients regularly; disconnects unresponsive ones |
-| 🚫 Enforcing Rules | Kills misbehaving connections, bans IPs/hostnames |
+**1. Message Routing**
+- When you send a message, your client doesn't send it directly to other users
+- The server receives it and forwards it to the right place
+- If the recipient is on another server, your server passes it along the tree
+
+**2. User Authentication & Registration**
+- The server checks and registers your nickname when you connect
+- It makes sure no two users have the same nickname on the network
+- It can require passwords to connect
+
+**3. Channel Management**
+- Servers create and manage chat rooms (channels)
+- They track who is inside each channel
+- They enforce channel rules like bans, invite-only, password-protected rooms
+
+**4. Permission & Mode Control**
+- Servers enforce user modes (are you an operator? are you invisible?)
+- They enforce channel modes (is the channel moderated? limited users?)
+- They give or remove operator privileges (@ status)
+
+**5. Keeping Track of the Network**
+- Each server maintains a map of the whole IRC network
+- It knows which servers are connected and which users are where
+- If a server disconnects, it updates the rest of the network
+
+**6. Broadcasting Announcements**
+- Server sends system messages to users (welcome messages, errors, notices)
+- It broadcasts events like "User X has joined" or "Server Y has disconnected"
+
+**7. Enforcing Rules / Killing Connections**
+- Servers can kill (forcefully disconnect) misbehaving users
+- They can ban IPs or hostnames from connecting
+- Operators on the server level can manage the entire network
+
+**8. Ping / Keepalive**
+- Servers regularly ping clients to check if they are still connected
+- If a client doesn't respond → server drops the connection
+- This keeps the network clean from ghost/dead connections
 
 ---
 
-### 👤 Clients
+### Clients
 
-A **client** is anything connecting to a server that is **not another server** — basically the user's side of IRC (your chat app or program).
+A client is anything connecting to a server that is not another server — basically, it's the user's side of IRC (your chat app/program).
 
-**Client identification:**
-- Every client has a **unique nickname** with a max of **9 characters**
-- No two users can share the same nickname
+**How is each client identified?**
+Every client has a unique nickname with a max of 9 characters — no two users can have the same one.
 
-**What the server stores about each client:**
+**What info does the server store about each client?**
+The server must know 3 things about every connected client:
+- 🖥️ Host Name — The real name of the machine the client is running on
+- 👤 Username — The user's name on that machine
+- 🔗 Connected Server — Which server they are connected to
 
-| Info | Description |
-|---|---|
-| 🖥️ Hostname | The real name of the machine the client is running on |
-| 👤 Username | The user's name on that machine |
-| 🔗 Connected Server | Which server the client is connected to |
-
----
-
-### 💬 Channels
-
-Public or private **chat rooms** where users communicate.  
-Examples: `#general`, `#42network`, `&local`
+So: A client is any non-server connection, identified by a unique 9-character nickname, and the server tracks their hostname, username, and which server they're on.
 
 ---
 
-### ⌨️ Commands
+### Channels
 
-Text-based instructions used to interact with the server.  
-Examples: `JOIN`, `PRIVMSG`, `NICK`, `KICK`, `TOPIC`, `MODE`
+Public or private chat rooms where users can communicate.
+
+---
+
+### Commands
+
+Text-based instructions like `/join`, `/msg`, and `/nick`.
 
 ---
 
 ## Building the Server
 
-### What is Socket Programming?
+To create a server we need to use socket programming.
 
-A **socket** is an endpoint for communication between two machines over a network. It allows a client and a server to establish a connection and exchange data. Sockets support both:
-- **TCP** — reliable, connection-based
-- **UDP** — fast, connectionless
+**What is Socket Programming?**
+A socket is an endpoint for communication between two machines over a network.
+In network programming, a socket allows you to establish a connection between a client and a server,
+enabling them to send and receive data. Sockets provide the interface for both network
+communication protocols (such as TCP and UDP) and local interprocess communication (IPC).
 
-### What is an Endpoint?
-
-An **endpoint** is the specific point where communication starts or ends in a network connection.
-
-```
-You (endpoint 1) <----connection----> Server (endpoint 2)
-```
-
-In networking terms, an endpoint is identified by:
+**What is an endpoint?**
+An endpoint is a specific point where communication starts or ends in a network connection.
 
 ```
-IP Address + Port = Endpoint
+You (endpoint 1) <----call----> Friend (endpoint 2)
 ```
 
-Example:
+In networking terms, an endpoint is identified by two things:
+
 ```
-192.168.1.11:8080
+IP Address + Port --> endpoint
 ```
 
-| Part | Meaning |
-|---|---|
-| IP Address | Which machine on the network |
-| Port | Which specific program/service on that machine |
+Example: `192.168.1.1:8080`
 
----
-
-## Resources
-
-- [RFC 1459 — Internet Relay Chat Protocol](https://datatracker.ietf.org/doc/html/rfc1459)
-- [RFC 2810 — IRC Architecture](https://datatracker.ietf.org/doc/html/rfc2810)
-- [RFC 2811 — IRC Channel Management](https://datatracker.ietf.org/doc/html/rfc2811)
-- [RFC 2812 — IRC Client Protocol](https://datatracker.ietf.org/doc/html/rfc2812)
-- [RFC 2813 — IRC Server Protocol](https://datatracker.ietf.org/doc/html/rfc2813)
+- **IP Address** → which machine on the network
+- **Port** → which specific program/service on that machine

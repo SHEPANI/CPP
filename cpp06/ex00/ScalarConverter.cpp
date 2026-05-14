@@ -183,7 +183,7 @@ static void printFloat(double value)
         std::cout << (value < 0.0 ? "-inff" : "+inff") << "\n";
         return;
     }
-    if (value < static_cast<double>(std::numeric_limits<float>::min())
+    if (value < static_cast<double>(-std::numeric_limits<float>::max())
         || value > static_cast<double>(std::numeric_limits<float>::max()))
     {
         std::cout << "impossible\n";

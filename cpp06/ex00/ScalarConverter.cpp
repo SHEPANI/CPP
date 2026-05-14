@@ -102,23 +102,6 @@ static eLiteralType detectType(const std::string &literal)
     return TYPE_INVALID;
 }
 
-// static std::string formatFloat(float value)
-// {
-//     std::ostringstream oss;
-
-//     if (std::isnan(value))
-//         return "nanf";
-//     if (std::isinf(value))
-//         return (value < 0.0f ? "-inff" : "+inff");
-//     {
-//         double integerPart;
-//         if (std::modf(value, &integerPart) == 0.0)
-//             oss << std::fixed << std::setprecision(1) << value << "f";
-//         else
-//             oss << value << "f";
-//     }
-//     return oss.str();
-// }
 
 static std::string formatDoubleOrFloat(double value, char currType)
 {

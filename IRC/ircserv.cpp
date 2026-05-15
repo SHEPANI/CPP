@@ -1,12 +1,10 @@
 
 
 #include "ircserv.hpp"
-#include "ircserv.hpp"
 
 ircserv::ircserv()
 {
     port = 8080;
-    ip = 0;
 }
 
 int ircserv::create_socket()
@@ -20,4 +18,5 @@ int ircserv::create_socket()
 int ircserv::bind_socket(int sockfd)
 {
     // bind(sockfd, )
+    return 0;
 }

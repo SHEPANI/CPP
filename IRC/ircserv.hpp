@@ -1,3 +1,6 @@
+#ifndef IRCSERV_HPP
+#define IRCSERV_HPP
+
 #include <sys/socket.h>
 #include <netinet/in.h>
 
@@ -6,9 +9,9 @@ class ircserv
 {
     public:
         int port;
-        int ip;
+        int serverSocket;
     public:
-        ircserv(){};
+        ircserv();
         ~ircserv(){};
         // ircserv(){};
         int create_socket();
@@ -20,3 +23,5 @@ class sockinfo
     public:
         sa_family_t i ;
 };
+
+#endif

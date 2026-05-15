@@ -1,1260 +1,667 @@
-# CPP06 — C++ Type Casting
+# The Four C++ Casts — A Complete Plain-English Guide
 
-A summary of everything covered in the cpp06 module on type casting in C++.
+> Based on **ISO/IEC 14882:1998 — the C++98 Standard**
 
 ---
 
 ## Table of Contents
 
-1. [What is Type Casting?](#what-is-type-casting)
-2. [Implicit Conversion](#implicit-conversion)
-3. [Explicit Conversion](#explicit-conversion)
-4. [dynamic_cast](#dynamic_cast)
-5. [static_cast](#static_cast)
-6. [reinterpret_cast](#reinterpret_cast)
-7. [const_cast](#const_cast)
-8. [Final Summary — How Everything Connects](#final-summary--how-everything-connects)
+- [Why Does C++ Have Four Separate Cast Operators?](#-why-does-c-have-four-separate-cast-operators)
+- [1. `static_cast` — §5.2.9](#1-static_cast--529)
+- [2. `dynamic_cast` — §5.2.7](#2-dynamic_cast--527)
+- [3. `const_cast` — §5.2.11](#3-const_cast--5211)
+- [4. `reinterpret_cast` — §5.2.10](#4-reinterpret_cast--5210)
+- [5. `uintptr_t` — Not in C++98](#5-uintptr_t--not-in-c98)
+- [Summary Table](#-summary-table)
+- [The Old-Style (C-Style) Cast — §5.4](#-the-old-style-c-style-cast--54)
+  - [What It Is](#what-it-is-1)
+  - [Three Ways to Write an Explicit Conversion](#three-ways-to-write-an-explicit-conversion)
+  - [The Result Type: lvalue or rvalue?](#the-result-type-lvalue-or-rvalue)
+  - [The Core Rule: What Can It Actually Do?](#the-core-rule-what-can-it-actually-do)
+  - [The Ambiguity Rule and When It's Ill-Formed](#the-ambiguity-rule-and-when-its-ill-formed)
+  - [The Special Rule for Incomplete Class Types](#the-special-rule-for-incomplete-class-types)
+  - [The Access Bypass — C-Style Cast's Unique Superpower](#the-access-bypass--c-style-casts-unique-superpower)
+  - [The Strict Aliasing Trap (§3.10 §15)](#the-strict-aliasing-trap-3101-15)
+  - [User-Defined Conversions and the Cast](#user-defined-conversions-and-the-cast)
+  - [Full Priority Walk-Through](#full-priority-walk-through-what-the-compiler-actually-does)
+  - [The "Same Semantics" Guarantee](#the-same-semantics-guarantee)
+  - [C-Style vs Named Casts Summary](#summary-c-style-vs-named-casts)
 
 ---
 
-## What is Type Casting?
+## 🗺️ Why Does C++ Have Four Separate Cast Operators?
 
-Type casting is the process of converting an expression of one type into another type. C++ provides multiple ways to perform this conversion, ranging from automatic (implicit) to explicit and controlled casts.
+Before C++ had its own cast operators, programmers used the old C-style cast:
+
+```cpp
+int x = (int)someValue;
+```
+
+The C++98 standard still allows this (Section 5.4), but notes that the C-style cast quietly does whichever of the named casts would apply — in order:
+
+1. `const_cast`
+2. `static_cast`
+3. `static_cast` + `const_cast`
+4. `reinterpret_cast`
+5. `reinterpret_cast` + `const_cast`
+
+If it can be interpreted in more than one way as a `static_cast` + `const_cast`, it's outright ill-formed. **The C-style cast is ambiguous and silent about what it actually does.**
+
+The named casts fix this. Each one has one specific job, and the compiler enforces that you're only asking for what that cast is allowed to do. They exist so that dangerous conversions are **visible and intentional**, not hidden.
 
 ---
 
-## Implicit Conversion
+## 1. `static_cast` — §5.2.9
 
-Implicit conversions happen **automatically** when a value is assigned to a compatible type — no cast operator is needed.
+### What It Is
 
-### Primitive types
-
-```cpp
-short a = 2000;
-int   b;
-b = a;  // short is automatically promoted to int
-```
-
-This is called a **standard conversion**. It covers:
-
-#### Numerical type conversions
-
-Every arrow below is a valid implicit conversion:
-
-```
-Integer promotions (safe, no data loss):
-  bool       → int
-  char       → int
-  short      → int
-  int        → long
-  int        → long long
-  int        → float
-  int        → double
-  int        → long double
-  long       → long long
-  long       → double
-  long       → long double
-  float      → double
-  float      → long double
-  double     → long double
-
-Narrowing conversions (may lose data — compiler may warn):
-  long long  → long
-  long long  → int
-  long long  → short
-  long long  → char
-  long       → int
-  long       → short
-  long       → char
-  int        → short
-  int        → char
-  double     → float
-  double     → int
-  float      → int
-```
-
-> ⚠️ Narrowing conversions may cause a **loss of precision or overflow**. The compiler usually warns. An explicit cast silences the warning.
-
-#### Conversions to/from `bool`
-
-Any non-zero numeric value or non-null pointer converts to `true`; zero/null converts to `false`. Going the other way, `true` becomes `1` and `false` becomes `0`.
+The workhorse of safe, compile-time conversions. It says: *"I know these two types are related in a way the compiler can verify statically — just do the conversion."*
 
 ```cpp
-{
-    int  i = 42;
-    bool b = i;      // true  (non-zero → true)
+static_cast<T>(v)
+```
 
-    int  j = 0;
-    bool c = j;      // false (zero    → false)
+- If `T` is a reference type, the result is an **lvalue** (you get a reference back).
+- Otherwise it's an **rvalue**.
+- You cannot define new types inside the cast.
+- It **cannot cast away constness** — that's `const_cast`'s job.
 
-    bool flag = true;
-    int  n    = flag; // 1    (true  → 1)
+### What It Can Do (Exhaustive List from the Standard)
 
-    bool off  = false;
-    int  m    = off;  // 0    (false → 0)
+**1. Any implicitly allowed conversion, in reverse.**
+
+If the compiler would automatically convert type `A → B` (say, `int` to `double`), you can use `static_cast` to go `B → A` explicitly. Exception: you cannot reverse lvalue-to-rvalue, array-to-pointer, function-to-pointer, or boolean conversions.
+
+```cpp
+double d = 3.7;
+int i = static_cast<int>(d); // double → int, truncates to 3
+```
+
+**2. Anything that could be initialized directly.**
+
+If `T t(v);` would compile, then `static_cast<T>(v)` is legal. The effect is exactly the same as that declaration — the same constructors and conversion functions fire.
+
+**3. Casting to void.**
+
+Any expression can be explicitly cast to `void`, which just discards the value. (The standard notes the destructor for any temporary is still called at the normal time.)
+
+```cpp
+static_cast<void>(someExpression); // discard result explicitly
+```
+
+**4. Downcasting in a class hierarchy (without polymorphism).**
+
+If `B` is a base class of `D`, and you have a `B*` that you know actually points to a `D` object, you can cast down:
+
+```cpp
+struct B {};
+struct D : public B {};
+D d;
+B& br = d;
+D& dr = static_cast<D&>(br); // produces lvalue to the original d object
+```
+
+> ⚠️ **The catch:** The standard says if the `B` lvalue isn't actually a sub-object of a `D`, the result is **undefined**. `static_cast` trusts you. It does no runtime check. If you're wrong, anything can happen. (If you need a safe checked downcast, use `dynamic_cast`.)
+
+> **Restriction:** `B` must not be a virtual base class of `D` for this to be allowed.
+
+**5. Pointer to `void*` and back.**
+
+A pointer to any object can be converted to `void*`. And a `void*` can be converted back to a pointer to the original type. Round-tripping is guaranteed to give you the original pointer back.
+
+```cpp
+int x = 42;
+void* vp = static_cast<void*>(&x);
+int* ip = static_cast<int*>(vp); // ip == &x, guaranteed
+```
+
+**6. Integer ↔ enum.**
+
+An integer can be explicitly converted to an enum type. If the value is within the enum's valid range, it is unchanged. Otherwise the result is unspecified.
+
+**7. Pointer-to-member conversions (in the class hierarchy).**
+
+A pointer to a member of a derived class `D` can be converted to a pointer to the same member via the base class `B`, and vice versa, subject to the same hierarchy validity rules.
+
+---
+
+## 2. `dynamic_cast` — §5.2.7
+
+### What It Is
+
+The safe, runtime-checked cast. It works only on **polymorphic types** (classes with at least one virtual function). At runtime, it actually looks up the object's true type and decides if the cast is valid. If it isn't, it fails gracefully instead of causing undefined behavior.
+
+```cpp
+dynamic_cast<T>(v)
+```
+
+- `T` must be a pointer or reference to a complete class type, or "pointer to cv void" (i.e. `void*`).
+- Cannot cast away constness.
+- Requires **RTTI** (Run-Time Type Information) to be available.
+
+### What "Polymorphic" Means
+
+The standard (§10.3) defines it explicitly: *"A class that declares or inherits a virtual function is called a polymorphic class."* If your class has no virtual functions, `dynamic_cast` cannot be used on it.
+
+### The Three Outcomes
+
+**Case 1: Upcasting (Derived → Base).** Always safe. `dynamic_cast` behaves identically to the implicit conversion — no runtime check needed. The standard says if `B` is an accessible, unambiguous base of `D`, and you cast from `D*` to `B*`, you just get a pointer to the `B` sub-object.
+
+```cpp
+struct B { virtual void f() {} };
+struct D : B {};
+D d;
+B* bp = dynamic_cast<B*>(&d); // always works, same as B* bp = &d
+```
+
+**Case 2: Downcasting or cross-casting (runtime check).** At runtime, the implementation examines the most-derived object pointed to by `v` and checks if a valid path to type `T` exists. The logic (from §5.2.7 §8) is:
+
+- If `v` points to a public base class sub-object of a `T` object, and there is exactly one such `T` object in the most-derived object, the result is a pointer to that `T` object. ✅
+- Otherwise if the most-derived object has an unambiguous public base of type `T`, the result is a pointer to that `T` sub-object. ✅
+- Otherwise: the cast **fails**. ❌
+
+**Case 3: Casting to `void*`.** `dynamic_cast<void*>(v)` is special — it gives you a pointer to the **most derived object**. This lets you find where an object actually starts in memory, regardless of which base class pointer you're holding.
+
+### What Happens on Failure
+
+| Cast type | Failure result |
+|-----------|---------------|
+| Pointer cast | Returns `nullptr` — **always check the result!** |
+| Reference cast | Throws `std::bad_cast` (§18.5.2), derived from `std::exception` |
+
+```cpp
+class A { virtual void f() {} };
+class B { virtual void g() {} };
+class D : public virtual A, private B {};
+
+void g() {
+    D d;
+    B* bp = (B*)&d;       // C-style needed to break access protection
+    A* ap = &d;           // fine: public derivation
+
+    D& dr = dynamic_cast<D&>(*bp);  // FAILS — throws bad_cast
+    ap = dynamic_cast<A*>(bp);      // FAILS — yields nullptr
+    bp = dynamic_cast<B*>(ap);      // FAILS — private base
+    ap = dynamic_cast<A*>(&d);      // SUCCEEDS
+    bp = dynamic_cast<B*>(&d);      // FAILS
 }
 ```
 
-#### Pointer conversions
+### Ambiguous Hierarchies
+
+With diamond or multiple inheritance, `dynamic_cast` can also fail if the path to `T` is ambiguous — i.e. there are two `T` sub-objects and neither is uniquely reachable.
 
 ```cpp
-// 1. Any pointer → void*  (generic pointer, loses type info)
-int  x = 10;
-int* p = &x;
-void* vp = p;           // int* → void*  (implicit, always safe)
+class E : public D, public B {};
+class F : public E, public D {};
 
-// 2. void* → typed pointer  (requires explicit cast in C++, shown for contrast)
-int* p2 = (int*)vp;     // needs explicit cast — NOT implicit in C++
-
-// 3. Derived* → Base*  (upcasting — always implicit and safe)
-class Base  {};
-class Child : public Base {};
-
-Child child;
-Base* bp = &child;      // Child* → Base*  (implicit upcast)
-
-// 4. nullptr  → any pointer type
-int*    np1 = nullptr;  // implicit
-double* np2 = nullptr;  // implicit
-
-// 5. T* → const T*  (adding const is always implicit)
-int        val = 5;
-int*       ptr = &val;
-const int* cptr = ptr;  // int* → const int*  (implicit)
-```
-
----
-
-### Constructor conversion vs. Conversion operator
-
-These are **two different mechanisms** — both trigger implicit conversions between class objects, but they live in different classes and work in opposite directions.
-
-#### 1. Constructor conversion (converting constructor)
-
-Defined **in the destination class**. The constructor takes the source type as parameter, so the compiler can build the target object from the source automatically.
-
-```cpp
-class Celsius {
-public:
-    double degrees;
-    Celsius(double d) : degrees(d) {}  // converting constructor
-};
-
-double temp = 36.6;
-Celsius body = temp;   // implicit: compiler calls Celsius(36.6)
-```
-
-The conversion goes **from the parameter type → to the class that owns the constructor**.
-
-#### 2. Conversion operator
-
-Defined **in the source class**. It teaches that class how to produce a value of another type when needed.
-
-```cpp
-class Celsius {
-public:
-    double degrees;
-    Celsius(double d) : degrees(d) {}
-
-    operator double() const {   // conversion operator: Celsius → double
-        return degrees;
-    }
-};
-
-Celsius body(36.6);
-double temp = body;   // implicit: compiler calls body.operator double()
-```
-
-The conversion goes **from the class that owns the operator → to the return type**.
-
-#### What if both exist?
-
-If both a converting constructor and a conversion operator can satisfy the same conversion, the compiler reports an **ambiguity error**.
-
-```cpp
-class Fahrenheit {
-public:
-    double degrees;
-    Fahrenheit(double d) : degrees(d) {}
-    operator double() const { return degrees; }  // Fahrenheit → double
-};
-
-class Celsius {
-public:
-    double degrees;
-    Celsius(double d) : degrees(d) {}
-    Celsius(Fahrenheit f) : degrees((f.degrees - 32) * 5.0 / 9.0) {} // Fahrenheit → Celsius
-};
-
-Fahrenheit f(98.6);
-Celsius c = f;   // ❌ ambiguous: use Celsius(Fahrenheit) or Fahrenheit::operator double() + Celsius(double)?
-```
-
-To resolve this, use an explicit cast to tell the compiler which path to take:
-
-```cpp
-Celsius c = Celsius(f);                  // force constructor conversion
-Celsius c2 = Celsius((double)f);         // force operator double() first, then Celsius(double)
-```
-
-#### What if the classes have different attributes?
-
-A converting constructor **only needs to receive what it uses**. If class `B` only cares about one field of class `A`, the constructor simply reads that field:
-
-```cpp
-class A {
-public:
-    int    id;
-    double value;
-    char   name[32];
-};
-
-class B {
-public:
-    double result;
-    B(const A& a) : result(a.value) {}   // only uses a.value, ignores id and name
-};
-
-A source = {1, 3.14, "hello"};
-B dest = source;   // implicit: B(source) — only a.value (3.14) is copied into result
-```
-
-The extra attributes (`id`, `name`) are simply ignored — the compiler does not care about the mismatch as long as the constructor compiles.
-
----
-
-## Explicit Conversion
-
-When the compiler won't convert automatically — or when you want to make your intent crystal-clear — you write the cast yourself. C++ inherited two classic notations for this from C:
-
-```cpp
-short a = 2000;
-int   b;
-b = (int) a;   // C-like cast notation
-b = int(a);    // Functional notation
-```
-
-### C-like cast vs Functional notation — what is the difference?
-
-They produce **identical machine code** for fundamental types. The difference is purely syntactic and about readability:
-
-| | C-like `(type) expr` | Functional `type(expr)` |
-|---|---|---|
-| Origin | Inherited from C | C++ addition |
-| Reads like | A prefix operator | A constructor / function call |
-| Works on multi-word types | `(unsigned int) x` ✅ | `unsigned int(x)` ❌ won't parse |
-| Works on class types | `(MyClass) x` ✅ | `MyClass(x)` ✅ (cleaner) |
-| Searchable in code | Hard — `(int)` is easy to miss | Easy — looks like a function call |
-
-The functional notation `int(a)` reads as *"construct an int from a"*, which fits naturally with how C++ thinks about types as constructors. For simple types they are the same, but many C++ programmers prefer functional notation because it is easier to grep and looks intentional.
-
-> ⚠️ Both notations are called **traditional casts**. For class pointers they are dangerous — see below.
-
----
-
-### The danger of traditional casts on class pointers
-
-Traditional casts let you convert **any pointer to any other pointer type** with zero checks:
-
-```cpp
-class CDummy {
-    float i, j;
-};
-
-class CAddition {
-    int x, y;
-public:
-    CAddition(int a, int b) { x = a; y = b; }
-    int result() { return x + y; }
-};
-
-int main() {
-    CDummy    d;
-    CAddition* padd;
-    padd = (CAddition*) &d;   // compiles fine — no error
-    cout << padd->result();   // 💥 undefined behaviour
-    return 0;
+void h() {
+    F f;
+    A* ap = &f;
+    D* dp = dynamic_cast<D*>(ap);  // SUCCEEDS: finds unique A
+    E* ep1 = dynamic_cast<E*>(ap); // SUCCEEDS
+    // (E*)ap would be ill-formed — cast from virtual base
 }
 ```
 
-`&d` is the address of a `CDummy` object. Its memory layout is two `float`s (`i`, `j`). The compiler happily reinterprets that address as if it pointed to a `CAddition` (which expects two `int`s, `x` and `y`). This compiles without a warning.
-
-#### "Run-time error or unexpected result" — which one, and why?
-
-This is **undefined behaviour** in C++. The standard does not mandate one specific outcome; what actually happens depends on several factors:
-
-| Factor | Outcome |
-|---|---|
-| Memory happens to contain plausible bit patterns | Wrong numeric answer (unexpected result) |
-| Memory is uninitialized / OS-protected | Segmentation fault / access violation (run-time error) |
-| Compiler optimisation level | Code may be reordered or eliminated entirely |
-| Platform / calling convention | Stack corruption, wrong registers used |
-
-So it is **not** the compiler that decides at compile-time which will happen — the outcome is determined at **runtime** by the state of memory and the platform. The compiler simply trusts you and generates code that reads from whatever address you gave it.
-
 ---
 
-### The four C++ casting operators — overview
+## 3. `const_cast` — §5.2.11
 
-To prevent exactly the problem above, C++ introduced four controlled casting operators:
+### What It Is
 
-```
-dynamic_cast     <new_type> (expression)
-static_cast      <new_type> (expression)
-reinterpret_cast <new_type> (expression)
-const_cast       <new_type> (expression)
-```
-
-#### The order traditional casts follow internally
-
-When you write `(new_type) expr`, the compiler tries the following sequence and **stops at the first attempt that succeeds**:
-
-| Step | What it tries | Fails if… |
-|---|---|---|
-| 1 | `const_cast` | types differ beyond just const/volatile |
-| 2 | `static_cast` | types are unrelated (no inheritance / no standard conversion) |
-| 3 | `static_cast` + `const_cast` | still unrelated after stripping const |
-| 4 | `reinterpret_cast` | almost never fails — raw address reinterpretation |
-| 5 | `reinterpret_cast` + `const_cast` | virtually never fails |
-
-In the `(CAddition*) &d` example, steps 1–3 all fail because `CDummy` and `CAddition` are completely unrelated classes. The compiler falls through to step 4 and does a raw `reinterpret_cast` — no checks, just reinterprets the raw memory address. That is why it compiles cleanly and then breaks at runtime.
-
-This is exactly what makes traditional casts dangerous: they silently escalate all the way to `reinterpret_cast` without telling you. The named casting operators are locks — each one permits only specific steps from the list above, and refuses to go further:
-
-| Named cast | Permits only |
-|---|---|
-| `const_cast` | Step 1 only |
-| `static_cast` | Steps 2–3 only |
-| `reinterpret_cast` | Steps 4–5 only |
-| `dynamic_cast` | A runtime type check — **not possible with traditional casts at all** |
-
-##### `const_cast` — step 1 only (add or remove const/volatile)
+The **only** cast that can add or remove `const` (or `volatile`) qualifiers from a type. It changes nothing else about the type — no conversion, no reinterpretation. Its entire purpose is manipulating **cv-qualifiers** (`const` and `volatile`).
 
 ```cpp
-void print(char* str) { std::cout << str; }
-
-const char* msg = "hello";
-print(const_cast<char*>(msg));  // strips const so it fits the function parameter
-                                // safe here because print() does not modify the string
+const_cast<T>(v)
 ```
+
+- If `T` is a reference type, the result is an **lvalue**; otherwise an **rvalue**.
+- **Cannot** change any other aspect of the type (not a conversion tool — only for cv-qualifiers).
+
+### What "Casting Away Constness" Means (§5.2.11 §8–11)
+
+The standard gives a precise definition. For two pointer types `X1` and `X2`, casting from `X1` to `X2` casts away constness if there is no implicit conversion from the innermost cv-qualified version of `X1`'s pointed-to chain to the corresponding part of `X2`'s chain. In practice: you're removing a `const` or `volatile` that the implicit conversion system would not allow you to remove.
+
+The same rule applies to reference casts and pointer-to-member casts.
+
+### What It Can Do
+
+**1. Add or remove `const`/`volatile` from a pointer.**
+
+```cpp
+const int* cp = &someInt;
+int* p = const_cast<int*>(cp); // removes const
+```
+
+The result refers to the original object — no copy is made.
+
+**2. Add or remove `const`/`volatile` from a reference.**
+
+```cpp
+const int x = 42;
+int& r = const_cast<int&>(x); // removes const from reference
+```
+
+Again, refers to the original object.
+
+**3. Multi-level pointers.** The same rules apply recursively for `const int**` etc. The "member" aspect of a pointer-to-member is ignored when deciding where cv-qualifiers are being added or removed.
+
+**4. Null pointers.** A null pointer value is converted to the null pointer value of the destination type.
+
+### ⚠️ The Critical Danger
+
+The standard (§5.2.11 §7) includes a stark warning:
+
+> *"A write operation through the pointer, lvalue, or pointer to data member resulting from a `const_cast` that casts away a const-qualifier may produce undefined behavior."*
+
+Specifically: if the original object was declared `const`, **writing** through a `const_cast`'d pointer to it is **undefined behavior**. The implementation may have placed it in read-only memory. You can read through the cast pointer safely, but you must not write.
 
 ```cpp
 const int x = 42;
 int* p = const_cast<int*>(&x);
-*p = 99;  // compiles — but UNDEFINED BEHAVIOUR, x was declared const
-           // const_cast does NOT make it safe to write, only to pass around
+*p = 99; // ⚠️ UNDEFINED BEHAVIOR — x was declared const
 ```
 
-> `const_cast` **only** changes const/volatile qualification. It cannot change the actual type at all — `const_cast<int*>(floatPtr)` won't compile.
+The legitimate use case for `const_cast` is when you receive a `const` pointer to something you **know** was not originally declared `const`:
+
+```cpp
+void legacyAPI(int* p); // old API, doesn't take const but doesn't write
+
+void safe(const int* cp) {
+    legacyAPI(const_cast<int*>(cp)); // OK if legacyAPI really doesn't write
+}
+```
+
+### What `const_cast` Cannot Do
+
+The standard explicitly notes (§5.2.11 §12):
+
+> Conversions between pointers to functions are not covered — such conversions lead to values whose use causes undefined behavior. Similarly, converting a pointer to a `const` member function to a pointer to a non-`const` member function is not allowed.
 
 ---
 
-##### `static_cast` — steps 2–3 only (compile-time checked conversions)
+## 4. `reinterpret_cast` — §5.2.10
+
+### What It Is
+
+The most dangerous cast. It tells the compiler: *"Just treat these bytes as this type."* No conversion happens. The underlying bit pattern is reinterpreted. Almost everything about it is **implementation-defined** (the compiler chooses how it works) or **undefined behavior** if misused.
 
 ```cpp
-// Numerical conversion
-double d = 3.99;
-int    i = static_cast<int>(d);  // i = 3 — truncates, compiler knows this is intentional
-
-// Up-cast (Derived* → Base*) — always safe
-class Base {};
-class Derived : public Base {};
-
-Derived  obj;
-Base*    bp = static_cast<Base*>(&obj);  // fine — Derived IS-A Base
-
-// Down-cast (Base* → Derived*) — compile-time only, no runtime check
-Base*    base = new Derived();
-Derived* dp   = static_cast<Derived*>(base);  // compiles — but YOU must guarantee
-                                               // base really points to a Derived
+reinterpret_cast<T>(v)
 ```
 
-> `static_cast` refuses completely unrelated types — `static_cast<CDummy*>(cadditionPtr)` won't compile, unlike the traditional cast that silently falls through to `reinterpret_cast`.
+- If `T` is a reference type, result is an **lvalue**; otherwise an **rvalue**.
+- **Cannot** cast away constness.
+- The mapping is **implementation-defined** — the result might or might not produce a different representation from the original.
 
-**Step 3 — `static_cast` + `const_cast` combination:**
-This happens when the conversion is valid (related types) but const also needs to be stripped at the same time. `static_cast` alone can't strip const, so the traditional cast silently applies both together:
+### What It Can Do
+
+**1. Pointer → integer.**
+
+A pointer can be converted to any integral type large enough to hold it. The standard says the mapping is implementation-defined, but notes it *"is intended to be unsurprising to those who know the addressing structure of the underlying machine."* In other words: you'll get the raw memory address as a number.
 
 ```cpp
-class Base {};
-class Derived : public Base {};
-
-const Derived  obj;
-Base*          bp = (Base*) &obj;  // traditional cast: applies static_cast (Derived→Base)
-                                   //                   then const_cast (strips const)
-                                   // one step, no warning — dangerous and invisible
+int x;
+unsigned long addr = reinterpret_cast<unsigned long>(&x); // raw address (C++98: pick an integral type large enough)
 ```
 
-With named casts you must do this **explicitly in two steps**, which makes the intent visible:
+> **Round-trip guarantee:** If you convert a pointer to an integer of sufficient size and back to the same pointer type, you get the original pointer back. This is the only guarantee.
+
+**2. Integer/enum → pointer.**
+
+You can go the other way — turn an integer into a pointer. The standard notes one edge case: converting an integral constant expression of value zero **always** gives a null pointer. Converting any other expression that happens to have value zero **may not** give a null pointer.
+
+**3. Function pointer → different function pointer type.**
+
+You can cast between function pointer types. Calling through the wrong type is undefined behavior. The only guarantee is round-tripping: cast `T1* → T2* → T1*` and you get the original value back.
+
+**4. Object pointer → different object pointer type.**
+
+You can cast between any two object pointer types. Round-tripping is safe if the alignment requirements of `T2` are no stricter than `T1`. Otherwise the result is unspecified. (And of course, using a pointer of the wrong type to read/write memory is undefined behavior in most cases — with certain exceptions related to `char*` and union access.)
+
+**5. Null pointer → null pointer.**
+
+A null pointer value always converts to the null pointer value of the destination type.
+
+**6. Pointer-to-member → pointer-to-member.**
+
+Between function pointer-to-members: round-tripping is safe. Between data pointer-to-members: round-tripping is safe if the alignment of `T2` is no stricter than `T1`. Otherwise unspecified.
+
+**7. lvalue → reference to different type (type punning).**
+
+This is what the standard calls a type pun (footnote 67):
 
 ```cpp
-const Derived  obj;
-const Base*    cbp = static_cast<const Base*>(&obj);  // step 1: upcast, keep const
-Base*          bp  = const_cast<Base*>(cbp);           // step 2: strip const explicitly
+reinterpret_cast<T&>(x)
+// is exactly identical to:
+*reinterpret_cast<T*>(&x)
 ```
 
-> The traditional cast hides that two operations happened. The named cast version forces you to write both, so a code reviewer can immediately see "this person is stripping const off a base pointer" and question why.
+You get a reference to the same memory interpreted as a different type. No copy, no constructor, no temporary. The footnote explicitly names this technique **"type punning."**
 
 ---
 
-##### `reinterpret_cast` — steps 4–5 only (raw bit/address reinterpretation)
+## 5. `uintptr_t` — Not in C++98
+
+`uintptr_t` **does not appear in the C++98 standard.** The text of the standard never mentions it.
+
+Here is why, and what the standard says instead:
+
+The C++98 standard (§5.2.10 §4) describes the pointer-to-integer conversion as:
+
+> *"A pointer can be explicitly converted to any integral type large enough to hold it."*
+
+It does not name a specific type for this. The burden is on you to pick one. In practice in C++98, programmers used `unsigned long` or `unsigned int` and hoped it was big enough.
+
+`uintptr_t` was introduced in **C99** (as part of `<stdint.h>`) and carried into **C++11** (as `<cstdint>`). It is defined as: an unsigned integer type that is large enough to hold a pointer value on the current platform. On a 32-bit system it is 32 bits; on a 64-bit system it is 64 bits.
+
+Its relationship to `reinterpret_cast` in modern C++ (C++11 and later):
 
 ```cpp
-// Reinterpret a pointer as a completely unrelated pointer type
-CDummy*    d    = new CDummy();
-CAddition* padd = reinterpret_cast<CAddition*>(d);  // same as the dangerous traditional cast
-                                                     // but now it is EXPLICIT and searchable
+#include <cstdint>  // C++11 and later only — not available in C++98
 
-// Reinterpret a pointer as an integer (e.g. to inspect the raw address)
-int* p    = new int(42);
-long addr = reinterpret_cast<long>(p);  // stores the raw memory address as a number
-std::cout << addr;
+int x = 42;
+uintptr_t addr = reinterpret_cast<uintptr_t>(&x); // guaranteed large enough
+int* back = reinterpret_cast<int*>(addr);          // round-trip: back == &x
 ```
 
-> `reinterpret_cast` does zero checks — it is the "I know what I'm doing, trust me" cast. The only advantage over a traditional cast is that it is visible and grep-able in the code, making dangerous casts easy to audit.
-
-**Step 5 — `reinterpret_cast` + `const_cast` combination:**
-This is the most dangerous step. It happens when the types are completely unrelated AND const needs to be stripped at the same time. The traditional cast handles both silently in one go:
+In **C++98**, you had to do this manually with a type you hoped was wide enough:
 
 ```cpp
-class CDummy    { float i, j; };
-class CAddition { int x, y; public: int result() { return x + y; } };
-
-const CDummy    d;
-CAddition*      padd = (CAddition*) &d;  // traditional cast: reinterpret_cast (unrelated types)
-                                         //                 + const_cast (strips const)
-                                         // both happen silently — undefined behaviour
+int x = 42;
+unsigned long addr = reinterpret_cast<unsigned long>(&x); // C++98 — no uintptr_t
+int* back = reinterpret_cast<int*>(addr);                 // round-trip: back == &x
 ```
 
-With named casts, again you must be explicit:
-
-```cpp
-const CDummy    d;
-CDummy*         non_const = const_cast<CDummy*>(&d);         // step 1: strip const explicitly
-CAddition*      padd      = reinterpret_cast<CAddition*>(non_const);  // step 2: raw reinterpret
-```
-
-> This is the most auditable advantage of named casts: any `reinterpret_cast` in the codebase is immediately a red flag worth reviewing. With traditional casts, this same dangerous operation is completely invisible.
+The C++98 standard does not provide `uintptr_t` but the concept it embodies — an integer type guaranteed large enough to hold a pointer — is exactly what §5.2.10 §4 and §5 are describing when they say *"integral type large enough to hold it."*
 
 ---
 
-##### `dynamic_cast` — runtime type check (requires polymorphism)
+## 🗃️ Summary Table
 
-```cpp
-class Base    { public: virtual ~Base() {} };  // must have at least one virtual function
-class Derived : public Base {};
-class Other   : public Base {};
-
-Base* bp = new Derived();
-
-// Safe down-cast — checked at runtime
-Derived* dp = dynamic_cast<Derived*>(bp);  // succeeds: bp really points to a Derived
-if (dp != NULL)
-    std::cout << "cast succeeded" << std::endl;
-
-// Failed cast — returns NULL (for pointers), does NOT crash
-Other* op = dynamic_cast<Other*>(bp);      // fails: bp is not an Other
-if (op == NULL)
-    std::cout << "cast failed safely" << std::endl;
-```
-
-> This is the only cast that inspects the **actual runtime type** of the object. A traditional cast cannot do this — it would just reinterpret the pointer and cause undefined behaviour. `dynamic_cast` requires the base class to be polymorphic (at least one `virtual` function).
+| | `static_cast` | `dynamic_cast` | `const_cast` | `reinterpret_cast` |
+|---|---|---|---|---|
+| **Purpose** | Safe compile-time conversion | Safe runtime-checked cast | Add/remove cv-qualifiers only | Raw reinterpretation of bits |
+| **Checked at** | Compile time | Runtime | Compile time | Compile time (but mostly UB territory) |
+| **Requires polymorphism?** | No | Yes (for downcasting) | No | No |
+| **Can cast away `const`?** | No | No | Yes, that's its job | No |
+| **On failure** | Undefined behavior (wrong downcast) | `nullptr` or throws `bad_cast` | N/A | Undefined behavior if misused |
+| **Result is predictable?** | Yes | Yes | Yes | Implementation-defined |
+| **Type pun?** | No | No | No | Yes |
 
 ---
 
-#### What does "traditional equivalents" mean?
+## ⚡ The Old-Style (C-Style) Cast — §5.4
 
-The sentence *"the traditional type-casting equivalents to these expressions would be `(new_type) expression` / `new_type(expression)`"* means:
+### What It Is
 
-> Every C++ cast can be written with the old C-like or functional syntax and will compile — **but** the old syntax performs no safety checks and gives no hint of intent. The four named casts are replacements that each restrict what conversions are allowed and make the programmer's intent explicit in the code.
+The C-style cast is the original cast syntax inherited from C. It looks like this:
+
+```cpp
+(T) expression
+```
+
+You wrap a type name in parentheses and put it in front of an expression. The standard (§5.4) defines the grammar precisely:
+
+```
+cast-expression:
+    unary-expression
+    ( type-id ) cast-expression
+```
+
+Notice that the grammar is **recursive** — you can write `(T)(U)someValue`, casting twice in sequence. The right side is another cast-expression, not just a value.
+
+---
+
+### Three Ways to Write an Explicit Conversion
+
+The C++98 standard (§5.4 §2) says there are actually **three syntaxes** that all count as explicit type conversion. They're all part of the same language feature:
+
+**1. Cast notation (C-style):**
+```cpp
+(int)someDouble
+```
+
+**2. Functional notation (§5.2.3):**
+```cpp
+int(someDouble)
+```
+
+**3. Named cast operators:**
+```cpp
+static_cast<int>(someDouble)
+dynamic_cast<Base*>(ptr)
+const_cast<int*>(constPtr)
+reinterpret_cast<uintptr_t>(ptr)
+```
+
+For the functional notation specifically, the standard says (§5.2.3 §1): *"If the expression list is a single expression, the type conversion expression is equivalent (in definedness, and if defined in meaning) to the corresponding cast expression."* In other words, `int(x)` and `(int)x` mean exactly the same thing. If multiple values are passed (`T(x1, x2, ...)`), it constructs a class object — equivalent to declaring `T t(x1, x2, ...)` and using `t` as an rvalue.
+
+---
+
+### The Result Type: lvalue or rvalue?
+
+§5.4 §1 states:
+
+> *"The result of the expression `(T) cast-expression` is of type `T`. The result is an lvalue if `T` is a reference type, otherwise the result is an rvalue."*
+
+And then an important note:
+
+> *"If `T` is a non-class type that is cv-qualified, the cv-qualifiers are ignored when determining the type of the resulting rvalue."*
+
+What this means in practice:
+
+```cpp
+int x = 5;
+(int&)x         // lvalue — T is a reference type
+(int)x          // rvalue — T is not a reference type
+(const int)x    // rvalue — the 'const' is IGNORED on a non-class rvalue
+```
+
+That third one is subtle. If you cast to `const int` and the result is not a reference, the `const` just disappears from the result type. It has no effect. This only matters for class types — `const MyClass` on a non-reference result does preserve the `const`.
+
+The standard also clarifies in §3.10 §6 that:
+
+> *"An expression which holds a temporary object resulting from a cast to a nonreference type is an rvalue."*
+
+So a C-style cast to a non-reference type **always** produces a temporary rvalue — never the original object.
+
+---
+
+### The Core Rule: What Can It Actually Do?
+
+§5.4 §5 is the heart of the section. The standard lists exactly what conversions the C-style cast can perform, **in priority order**:
+
+1. `const_cast`
+2. `static_cast`
+3. `static_cast` followed by `const_cast`
+4. `reinterpret_cast`
+5. `reinterpret_cast` followed by `const_cast`
+
+The rule is: *"If a conversion can be interpreted in more than one of the ways listed above, the interpretation that appears first in the list is used, even if a cast resulting from that interpretation is ill-formed."*
+
+> ⚠️ **This is the critical danger.** The compiler doesn't pick the interpretation that works — it picks the **first one on the list** and uses it, even if it's broken.
+
+**§5.4 §4 — The Hard Boundary**
+
+> *"Any type conversion not mentioned below and not explicitly defined by the user (12.3) is ill-formed."*
+
+If a conversion can't be expressed as one of the five interpretations above, and the user hasn't defined a conversion function (`operator T()`) or a converting constructor, the cast simply **does not compile**. The C-style cast is not a magic "make it work" incantation — it still has limits.
+
+---
+
+### The Ambiguity Rule and When It's Ill-Formed
+
+§5.4 §5 has a separate rule specifically for the `static_cast` + `const_cast` interpretation:
+
+> *"If a conversion can be interpreted in more than one way as a static_cast followed by a const_cast, the conversion is ill-formed."*
+
+The standard provides an example of this (§5.4 §5):
+
+```cpp
+struct A {};
+struct I1 : A {};
+struct I2 : A {};
+struct D : I1, I2 {};
+
+A* foo(D* p) {
+    return (A*)(p); // ill-formed — static_cast interpretation is ambiguous
+}
+```
+
+Here, `D` inherits from `A` through two paths (`I1` and `I2`). A `static_cast` from `D*` to `A*` would be ambiguous because there are two `A` sub-objects. The compiler cannot choose one. But since `static_cast` comes **before** `reinterpret_cast` in the priority list, the compiler tries `static_cast` first — finds it ill-formed — and the whole thing fails. It does **not** fall back to `reinterpret_cast`.
+
+This is a key distinction: the named casts would at least be clear about what they're trying to do. The C-style cast silently escalates through the list and fails in a confusing way.
+
+---
+
+### The Special Rule for Incomplete Class Types
+
+§5.4 §6 introduces a unique behavior that **doesn't exist in any named cast**:
+
+> *"The operand of a cast using the cast notation can be an rvalue of type 'pointer to incomplete class type'. The destination type of a cast using the cast notation can be 'pointer to incomplete class type'. In such cases, even if there is an inheritance relationship between the source and destination classes, whether the static_cast or reinterpret_cast interpretation is used is **unspecified**."*
+
+This means: if you cast between pointers to types that are forward-declared but not fully defined yet, the compiler doesn't know if there's an inheritance relationship. It picks either `static_cast` or `reinterpret_cast` — but the standard says which one it picks is **unspecified**. You literally cannot know what you're getting. This is a unique trap of the C-style cast with no parallel in the named operators.
+
+---
+
+### The Access Bypass — C-Style Cast's Unique Superpower
+
+§5.4 §7 is one of the most important and least-known rules in this section. The named casts all **respect** access control (`public`/`private`/`protected`). The C-style cast **does not**:
+
+> *"In addition to those conversions, the following static_cast and reinterpret_cast operations (optionally followed by a const_cast operation) may be performed using the cast notation of explicit type conversion, even if the base class type is not accessible:"*
+
+The three specific cases granted this access bypass are:
+
+- **Case 1:** A pointer or lvalue of derived class type → pointer or reference to an unambiguous base class type. This works even if the base is `private`.
+- **Case 2:** A pointer-to-member of derived class → pointer-to-member of an unambiguous non-virtual base class type. Again, even if `private`.
+- **Case 3:** A pointer, lvalue, or pointer-to-member of non-virtual base class type → pointer, reference, or pointer-to-member of a derived class type. Even if `private`.
 
 In other words:
 
 ```cpp
-// These two lines do the same thing mechanically:
-int* p = (int*) somePtr;              // traditional — no checks, no intent
-int* p = static_cast<int*>(somePtr);  // named cast  — checked, intent is clear
+class Base {};
+class Derived : private Base {};  // private inheritance!
+
+Derived d;
+Base* bp = (Base*)(&d);                    // WORKS — C-style bypasses private
+// Base* bp = static_cast<Base*>(&d);      // ERROR — static_cast respects access
 ```
 
-The named casts are **not new operations** — they are the same pointer/value reinterpretation you already know, wrapped in rules that catch mistakes. Each of the four has its own specific rules and use cases, which we will cover next.
+This is intentional — it matches the behavior of the original C language, which had no concept of access control. The C++ standard preserves this for backwards compatibility but it is a significant footgun.
 
 ---
 
-## `dynamic_cast`
+### The Strict Aliasing Trap (§3.10 §15)
 
-`dynamic_cast` can only be used with **pointers and references to objects** (not plain values). Its purpose is to guarantee that the result of the conversion is a valid, complete object of the requested class — something no other cast can promise.
+When the C-style cast resolves to a `reinterpret_cast`, you are **type-punning** — telling the compiler to access the same memory as a different type. The standard imposes a **strict aliasing rule** in §3.10 §15 that determines when this is legal:
+
+> *"If a program attempts to access the stored value of an object through an lvalue of other than one of the following types the behavior is undefined:"*
+
+The **allowed** types are:
+
+- The dynamic type of the object
+- A cv-qualified version of that type (e.g. `const T` when `T` is the real type)
+- The signed or unsigned counterpart of the dynamic type
+- The signed or unsigned counterpart of a cv-qualified version of the dynamic type
+- An aggregate or union that contains the dynamic type among its members
+- A (possibly cv-qualified) base class type of the dynamic type
+- `char` or `unsigned char` (these two can alias **anything**)
+
+Everything else is **undefined behavior**. This is directly relevant to the C-style cast because it can silently become a `reinterpret_cast`, letting you write code that looks like it works but violates this rule:
+
+```cpp
+float f = 3.14f;
+int i = *(int*)(&f);  // C-style cast → reinterpret → UNDEFINED BEHAVIOR
+                      // int is not in the allowed alias list for float
+```
+
+The footnote in the standard (footnote 48) states bluntly: *"The intent of this list is to specify those circumstances in which an object may or may not be aliased."*
 
 ---
 
-### Derived-to-base is always safe
+### User-Defined Conversions and the Cast
 
-Converting from a derived class to one of its base classes always succeeds because a `CDerived` object IS-A `CBase` object by definition:
+§5.4 §4 specifies that any type conversion "explicitly defined by the user" (§12.3) is permitted by the cast notation. This means the C-style cast also invokes:
 
-```cpp
-class CBase   {};
-class CDerived: public CBase {};
-
-CBase    b;  CBase*    pb;
-CDerived d;  CDerived* pd;
-
-pb = dynamic_cast<CBase*>(&d);    // ok: derived-to-base, always succeeds
-pd = dynamic_cast<CDerived*>(&b); // COMPILATION ERROR: base-to-derived not allowed
-                                  // unless CBase is polymorphic (has a virtual function)
-```
-
-The second line is rejected at **compile time** — not runtime. `dynamic_cast` refuses the base-to-derived direction entirely unless the base class is polymorphic, because without runtime type info there is no safe way to verify the cast.
-
----
-
-### Polymorphic classes — runtime checking
-
-Once the base class has at least one `virtual` function, it becomes polymorphic and `dynamic_cast` can perform a **runtime check**:
+- **Conversion constructors** — a constructor of the destination type that takes one argument of the source type
+- **Conversion functions** — `operator T()` defined in the source class
 
 ```cpp
-class CBase    { virtual void dummy() {} };  // virtual → polymorphic
-class CDerived : public CBase { int a; };
-
-int main() {
-    CBase* pba = new CDerived;  // CBase pointer → but points to a CDerived object
-    CBase* pbb = new CBase;     // CBase pointer → points to a plain CBase object
-
-    CDerived* pd;
-
-    pd = dynamic_cast<CDerived*>(pba);  // SUCCESS  — pba really IS a CDerived at runtime
-    if (pd == 0) std::cout << "Null pointer on first type-cast" << std::endl;
-
-    pd = dynamic_cast<CDerived*>(pbb);  // FAILS    — pbb is only a CBase, not a CDerived
-    if (pd == 0) std::cout << "Null pointer on second type-cast" << std::endl;
-}
-```
-
-Output:
-```
-Null pointer on second type-cast
-```
-
-`pba` and `pbb` are both `CBase*` — the same static type. But at runtime their actual objects differ: `pba` points to a full `CDerived`, `pbb` to a plain `CBase`. `dynamic_cast` inspects the real object in memory and returns `NULL` instead of crashing when the cast is impossible.
-
----
-
-### What is RTTI and how does it affect the compiler?
-
-**RTTI (Run-Time Type Information)** is extra data that the compiler secretly embeds into every polymorphic object (any class with at least one `virtual` function). It is what makes `dynamic_cast` possible.
-
-#### What the compiler actually stores
-
-For every polymorphic class, the compiler generates a hidden structure called a **vtable** (virtual function table). Alongside the pointers to virtual functions, it attaches a `type_info` record that describes the class:
-
-```
-Memory layout of a CDerived object:
-┌──────────────────────────────────────┐
-│ vptr ──────────────────────────────► vtable of CDerived        │
-│                                      ├─────────────────────────┤
-│  int a                               │ ptr to dummy()          │
-│                                      │ ptr to type_info        │
-└──────────────────────────────────────┘    └─► name: "CDerived"
-                                                 base: CBase
-                                                 base's base: ...
-```
-
-When `dynamic_cast<CDerived*>(pbb)` runs, the compiler emits code that:
-1. Follows `pbb`'s `vptr` to its vtable
-2. Reads the `type_info` record attached to it
-3. Walks up the inheritance chain stored there to check whether `CDerived` appears
-4. If yes → returns the adjusted pointer. If no → returns `NULL`
-
-#### The compiler option warning
-
-Some compilers (notably older GCC and some embedded toolchains) disable RTTI by default to save binary size and speed up builds (`-fno-rtti` in GCC/Clang). If RTTI is off:
-- `dynamic_cast` will either **fail to compile** or produce wrong results silently
-- `typeid` (the other RTTI feature) also stops working
-- You must enable it explicitly (GCC/Clang: `-frtti`, MSVC: `/GR`)
-
-In normal desktop C++ compilation RTTI is on by default — you only hit this problem on embedded systems or when someone explicitly stripped it.
-
----
-
-### Pointer → returns `NULL` on failure. Reference → throws `bad_cast`
-
-```cpp
-// POINTER version — failed cast returns NULL, you check with if
-CDerived* pd = dynamic_cast<CDerived*>(pbb);
-if (pd == NULL)
-    std::cout << "cast failed" << std::endl;  // safe, no crash
-
-// REFERENCE version — failed cast throws std::bad_cast (no NULL for references)
-try {
-    CDerived& rd = dynamic_cast<CDerived&>(*pbb);  // pbb is not a CDerived → throws
-} catch (std::bad_cast& e) {
-    std::cout << "Exception: " << e.what() << std::endl;
-}
-```
-
----
-
-### Casting null pointers and casting to `void*`
-
-`dynamic_cast` has two special behaviours that no other cast shares:
-
-#### Null pointer between unrelated classes — always returns `NULL`
-
-```cpp
-class A { virtual void dummy() {} };
-class B { virtual void dummy() {} };  // completely unrelated to A
-
-A* pa = NULL;
-B* pb = dynamic_cast<B*>(pa);  // pa is NULL → result is NULL, no crash, no UB
-                                // static_cast or reinterpret_cast here = undefined behaviour
-```
-
-This is safe because `dynamic_cast` checks the pointer before touching any memory. A null input always produces a null output.
-
-#### Any polymorphic pointer → `void*` always succeeds
-
-```cpp
-class CBase    { virtual void dummy() {} };
-class CDerived : public CBase { int a; };
-
-CDerived  obj;
-CBase*    pb   = &obj;
-void*     pv   = dynamic_cast<void*>(pb);  // always succeeds for any polymorphic pointer
-                                            // pv now holds the address of the MOST DERIVED
-                                            // object (CDerived), not just the CBase sub-object
-```
-
-This is unique: casting to `void*` gives you the address of the **complete, most-derived object**, not the base sub-object. This is useful when you need to compare whether two pointers with different types point to the same underlying object:
-
-```cpp
-CBase*    pb2 = &obj;
-void*     pv2 = dynamic_cast<void*>(pb2);
-
-if (pv == pv2)
-    std::cout << "same object" << std::endl;  // true — both point to the same CDerived
-```
-
----
-
-## `static_cast`
-
-`static_cast` performs conversions that are **checked at compile time only** — the compiler verifies that the two types are related (connected by inheritance), but it does zero checking at runtime about whether the actual object in memory is really what you claim it is. That responsibility falls entirely on the programmer.
-
----
-
-### Pointer conversions between related classes
-
-```cpp
-class CBase    {};
-class CDerived : public CBase {};
-
-CBase*    a = new CBase;
-CDerived* b = static_cast<CDerived*>(a);  // compiles — types are related
-                                           // but a only holds a plain CBase object!
-```
-
-#### Why does `b` point to an "incomplete object" and cause runtime errors?
-
-Think about what memory looks like for each class:
-
-```
-Memory layout of a CBase object:       Memory layout of a CDerived object:
-┌────────────────────┐                 ┌────────────────────┐
-│  CBase members     │                 │  CBase members     │  ← same region
-└────────────────────┘                 ├────────────────────┤
-                                       │  CDerived members  │  ← extra region
-                                       └────────────────────┘
-```
-
-`a` was created with `new CBase` — so only the top region exists in memory. The extra `CDerived` region was **never allocated**. When you do `static_cast<CDerived*>(a)`, the compiler just shifts the pointer type on paper. It does not allocate the missing memory, does not check anything.
-
-Now `b` points to a `CBase`-sized block but pretends it is `CDerived`-sized. The moment you access any member that lives in the `CDerived` region:
-
-```cpp
-b->someCDerivedMember;  // reads memory that was never allocated → garbage or segfault
-```
-
-You are reading memory that belongs to someone else — undefined behaviour. This is exactly what `dynamic_cast` protects you from by doing the runtime check.
-
-> **Rule:** `static_cast` downcast (base→derived) is only safe when you are 100% certain the object was originally constructed as the derived type. If there is any doubt, use `dynamic_cast`.
-
----
-
-### Non-pointer conversions — all cases with examples
-
-#### 1. Standard numerical conversions
-
-```cpp
-// Floating point → integer (truncates toward zero)
-double d = 3.99;
-int    i = static_cast<int>(d);   // i = 3, not 4 — truncation, not rounding
-
-// Integer → floating point
-int   x = 7;
-float f = static_cast<float>(x);  // f = 7.0
-
-// Larger integer → smaller integer (narrowing — may lose data)
-long  l  = 100000L;
-short s  = static_cast<short>(l); // may overflow if value doesn't fit in short
-
-// Signed ↔ unsigned
-int           n  = -1;
-unsigned int  u  = static_cast<unsigned int>(n);   // u = 4294967295 (wraps around)
-unsigned int  u2 = 42;
-int           n2 = static_cast<int>(u2);            // n2 = 42, safe here
-```
-
-#### 2. bool conversions
-
-```cpp
-// Any non-zero number → true, zero → false
-int  a = 5;
-bool t = static_cast<bool>(a);   // true
-
-int  b = 0;
-bool f2 = static_cast<bool>(b);  // false
-
-// bool → int: true=1, false=0
-bool flag = true;
-int  val  = static_cast<int>(flag);  // val = 1
-```
-
-#### 3. char conversions
-
-```cpp
-// char → int (gives the ASCII value)
-char c = 'A';
-int  ascii = static_cast<int>(c);    // ascii = 65
-
-// int → char (gives the character for that ASCII value)
-int  code = 66;
-char ch   = static_cast<char>(code); // ch = 'B'
-```
-
----
-
-### Conversions between classes — constructor and operator conversions
-
-#### Constructor conversion (same as implicit, but explicit)
-
-```cpp
-class Celsius {
-    float degrees;
+class MyInt {
 public:
-    Celsius(float d) : degrees(d) {}
-    float get() const { return degrees; }
+    MyInt(int v) : val(v) {}        // converting constructor
+    operator double() { return val; } // conversion function
+    int val;
 };
 
-class Fahrenheit {
-    float degrees;
-public:
-    Fahrenheit(float d) : degrees(d) {}          // constructor from float
-    Fahrenheit(Celsius c) : degrees(c.get() * 9.0f / 5.0f + 32.0f) {}  // constructor from Celsius
-    float get() const { return degrees; }
-};
-
-Celsius    c(100.0f);
-Fahrenheit f = static_cast<Fahrenheit>(c);  // calls Fahrenheit(Celsius) constructor
-                                             // same as implicit but intent is explicit
-std::cout << f.get();  // 212
+MyInt m = (MyInt)42;    // invokes MyInt(int) — converting constructor
+double d = (double)m;   // invokes operator double()
 ```
 
-The `static_cast` here simply calls the constructor — identical to what implicit conversion would do, but written explicitly so anyone reading the code sees the conversion happening.
-
-#### Operator conversion
-
-```cpp
-class Percentage {
-    float value;
-public:
-    Percentage(float v) : value(v) {}
-    operator float() const { return value / 100.0f; }  // conversion operator → float
-};
-
-Percentage p(75.0f);
-float ratio = static_cast<float>(p);   // calls operator float()
-std::cout << ratio;                    // 0.75
-
-// Compare with implicit — both call the same operator:
-float ratio2 = p;                      // implicit — works but hides the conversion
-float ratio3 = static_cast<float>(p);  // explicit — makes it obvious a conversion happens
-```
-
-#### When both a constructor and an operator exist for the same conversion
-
-```cpp
-class B;
-class A {
-public:
-    operator B() const;  // A can convert itself to B
-};
-
-class B {
-public:
-    B() {}
-    B(A a) {}            // B can be constructed from A
-};
-
-A a;
-B b = static_cast<B>(a);  // AMBIGUOUS — compiler doesn't know whether to call
-                           // A::operator B() or B::B(A)
-                           // this is a compile error
-```
-
-This is the same ambiguity covered in the implicit conversion section — `static_cast` does not resolve it, it just makes the intent explicit. You must remove one of the two conversion paths to fix it.
-
----
-## `reinterpret_cast`
-
-`reinterpret_cast` is the most powerful and most dangerous cast in C++. It tells the compiler: **"take these bits and pretend they are a completely different type"** — no checks, no conversions, no adjustments. Just a raw reinterpretation of memory.
+These are the only cases where a C-style cast can do something that none of the five named-cast interpretations could do on their own — when user-defined conversions are involved, the compiler treats `(T)x` as initialization `T t(x)`, firing constructors or conversion functions as needed.
 
 ---
 
-### How the "binary copy" operation actually works
+### Full Priority Walk-Through: What the Compiler Actually Does
 
-Every variable in memory is just a sequence of bytes. `reinterpret_cast` does not move those bytes, does not convert them, does not allocate anything. It just hands you back the **same address** with a **different type label** stamped on it by the compiler.
+Here is the exact sequence the compiler follows every time it sees `(T)expr`, laid out step by step from the standard:
 
 ```
-Before cast:
-  int* p → [ 0x00 | 0x00 | 0x03 | 0xE8 ]   ← 4 bytes representing integer 1000
-                ↑
-          address: 0x7ffee4bc
+Step 1: Can this be done as a const_cast alone?
+         (only changes cv-qualifiers, nothing else)
+        → YES: use const_cast. STOP.
 
-After reinterpret_cast<float*>(p):
-  float* fp → [ 0x00 | 0x00 | 0x03 | 0xE8 ]  ← exact same 4 bytes, same address
-                 ↑
-           address: 0x7ffee4bc  (unchanged)
-```
+Step 2: Can this be done as a static_cast alone?
+         (hierarchy navigation, arithmetic conversions,
+          void*, enum/int, anything implicitly reversible)
+        → YES: use static_cast. STOP.
+          (even if it's ill-formed — the compiler tries it first)
 
-The pointer value (the address) is copied as-is into the new pointer variable. Nothing in memory changes. The compiler just agrees to treat those bytes as a `float` now — even though they were never written as a `float`. That is what "binary copy of the value from one pointer to the other" means.
+Step 3: Can this be done as static_cast + const_cast?
+         (downcast while also stripping const)
+        → YES (unambiguously): use static_cast + const_cast. STOP.
+        → YES (but ambiguous): ILL-FORMED. Compilation error.
 
-```cpp
-int   i  = 1000;
-int*  pi = &i;
-float* pf = reinterpret_cast<float*>(pi);  // pf holds the exact same address as pi
-                                            // the bytes of i are now "read" as a float
-std::cout << *pf;  // prints garbage — the bits of 1000 (as int) make no sense as float
+Step 4: Can this be done as a reinterpret_cast alone?
+         (pointer↔integer, pointer↔pointer, type pun)
+        → YES: use reinterpret_cast. STOP.
+
+Step 5: Can this be done as reinterpret_cast + const_cast?
+         (raw reinterpretation while stripping const)
+        → YES: use reinterpret_cast + const_cast. STOP.
+
+Step 6: Is there a user-defined conversion (constructor/operator)?
+        → YES: invoke it. STOP.
+
+Step 7: None of the above apply.
+        → ILL-FORMED. Compilation error.
 ```
 
 ---
 
-### All pointer conversions are allowed — no checks at all
+### The "Same Semantics" Guarantee
 
-`reinterpret_cast` does not check:
-- Whether the types are related
-- Whether the memory is valid
-- Whether the object actually exists
-- Whether sizes match
-
-```cpp
-class A { int x; };
-class B { double d; };   // completely unrelated to A
-
-A* a = new A;
-B* b = reinterpret_cast<B*>(a);  // compiles — types are irrelevant
-                                  // b now points to A's memory, pretending it's a B
-
-// Even wilder — pointer to a function pointer
-void myFunc() {}
-void (*fp)()  = myFunc;
-int* ip       = reinterpret_cast<int*>(fp);  // pointer to function → pointer to int
-                                              // compiles, completely platform-dependent
-
-// Pointer to void* and back
-A*    a2  = new A;
-void* vp  = reinterpret_cast<void*>(a2);   // A* → void*
-A*    a3  = reinterpret_cast<A*>(vp);       // void* → A* back (safe, same address)
-```
+§5.4 §5 is explicit: *"The same semantic restrictions and behaviors apply."* This means the C-style cast does **not** get special permissions when it resolves to a named cast. If the equivalent `static_cast` would have undefined behavior, the C-style cast that resolves to `static_cast` has the same undefined behavior. The C-style cast doesn't secretly make anything safer — it just hides which cast it chose.
 
 ---
 
-### Casting pointers to/from integer types — all cases
+### Summary: C-Style vs Named Casts
 
-#### Why would you ever cast a pointer to an integer?
-
-A pointer is just a memory address, and a memory address is just a number. Sometimes you need to:
-- Print or log the raw address
-- Store an address in a struct that only has integer fields
-- Do bitwise arithmetic on an address (e.g. alignment checks)
-- Interface with C libraries or hardware registers that use integers for addresses
-
-#### The integer must be large enough to hold the address
-
-This is the critical rule. On a 32-bit system, pointers are 4 bytes — they fit in an `int`. On a 64-bit system, pointers are 8 bytes — they do NOT fit in an `int` (only 4 bytes), you need `long` or better yet `size_t`.
-
-```cpp
-int  x = 42;
-int* p = &x;
-
-// SAFE: cast to a type large enough to hold the address
-long       addr1  = reinterpret_cast<long>(p);       // works on 32-bit, risky on 64-bit
-size_t     addr2  = reinterpret_cast<size_t>(p);     // size_t is always pointer-sized ✅
-
-// Cast back to pointer — guaranteed to work if the integer was large enough
-int* p2 = reinterpret_cast<int*>(addr2);  // p2 == p, points to x again ✅
-
-// UNSAFE: integer too small
-short small = reinterpret_cast<short>(p); // truncates the address — cast back would be wrong ❌
-```
-
-#### The "platform-specific format" part — simplified
-
-The quote says *"the format in which this integer value represents a pointer is platform-specific"*. In plain terms:
-
-> The number you get when you cast a pointer to an integer is the raw memory address. But **how addresses are numbered** depends on the OS and CPU architecture.
-
-| Platform | Pointer size | Address range |
+| Property | C-style `(T)x` | Named casts |
 |---|---|---|
-| 32-bit system | 4 bytes | 0 to ~4 billion |
-| 64-bit system | 8 bytes | 0 to ~18 quintillion |
-| Some embedded CPUs | 2 bytes | 0 to 65535 |
+| Makes intent visible | ❌ — opaque | ✅ — explicit |
+| Respects private inheritance | ❌ — bypasses it (§5.4 §7) | ✅ — access controlled |
+| Can strip `const` | ✅ (silently) | Only `const_cast`, explicitly |
+| Works on incomplete types | ✅ (unspecified behavior, §5.4 §6) | Varies — mostly requires complete types |
+| Can type-pun | ✅ (silently resolves to `reinterpret_cast`) | Only `reinterpret_cast`, explicitly |
+| Ambiguous paths | Picks first valid interpretation | Each cast has one well-defined job |
+| Safe downcasting | ❌ (no runtime check) | `dynamic_cast` checks at runtime |
+| Searchable in code | ❌ — hard to grep | ✅ — easy to find and audit |
 
-So the integer you get is meaningful only on the machine that produced it. Move that integer to a different architecture and it is just a meaningless number — that address does not exist there.
-
-**The only guarantee:** if you cast a pointer to an integer type large enough (e.g. `size_t`), then cast that integer back to the original pointer type, you get the original pointer back exactly. The round-trip is guaranteed — nothing more.
-
-```cpp
-int  val = 99;
-int* original = &val;
-
-size_t as_integer = reinterpret_cast<size_t>(original);  // pointer → integer
-int*   restored   = reinterpret_cast<int*>(as_integer);  // integer → pointer back
-
-// restored == original: guaranteed ✅
-// *restored == 99:      guaranteed ✅
-```
+The C-style cast is not wrong or forbidden in C++98, but the standard's design of the named casts is a deliberate statement: every named cast does one thing, is readable, and fails loudly when you ask it to do something outside its lane. The C-style cast does all five things invisibly, and when it resolves to the most dangerous option — `reinterpret_cast` — it gives you no warning that it did.
 
 ---
 
-### Low-level, system-specific, non-portable — what do these mean?
-
-#### "Low-level"
-
-High-level code works with objects, types, and logic. Low-level code works with raw memory addresses and bit patterns — the same things the CPU deals in. `reinterpret_cast` bypasses everything C++'s type system normally protects you from.
-
-```cpp
-// High-level (static_cast): "convert this double to int mathematically"
-double d = 3.14;
-int    i = static_cast<int>(d);    // i = 3 — a real mathematical conversion
-
-// Low-level (reinterpret_cast): "give me the raw bits of this double, read as int"
-int raw = *reinterpret_cast<int*>(&d);  // not 3 — the IEEE 754 bit pattern of 3.14
-                                         // completely different number, platform-specific
-```
-
-#### "System-specific"
-
-The result depends on how your OS and CPU organize memory:
-
-```cpp
-// Checking pointer alignment (must be 4-byte aligned for int on most CPUs)
-int  x   = 10;
-int* p   = &x;
-bool aligned = (reinterpret_cast<size_t>(p) % 4 == 0);  // answer depends on where
-                                                          // the OS placed x in memory
-```
-
-A different OS or compiler settings may place `x` at a different address, giving a different result.
-
-#### "Non-portable"
-
-Code using `reinterpret_cast` may work on one machine and break on another:
-
-```cpp
-// On a 32-bit machine: pointer fits in int — works
-int* p    = &someVar;
-int  addr = reinterpret_cast<int>(p);   // works on 32-bit
-
-// On a 64-bit machine: pointer is 8 bytes, int is 4 bytes — addr is TRUNCATED
-// casting addr back to int* gives the wrong address entirely ❌
-```
-
-Correctness depends on the machine — that is the definition of non-portable.
-
-#### All realistic use cases of `reinterpret_cast`
-
-```cpp
-// 1. Inspect the raw bytes of any object
-float f = 1.0f;
-unsigned char* bytes = reinterpret_cast<unsigned char*>(&f);
-for (int i = 0; i < (int)sizeof(float); i++)
-    printf("%02X ", bytes[i]);  // 00 00 80 3F  (IEEE 754 bytes of 1.0f)
-
-// 2. Hardware / memory-mapped register access (embedded systems)
-// A hardware register lives at a fixed address decided by the circuit board
-volatile int* led_register = reinterpret_cast<volatile int*>(0x40021000);
-*led_register = 1;  // turn on LED — writes 1 to that hardware address
-
-// 3. Storing a pointer as an integer (e.g. for serialisation or IPC)
-int  data   = 42;
-int* ptr    = &data;
-size_t stored = reinterpret_cast<size_t>(ptr);        // pointer → integer
-int*  recovered = reinterpret_cast<int*>(stored);     // integer → pointer back
-                                                       // only valid on the SAME machine
-
-// 4. Type-punning — reading the raw bit pattern of a float as an unsigned int
-float        pi   = 3.14159f;
-unsigned int bits = *reinterpret_cast<unsigned int*>(&pi);
-printf("float bits: %08X\n", bits);  // 40490FD0 (IEEE 754 representation)
-```
-
----
-
-### Why dereferencing an incompatible pointer is unsafe
-
-```cpp
-class A { int x; };       // size: 4 bytes
-class B { double d; };    // size: 8 bytes
-
-A* a = new A;
-B* b = reinterpret_cast<B*>(a);  // b points to A's 4-byte block
-```
-
-Memory layout comparison:
-
-```
-A object (allocated):          B's expected layout:
-┌──────────────┐               ┌──────────────┐
-│  int x       │  4 bytes      │              │
-└──────────────┘               │  double d    │  8 bytes expected
-                               │              │
-                               └──────────────┘
-```
-
-When you access `b->d`, the compiler reads 8 bytes starting at `b`'s address. Only 4 bytes belong to the `A` object — the next 4 bytes belong to whatever is adjacent in memory (heap metadata, another variable, or unmapped memory).
-
-- If the extra 4 bytes are readable → garbage `double` value (unexpected result)
-- If they are in a protected memory page → segmentation fault (runtime crash)
-- If the optimiser sees the strict aliasing violation → may eliminate or reorder the access entirely (undefined behaviour)
-
-This is why the text says "does not make much sense" — there is no legitimate reason to read a `B` from an `A`-sized block. `reinterpret_cast` lets you write it, but the outcome is fully undefined.
-
----
-
-## `const_cast`
-
-`const_cast` is the **only** C++ cast that can add or remove `const` (and `volatile`) qualifiers from a type. It does not touch the actual bits in memory, does not change the type, does not do any conversion — it purely changes whether the compiler treats the variable as read-only or not.
-
-> **Critical rule:** `const_cast` removes the compiler's restriction, it does NOT make the write safe. If the original object was declared `const`, writing through a `const_cast`-ed pointer is **undefined behaviour** even if it compiles.
-
----
-
-### The core use case — passing a const variable to a non-const parameter
-
-```cpp
-void print(char* str) {          // expects non-const char*
-    std::cout << str << std::endl;
-}
-
-int main() {
-    const char* c = "sample text";
-    print(const_cast<char*>(c));  // strips const so it fits the parameter
-    return 0;
-}
-```
-
-`print` does not modify `str` — it only reads it. But its signature says `char*` (non-const), so the compiler refuses to pass a `const char*` directly. `const_cast` removes the restriction for the duration of the call. This is safe **only because** `print` never writes to the pointer.
-
----
-
-### All usage cases with examples
-
-#### 1. Remove `const` from a pointer to pass to a legacy/C function
-
-The most common real-world use — old C APIs that were written before `const` was common, so they take `char*` even when they don't modify the string:
-
-```cpp
-// Legacy C function — written without const, but does not modify the string
-void legacy_log(char* message) {
-    printf("%s\n", message);
-}
-
-void modern_function(const std::string& text) {
-    // text.c_str() returns const char* — but legacy_log needs char*
-    legacy_log(const_cast<char*>(text.c_str()));  // safe: legacy_log only reads it
-}
-```
-
-#### 2. Remove `const` from a reference
-
-```cpp
-void double_value(int& x) {   // needs non-const reference to modify
-    x *= 2;
-}
-
-int main() {
-    const int val = 5;
-    double_value(const_cast<int&>(val));  // compiles — but UNDEFINED BEHAVIOUR
-                                          // val was declared const — writing to it
-                                          // is UB even through const_cast
-}
-```
-
-This compiles but is undefined behaviour — the compiler may have placed `val` in read-only memory or replaced all uses of `val` with the literal `5` at compile time. This example shows what NOT to do.
-
-#### 3. Safe use with a non-const original object
-
-The only truly safe case of removing const is when the original object was **not** declared const — it just arrived through a const pointer/reference:
-
-```cpp
-void increment(const int* p) {
-    // p is const — but what if we know the caller passed a non-const int?
-    int* writable = const_cast<int*>(p);
-    (*writable)++;   // safe ONLY if the original object was not declared const
-}
-
-int main() {
-    int x = 10;                // NOT const — lives in writable memory
-    increment(&x);             // safe: original is non-const ✅
-    std::cout << x;            // 11
-
-    const int y = 10;          // IS const — lives in read-only memory
-    increment(&y);             // compiles — but writing inside is UB ❌
-}
-```
-
-#### 4. Add `const` to a pointer (the safe direction)
-
-`const_cast` can also go the other way — adding `const`. This is always safe because you are restricting access, not expanding it:
-
-```cpp
-int  x  = 42;
-int* p  = &x;
-
-const int* cp = const_cast<const int*>(p);  // add const — always safe
-// *cp = 99;  // would be a compile error now — cp is read-only
-```
-
-In practice you rarely need `const_cast` to add const (the compiler does it implicitly), but it is technically valid.
-
-#### 5. Remove `volatile`
-
-`const_cast` also works on `volatile`, which tells the compiler "do not cache this variable, always read it fresh from memory" (used in hardware registers and multithreading):
-
-```cpp
-volatile int hardware_flag = 0;
-
-// A function that does not need the volatile guarantee
-void process(int* p) {
-    *p = 1;
-}
-
-process(const_cast<int*>(&hardware_flag));  // strips volatile so it fits the parameter
-```
-
-This is safe only if you are sure the function does not need to observe hardware changes to the variable.
-
-#### 6. `const` method calling a non-const method — mutable workaround
-
-In C++98, before `mutable` was widely used, `const_cast` was sometimes used inside a `const` method to call a non-const version of itself:
-
-```cpp
-class Buffer {
-    char data[256];
-    int  size;
-public:
-    // Non-const version
-    char* get_data() {
-        return data;
-    }
-
-    // Const version — avoid duplicating logic by casting away const
-    const char* get_data() const {
-        // cast away const on 'this' to call the non-const version
-        return const_cast<Buffer*>(this)->get_data();
-    }
-};
-```
-
-This is safe because the non-const `get_data` does not actually modify the object — it just returns a pointer. The `const_cast<Buffer*>(this)` trick was a standard C++98 pattern to avoid duplicating function bodies.
-
----
-
-### Summary — when is `const_cast` safe vs unsafe?
-
-| Situation | Safe? |
-|---|---|
-| Original object was NOT declared `const`, arrives via `const` pointer/ref | ✅ Safe to write |
-| Passing `const` pointer to a C/legacy function that only reads | ✅ Safe — no write happens |
-| Original object WAS declared `const`, writing through cast | ❌ Undefined behaviour |
-| Adding `const` to a pointer | ✅ Always safe |
-| Stripping `volatile` when no hardware/threading concerns | ✅ Generally safe |
-
----
-
-## Final Summary — How Everything Connects
-
-### The Big Picture — One Problem, Many Solutions
-
-Every cast in C++ exists to answer one question: **"these two types don't match — how do I bridge them?"** The entire README is a progression from "the compiler does it for you" all the way to "you do everything yourself":
-
-```
-LEAST CONTROL                                          MOST CONTROL
-     │                                                      │
-  Implicit ──► static_cast ──► dynamic_cast ──► reinterpret_cast
-                                    │                        │
-                               const_cast ◄─────────────────┘
-                           (orthogonal to all)
-```
-
----
-
-### How the casts complete each other — the gaps they fill
-
-**Implicit conversion** is the baseline. It handles all the safe, obvious cases automatically — numbers promoting upward (`short→int`), classes with matching constructors. The moment it refuses, you are forced into explicit territory.
-
-**The traditional cast (`(type)expr`)** is the bridge from C — it covers everything implicit won't do, but does so blindly by trying all four named casts in order until something fits. It is the "I don't care how, just make it work" option. The four named casts exist precisely to replace it with intention.
-
-**`static_cast`** picks up exactly where implicit conversion stops. If implicit would do it automatically, `static_cast` does it explicitly. If implicit would refuse but the types are at least *related* (inheritance chain, numerical family), `static_cast` covers that too. Its weakness: it trusts you on downcasts.
-
-**`dynamic_cast`** plugs the exact hole `static_cast` leaves open — the unsafe downcast. Where `static_cast` says "I'll trust you", `dynamic_cast` says "I'll check at runtime". The trade-off is cost (RTTI lookup) and a requirement (the base must be polymorphic). They are direct complements: use `static_cast` when certain, `dynamic_cast` when you need a guarantee.
-
-**`reinterpret_cast`** goes where neither `static_cast` nor `dynamic_cast` will go — completely unrelated types, raw memory, hardware addresses. It does not convert anything, it just relabels bytes. It is the escape hatch for system-level work the type system was never designed to express.
-
-**`const_cast`** is orthogonal to all of the above — it does not change what type something is, only whether it is read-only. Every other cast can be combined with a `const` concern, and `const_cast` is the dedicated tool for that dimension alone.
-
----
-
-### The safety ladder
-
-```
-dynamic_cast     — safest     — checks at RUNTIME,    returns NULL on failure
-static_cast      — safe       — checks at COMPILE TIME, trusts you on downcasts
-const_cast       — neutral    — no type change, safe if original was not const
-reinterpret_cast — dangerous  — zero checks, raw bits, UB if misused
-traditional cast — worst      — silently escalates to reinterpret_cast without warning
-```
-
----
-
-### The cost ladder
-
-```
-implicit / static_cast / const_cast / reinterpret_cast  — zero runtime cost
-dynamic_cast                                            — runtime cost: RTTI lookup + inheritance walk
-```
-
-This is why `dynamic_cast` is not the default — you pay for it every call. `static_cast` is the free version that only works when you can prove safety yourself.
-
----
-
-### When each one is the right answer
-
-| Situation | Use |
-|---|---|
-| Compiler already knows the types are compatible | Implicit — do nothing |
-| Numerical conversion you want to make explicit | `static_cast` |
-| Upcast (derived → base pointer) | `static_cast` or implicit |
-| Downcast and you are 100% certain of the type | `static_cast` |
-| Downcast and you are NOT certain — need a safety net | `dynamic_cast` |
-| Legacy C function needs non-const but won't modify | `const_cast` |
-| Completely unrelated pointer types | `reinterpret_cast` |
-| Hardware register / raw memory address | `reinterpret_cast` |
-| Quick cast without caring about safety (prototype only) | traditional cast |
-
----
-
-### The thread that runs through everything
-
-Every topic in this README is about one core tension: **what the compiler knows at compile time vs what only exists at runtime**.
-
-Implicit and `static_cast` live entirely at compile time — resolved before the program runs. `dynamic_cast` is the one moment where C++ admits the compiler does not always know enough and defers to runtime. `reinterpret_cast` abandons the type system entirely and drops to the hardware level. `const_cast` is a narrow tool for the one case where the type is right but the access permission is wrong.
-
-Understanding that progression — compile-time knowledge eroding as you go down the ladder — is the mental model that makes every casting decision in cpp06 straightforward.
+*Based on ISO/IEC 14882:1998 (C++98 Standard)*

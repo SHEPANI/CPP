@@ -1,4 +1,4 @@
-SRC = main.cpp ScalarConverter.cpp
+SRC = Base.cpp C.cpp B.cpp A.cpp main.cpp 
 OBJ = $(SRC:.cpp=.o)
 NAME = a.out
 

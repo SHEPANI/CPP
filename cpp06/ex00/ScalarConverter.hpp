@@ -1,10 +1,20 @@
+#ifndef SCALARCONVERTER_HPP
+#define SCALARCONVERTER_HPP
+
 #include <iostream>
 #include <string>
-#include <exception>
 #include <iomanip>
 
 class ScalarConverter
 {
     public:
-        static void convert(std::string& str);
+        static void convert(const std::string &literal);
+
+    private:
+        ScalarConverter();
+        ScalarConverter(const ScalarConverter &);
+        ScalarConverter &operator=(const ScalarConverter &);
+        ~ScalarConverter();
 };
+
+#endif

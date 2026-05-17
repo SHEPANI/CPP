@@ -384,12 +384,41 @@ int main()
        A d;
        B *pb;
        pb = (B*) &d; // compile fine no err checks
-       std::cout << pb->res(); // undefine behaviour
+       std::cout << pb->res() << "\n"; // undefine behaviour
        /*
             &d is the address of a CDummy object. Its memory layout is two floats (i, j).
             The compiler happily "reinterprets" that address as if it pointed to 
             a CAddition (which expects two ints, x and y).
        */
 
+       // --- const_ cast -------- //
+       
+       const int x = 42;
+       int *ip = const_cast<int*>(&x);
+       *ip=100;
+
+       std::cout << x << "\n";
+       std::cout << *ip << "\n";
+       // ------ static cast -------- //
+
+       // Numerical conversion
+        double dd = 3.99;
+        int    i = static_cast<int>(dd);  // i = 3 — truncates, compiler knows this is intentional
+
+        // Up-cast (Derived* → Base*) — always safe
+        class Base {
+            public:
+                
+        };
+        class Derived : public Base {
+        };
+
+        Derived  obj;
+        Base*    bp = static_cast<Base*>(&obj);  // fine — Derived IS-A Base
+
+        // Down-cast (Base* → Derived*) — compile-time only, no runtime check
+        Base*    base = new Derived();
+        Derived* dp   = static_cast<Derived*>(base);  // compiles — but YOU must guarantee
+                                                    // base really points to a Derived
     }
 }

@@ -233,3 +233,163 @@ int main()
 //   }
 // }
 
+// ----------------------------------------------------------------------------------------------------------------------------------
+
+#include <iostream>
+int main()
+{
+    /*
+    implicit convertion: 
+    happen automatically when a value is assigned to a compatible type — no cast operator is needed.
+    */
+    {
+        // --- Integer promotions (safe - no data loss) --- //
+
+        short a = 303;
+        int b;
+        b = a; 
+        std::cout <<"b : "<< b << "\n";
+        bool i = true;
+        a = i; 
+        std::cout <<"a : " << a << " sizeof(bool) : " <<  sizeof(i) << "\n";
+        i = false;
+        a = i;
+        std::cout << a << '\n';
+        long l;
+        float f;
+        b = 1263278237;
+        l = b;
+        f = b;
+        std::cout <<"l : " << l << "\nf : " << f<< " \n";
+        double d = f;
+        long double ld = f;
+        std::cout << "f to d : " << d << "\nf to ld : " << ld <<"\n";
+
+        // ------- Narrowing conversions (may lose data — compiler may warn) ----//
+
+        long long ll = 1000000000001111233;
+        a = ll;
+        char c;
+        c = ll;
+
+        std::cout << "a : " << a << "\n";
+        std::cout << "c : " << c << "\n";
+
+        // ------------ Pointer conversions ----------------// (important)
+    
+        // 1. Any pointer → void*  (generic pointer, loses type info)
+        int  x = 10;
+        int* p = &x;
+        void* vp = p;           // int* → void*  (implicit, always safe)
+
+        // 2. void* → typed pointer  (requires explicit cast in C++, shown for contrast)
+        int* p2 = (int*)vp;     // needs explicit cast — NOT implicit in C++
+
+        // 3. Derived* → Base*  (upcasting — always implicit and safe)
+        class Base  {public:
+            virtual ~Base(){};};
+        class Child : public Base {
+                int age;
+            public:
+                Child(): age(10){};
+                void print()
+                {std::cout << "c : "<< "\n";}
+                // {std::cout << "c : "<< this->age<< "\n";} // 
+        };
+
+        Child child;
+        Base base;
+        // child.print();
+        Base* bp = &child;      // Child* → Base*  (implicit upcast)
+        Base* bp2 =  &base;      // Child* → Base*  (implicit upcast)
+        // bp->print(); becouse slicing and the now only the part of child the parent can use the print() func
+        // but we can use dynamic cast and get the child part from the parent with add virtual 
+        Child* cp = dynamic_cast<Child*>(bp);
+        Child* cp1 = dynamic_cast<Child*>(bp2);// return NULL
+        cp->print();
+        cp1->print(); // // This "works" on NULL because nothing touches 'this' in the child class no derefrence
+                        // if u wanna check decomment the child class comment  
+        // 4. nullptr  → any pointer type
+        int*    np1 = nullptr;  // implicit
+        double* np2 = nullptr;  // implicit
+
+        // 5. T* → const T*  (adding const is always implicit)
+        int        val = 5;
+        int*       ptr = &val;
+        const int* cptr = ptr;  // int* → const int*  (implicit)
+
+        // --------------- Constructor conversion vs. Conversion operator -------- //
+
+        class Celsius {
+            public:
+                double degrees;
+                Celsius(double d) : degrees(d){}  // converting constructor
+            };
+            
+            double temp = 36.6;
+            Celsius body = temp;   // implicit: compiler calls Celsius(36.6)
+            std::cout << body.degrees << "\n";
+
+            class A{
+                public:
+                    long c;
+                    A(int j) : c(j){}
+            };
+            int j = 19;
+            A n = j;
+        // ------  Conversion operator ----------- //
+        // Defined in the source class. It teaches that class how to produce a value of another type when needed.
+        class Celsius1 {
+            public:
+                double degrees;
+                Celsius1(double d) : degrees(d){}  // converting constructor
+
+                operator int() const{  // conversion operator: Celsius → double
+                    return degrees;
+                }
+            };
+            
+            Celsius1 body1(15);
+            double db = body1; // implicit: compiler calls body.operator double()
+            std::cout << db << "\n";
+    }
+    /*
+        Explicit Conversion
+            When the compiler won't convert automatically — or when you want to make your intent crystal-clear 
+            — you write the cast yourself. 
+    */
+    {
+        // C++ inherited two classic notations for this from C:
+
+        short a = 200;
+        int b;
+        b = int(a); // function notation c++ version it like u say constructe an int from a
+        b = (int)a; // C-like cast notation
+        std::cout << "b : " << b<< "\n";
+        // the deferent is just the readabillity and syntactic
+        
+        /* 
+            Both notations are called traditional casts. For class pointers they are dangerous
+            because the let u convert any pointer to any other pointer type without checks
+         */
+
+        class A{int i;};
+        class B{
+            float b;
+            public:
+                B(int i): b(i){};
+                float res() 
+                {return (b);}
+       };
+       A d;
+       B *pb;
+       pb = (B*) &d; // compile fine no err checks
+       std::cout << pb->res(); // undefine behaviour
+       /*
+            &d is the address of a CDummy object. Its memory layout is two floats (i, j).
+            The compiler happily "reinterprets" that address as if it pointed to 
+            a CAddition (which expects two ints, x and y).
+       */
+
+    }
+}

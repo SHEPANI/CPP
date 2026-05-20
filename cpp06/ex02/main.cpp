@@ -32,34 +32,34 @@ void identify(Base& p)
 {
     try
     {
-        (void)dynamic_cast<A&>(p);
+        dynamic_cast<A&>(p);
         std::cout << "A\n";
         return;
     }
     catch(const std::exception& e)
     {
-        std::cerr << e.what() << '\n';
+        std::cerr << "A : " <<  e.what() << '\n';
     }
 
     try
     {
-        (void)dynamic_cast<B&>(p);
+        dynamic_cast<B&>(p);
         std::cout << "B\n";
         return;
     }
     catch(const std::exception& e)
     {
-        std::cerr << e.what() << '\n';
+        std::cerr << "B : " << e.what() << '\n';
     }
 
     try
     {
-        (void)dynamic_cast<C&>(p);
+        dynamic_cast<C&>(p);
         std::cout << "C\n";
     }
     catch(const std::exception& e)
     {
-        std::cerr << e.what() << '\n';
+        std::cerr << "C : " << e.what() << '\n';
     }
 }
 

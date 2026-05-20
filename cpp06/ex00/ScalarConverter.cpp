@@ -7,7 +7,7 @@
 #include <cerrno>
 #include <cctype>
 
-enum eLiteralType
+enum possibleTypes
 {
     TYPE_INVALID,
     TYPE_CHAR,
@@ -17,87 +17,90 @@ enum eLiteralType
     TYPE_PSEUDO
 };
 
-static bool isPseudoLiteral(const std::string &literal)
+static bool isPseudoStr(const std::string &str)
 {
-    return (literal == "nan" || literal == "+inf" || literal == "-inf" || literal == "inf"
-         || literal == "nanf" || literal == "+inff" || literal == "-inff" || literal == "inff");
+    return (str == "nan" || str == "+inf" || str == "-inf"
+         || str == "nanf" || str == "+inff" || str == "-inff");
 }
 
-static bool isCharLiteral(const std::string &literal)
+static bool isCharStr(const std::string &str)
 {
-    return literal.size() == 1 && !std::isdigit(literal[0]);
+    return (str.size() == 1 && !std::isdigit(str[0]));
 }
 
-static bool isDecimalLiteral(const std::string &literal)
+static bool isDecimalStr(const std::string &str)
 {
-    std::string::size_type i = 0;
-    bool hasDigit = false;
-    bool hasDot = false;
+    size_t i = 0;
+    size_t strSize = str.size();
+    bool Digit = false;
+    bool Dot = false;
 
-    if (literal.empty())
+    if (str.empty())
         return false;
-    if (literal[i] == '+' || literal[i] == '-')
+    if (str[i] == '+' || str[i] == '-')
         ++i;
-    if (i == literal.size())
+    if (i == strSize)
         return false;
-    for (; i < literal.size(); ++i)
+    for (; i < strSize; ++i)
     {
-        if (literal[i] == '.')
+        if (str[i] == '.')
         {
-            if (hasDot)
+            if (Dot)
                 return false;
-            hasDot = true;
+            Dot = true;
         }
-        else if (std::isdigit(literal[i]))
-            hasDigit = true;
+        else if (std::isdigit(str[i]))
+            Digit = true;
         else
             return false;
     }
-    return hasDigit && hasDot;
+    return (Digit && Dot);
 }
 
-static bool isIntLiteral(const std::string &literal)
+static bool isIntStr(const std::string &str)
 {
-    std::string::size_type i = 0;
+    size_t i = 0;
+    size_t strSize = str.size();
 
-    if (literal.empty())
+    if (str.empty())
         return false;
-    if (literal[i] == '+' || literal[i] == '-')
+    if (str[i] == '+' || str[i] == '-')
         ++i;
-    if (i == literal.size())
+    if (i == strSize)
         return false;
-    for (; i < literal.size(); ++i)
+    for (; i < strSize; ++i)
     {
-        if (!std::isdigit(literal[i]))
+        if (!std::isdigit(str[i]))
             return false;
     }
     return true;
 }
 
-static bool isFloatLiteral(const std::string &literal)
+static bool isFloatStr(const std::string &str)
 {
-    if (literal.size() < 2 || literal[literal.size() - 1] != 'f')
+    size_t strSize = str.size();
+    if (strSize < 2 || str[strSize - 1] != 'f')
         return false;
-    std::string core = literal.substr(0, literal.size() - 1);
-    return isDecimalLiteral(core) || isIntLiteral(core);
+    std::string numberOnly = str.substr(0, strSize - 1);
+    return (isDecimalStr(numberOnly) || isIntStr(numberOnly));
 }
 
-static bool isDoubleLiteral(const std::string &literal)
+static bool isDoubleStr(const std::string &str)
 {
-    return isDecimalLiteral(literal);
+    return isDecimalStr(str);
 }
 
-static eLiteralType detectType(const std::string &literal)
+static possibleTypes detectType(const std::string &str)
 {
-    if (isPseudoLiteral(literal))
+    if (isPseudoStr(str))
         return TYPE_PSEUDO;
-    if (isCharLiteral(literal))
+    if (isCharStr(str))
         return TYPE_CHAR;
-    if (isIntLiteral(literal))
+    if (isIntStr(str))
         return TYPE_INT;
-    if (isFloatLiteral(literal))
+    if (isFloatStr(str))
         return TYPE_FLOAT;
-    if (isDoubleLiteral(literal))
+    if (isDoubleStr(str))
         return TYPE_DOUBLE;
     return TYPE_INVALID;
 }
@@ -191,17 +194,17 @@ static void printDouble(double value)
     std::cout << formatDoubleOrFloat(value, 'd') << "\n";
 }
 
-static void printPseudoLiterals(const std::string &literal)
+static void printPseudoStr(const std::string &str)
 {
     std::cout << "char: impossible\n";
     std::cout << "int: impossible\n";
-    if (literal == "nan" || literal == "nanf")
+    if (str == "nan" || str == "nanf")
     {
         std::cout << "float: nanf\n";
         std::cout << "double: nan\n";
         return;
     }
-    if (literal == "+inf" || literal == "inf" || literal == "+inff" || literal == "inff")
+    if (str == "+inf" || str == "inf" || str == "+inff" || str == "inff")
     {
         std::cout << "float: +inff\n";
         std::cout << "double: +inf\n";
@@ -212,35 +215,33 @@ static void printPseudoLiterals(const std::string &literal)
 }
 
 
-void ScalarConverter::convert(const std::string &literal)
+void ScalarConverter::convert(const std::string &str)
 {
-    eLiteralType type = detectType(literal);
+    possibleTypes type = detectType(str);
+
     if (type == TYPE_INVALID)
     {
         std::cout << "char: impossible\n";
         std::cout << "int: impossible\n";
         std::cout << "float: impossible\n";
         std::cout << "double: impossible\n";
-        return;
     }
+
     if (type == TYPE_PSEUDO)
-    {
-        printPseudoLiterals(literal);
-        return;
-    }
+        printPseudoStr(str);
 
     double value = 0.0;
     if (type == TYPE_CHAR)
-        value = static_cast<double>(literal[0]);
+        value = static_cast<double>(str[0]);
     else if (type == TYPE_INT)
-        value = std::strtod(literal.c_str(), NULL);
+        value = std::strtod(str.c_str(), NULL);
     else if (type == TYPE_FLOAT)
     {
-        std::string core = literal.substr(0, literal.size() - 1);
+        std::string core = str.substr(0, str.size() - 1);
         value = std::strtod(core.c_str(), NULL);
     }
     else if (type == TYPE_DOUBLE)
-        value = std::strtod(literal.c_str(), NULL);
+        value = std::strtod(str.c_str(), NULL);
 
     printChar(value);
     printInt(value);

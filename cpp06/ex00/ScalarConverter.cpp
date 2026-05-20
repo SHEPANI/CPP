@@ -2,10 +2,11 @@
 
 #include <cmath>
 #include <sstream>
-#include <limits>
+#include <climits>
 #include <cstdlib>
 #include <cerrno>
 #include <cctype>
+#include <float.h>
 
 enum possibleTypes
 {
@@ -110,9 +111,10 @@ static std::string formatDoubleOrFloat(double value, char currType)
 {
     std::ostringstream oss;
 
-    if (std::isnan(value))
+    if (value != value)
         return (currType == 'd' ? "nan" : "nanf");
-    if (std::isinf(value))
+    double inf = 1.0/0.0;
+    if (value == inf || value == -inf)
         return (currType == 'd'
             ? (value < 0.0 ? "-inf" : "+inf")
             : (value < 0.0 ? "-inff" : "+inff"));
@@ -125,13 +127,17 @@ static std::string formatDoubleOrFloat(double value, char currType)
     if (currType == 'f')
         oss << 'f';
 
-    return oss.str();
+    return (oss.str());
 }
 
 static void printChar(double value)
 {
     std::cout << "char: ";
-    if (std::isnan(value) || std::isinf(value) || value < 0.0 || value > 127.0)
+    double inf = 1.0 / 0.0;
+    if (value != value ||
+        value == inf || 
+        value == -inf ||
+        value < 0.0 || value > 127.0)
     {
         std::cout << "impossible\n";
         return;
@@ -146,9 +152,7 @@ static void printChar(double value)
 static void printInt(double value)
 {
     std::cout << "int: ";
-    if (std::isnan(value) || std::isinf(value)
-        || value < static_cast<double>(std::numeric_limits<int>::min())
-        || value > static_cast<double>(std::numeric_limits<int>::max()))
+    if (value != value || value < INT_MIN || value > INT_MAX)
     {
         std::cout << "impossible\n";
         return;
@@ -159,34 +163,35 @@ static void printInt(double value)
 static void printFloat(double value)
 {
     std::cout << "float: ";
-    if (std::isnan(value))
+    if (value != value)
     {
         std::cout << "nanf\n";
         return;
     }
-    if (std::isinf(value))
+    double inf = 1.0 / 0.0;
+    if (value == inf || value == -inf)
     {
         std::cout << (value < 0.0 ? "-inff" : "+inff") << "\n";
         return;
     }
-    if (value < static_cast<double>(-std::numeric_limits<float>::max())
-        || value > static_cast<double>(std::numeric_limits<float>::max()))
+    if (value < -FLT_MAX || value > FLT_MAX)
     {
         std::cout << "impossible\n";
         return;
     }
-    std::cout << formatDoubleOrFloat(static_cast<float>(value), 'f') << "\n";
+    std::cout << formatDoubleOrFloat(value, 'f') << "\n";
 }
 
 static void printDouble(double value)
 {
     std::cout << "double: ";
-    if (std::isnan(value))
+    if (value != value)
     {
         std::cout << "nan\n";
         return;
     }
-    if (std::isinf(value))
+    double inf = 1.0/0.0;
+    if (value == inf || value == -inf)
     {
         std::cout << (value < 0.0 ? "-inf" : "+inf") << "\n";
         return;
@@ -233,15 +238,13 @@ void ScalarConverter::convert(const std::string &str)
     double value = 0.0;
     if (type == TYPE_CHAR)
         value = static_cast<double>(str[0]);
-    else if (type == TYPE_INT)
+    else if (type == TYPE_INT || type == TYPE_DOUBLE)
         value = std::strtod(str.c_str(), NULL);
     else if (type == TYPE_FLOAT)
     {
-        std::string core = str.substr(0, str.size() - 1);
-        value = std::strtod(core.c_str(), NULL);
+        std::string strWithoutF = str.substr(0, str.size() - 1);
+        value = std::strtod(strWithoutF.c_str(), NULL);
     }
-    else if (type == TYPE_DOUBLE)
-        value = std::strtod(str.c_str(), NULL);
 
     printChar(value);
     printInt(value);

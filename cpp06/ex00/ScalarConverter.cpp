@@ -230,11 +230,14 @@ void ScalarConverter::convert(const std::string &str)
         std::cout << "int: impossible\n";
         std::cout << "float: impossible\n";
         std::cout << "double: impossible\n";
+        return;
     }
 
     if (type == TYPE_PSEUDO)
+    {
         printPseudoStr(str);
-
+        return;
+    }
     double value = 0.0;
     if (type == TYPE_CHAR)
         value = static_cast<double>(str[0]);

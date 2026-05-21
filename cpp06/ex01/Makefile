@@ -7,7 +7,7 @@ all: $(NAME)
 $(NAME): $(OBJ)
 	c++ -Wall -Werror -Wextra -std=c++98 $(OBJ) -o $(NAME)
 
-%.o: 	%.cpp ScalarConverter.hpp
+%.o: 	%.cpp Data.hpp Serializer.hpp
 	c++ -Wall -Werror -Wextra -std=c++98 -c $< -o $@
 
 clean:

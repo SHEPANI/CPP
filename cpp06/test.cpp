@@ -421,4 +421,9 @@ int main()
         Derived* dp   = static_cast<Derived*>(base);  // compiles — but YOU must guarantee
                                                     // base really points to a Derived
     }
+
+    // ------------- dynamic_cast -------------- //
+    {
+
+    }
 }

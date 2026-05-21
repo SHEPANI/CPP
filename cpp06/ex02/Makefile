@@ -7,7 +7,7 @@ all: $(NAME)
 $(NAME): $(OBJ)
 	c++ -Wall -Werror -Wextra -std=c++98 $(OBJ) -o $(NAME)
 
-%.o: 	%.cpp A.hpp base.hpp C.hpp B.hpp
+%.o: 	%.cpp A.hpp Base.hpp C.hpp B.hpp
 	c++ -Wall -Werror -Wextra -std=c++98 -c $< -o $@
 
 clean:
@@ -16,4 +16,4 @@ clean:
 fclean: clean
 	rm -rf $(NAME)
 
-re:	fclean all;
+re:	fclean all

@@ -38,7 +38,7 @@ void identify(Base& p)
     }
     catch(const std::exception& e)
     {
-        std::cerr << "A : " <<  e.what() << '\n';
+        std::cout << "A : " <<  e.what() << '\n';
     }
 
     try
@@ -49,7 +49,7 @@ void identify(Base& p)
     }
     catch(const std::exception& e)
     {
-        std::cerr << "B : " << e.what() << '\n';
+        std::cout << "B : " << e.what() << '\n';
     }
 
     try
@@ -59,7 +59,7 @@ void identify(Base& p)
     }
     catch(const std::exception& e)
     {
-        std::cerr << "C : " << e.what() << '\n';
+        std::cout << "C : " << e.what() << '\n';
     }
 }
 

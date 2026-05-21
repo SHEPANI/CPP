@@ -3,5 +3,4 @@
 
 Base::~Base()
 {
-    std::cout << "Base Destructer called\n";
 }

@@ -1,8 +1,9 @@
 #include "Serializer.hpp"
+#include <iostream>
 
 int main()
 {
-    intptr_t raw;
+    uintptr_t raw;
     Data data1;
     Data* data2;
 

@@ -1,6 +1,6 @@
 SRC = main.cpp Serializer.cpp
 OBJ = $(SRC:.cpp=.o)
-NAME = a.out
+NAME = Serializer
 
 all: $(NAME)
 

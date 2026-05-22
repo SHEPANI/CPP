@@ -1,6 +1,6 @@
 SRC = main.cpp ScalarConverter.cpp
 OBJ = $(SRC:.cpp=.o)
-NAME = a.out
+NAME = ScalarConverter
 
 all: $(NAME)
 

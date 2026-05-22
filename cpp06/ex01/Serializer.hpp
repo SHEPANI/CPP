@@ -1,16 +1,14 @@
-#ifndef SERIALIZED_HPP
-#define SERIALIZED_HPP
+#ifndef SERIALIZER_HPP
+#define SERIALIZER_HPP
 
-#include <stdint.h>
-#include <string>
 #include "Data.hpp"
 
 class Serializer
 {
     private:
         Serializer();
-        Serializer(const Serializer& Other);
-        Serializer& operator=(const Serializer& Other);
+        Serializer(const Serializer&);
+        Serializer& operator=(const Serializer&);
         ~Serializer();
     public:
         static uintptr_t serialize(Data* ptr);

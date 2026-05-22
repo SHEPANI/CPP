@@ -1,12 +1,14 @@
 #include "ScalarConverter.hpp"
-
 #include <cmath>
+#include <iomanip>
+#include <iostream>
 #include <sstream>
-#include <climits>
-#include <cstdlib>
-#include <cerrno>
-#include <cctype>
 #include <float.h>
+
+ScalarConverter::ScalarConverter() {}
+ScalarConverter::ScalarConverter(const ScalarConverter &) {}
+ScalarConverter &ScalarConverter::operator=(const ScalarConverter &) { return *this; }
+ScalarConverter::~ScalarConverter() {}
 
 enum possibleTypes
 {
@@ -106,7 +108,6 @@ static possibleTypes detectType(const std::string &str)
     return TYPE_INVALID;
 }
 
-
 static std::string formatDoubleOrFloat(double value, char currType)
 {
     std::ostringstream oss;
@@ -130,73 +131,51 @@ static std::string formatDoubleOrFloat(double value, char currType)
     return (oss.str());
 }
 
-static void printChar(double value)
+static void printChar(char c, bool impossible)
 {
     std::cout << "char: ";
-    double inf = 1.0 / 0.0;
-    if (value != value ||
-        value == inf || 
-        value == -inf ||
-        value < 0.0 || value > 127.0)
+    if (impossible)
     {
         std::cout << "impossible\n";
         return;
     }
-    char c = static_cast<char>(value);
     if (c < 32 || c > 126)
         std::cout << "Non displayable\n";
     else
         std::cout << '\'' << c << '\'' << "\n";
 }
 
-static void printInt(double value)
+static void printInt(int i, bool impossible)
 {
     std::cout << "int: ";
-    if (value != value || value < INT_MIN || value > INT_MAX)
+    if (impossible)
     {
         std::cout << "impossible\n";
         return;
     }
-    std::cout << static_cast<int>(value) << "\n";
+    std::cout << i << "\n";
 }
 
-static void printFloat(double value)
+static void printFloat(float f, bool impossible)
 {
     std::cout << "float: ";
-    if (value != value)
-    {
-        std::cout << "nanf\n";
-        return;
-    }
-    double inf = 1.0 / 0.0;
-    if (value == inf || value == -inf)
-    {
-        std::cout << (value < 0.0 ? "-inff" : "+inff") << "\n";
-        return;
-    }
-    if (value < -FLT_MAX || value > FLT_MAX)
+    if (impossible)
     {
         std::cout << "impossible\n";
         return;
     }
-    std::cout << formatDoubleOrFloat(value, 'f') << "\n";
+    std::cout << formatDoubleOrFloat(static_cast<double>(f), 'f') << "\n";
 }
 
-static void printDouble(double value)
+static void printDouble(double d, bool impossible)
 {
     std::cout << "double: ";
-    if (value != value)
+    if (impossible)
     {
-        std::cout << "nan\n";
+        std::cout << "impossible\n";
         return;
     }
-    double inf = 1.0/0.0;
-    if (value == inf || value == -inf)
-    {
-        std::cout << (value < 0.0 ? "-inf" : "+inf") << "\n";
-        return;
-    }
-    std::cout << formatDoubleOrFloat(value, 'd') << "\n";
+    std::cout << formatDoubleOrFloat(d, 'd') << "\n";
 }
 
 static void printPseudoStr(const std::string &str)
@@ -219,17 +198,13 @@ static void printPseudoStr(const std::string &str)
     std::cout << "double: -inf\n";
 }
 
-
 void ScalarConverter::convert(const std::string &str)
 {
     possibleTypes type = detectType(str);
 
     if (type == TYPE_INVALID)
     {
-        std::cout << "char: impossible\n";
-        std::cout << "int: impossible\n";
-        std::cout << "float: impossible\n";
-        std::cout << "double: impossible\n";
+        std::cout << "char: impossible\nint: impossible\nfloat: impossible\ndouble: impossible\n";
         return;
     }
 
@@ -238,19 +213,75 @@ void ScalarConverter::convert(const std::string &str)
         printPseudoStr(str);
         return;
     }
-    double value = 0.0;
+
     if (type == TYPE_CHAR)
-        value = static_cast<double>(str[0]);
-    else if (type == TYPE_INT || type == TYPE_DOUBLE)
-        value = std::strtod(str.c_str(), NULL);
+    {
+        char c = str[0];
+        printChar(c, false);
+        printInt(static_cast<int>(c), false);
+        printFloat(static_cast<float>(c), false);
+        printDouble(static_cast<double>(c), false);
+    }
+    else if (type == TYPE_INT)
+    {
+        std::stringstream ss(str);
+        int i;
+        if (!(ss >> i))
+        {
+            printChar(0, true);
+            printInt(0, true);
+            printFloat(0.0f, true);
+            printDouble(0.0, true);
+        }
+        else
+        {
+            printChar(static_cast<char>(i), (i < 0 || i > 127));
+            printInt(i, false);
+            printFloat(static_cast<float>(i), false);
+            printDouble(static_cast<double>(i), false);
+        }
+
+    }
     else if (type == TYPE_FLOAT)
     {
         std::string strWithoutF = str.substr(0, str.size() - 1);
-        value = std::strtod(strWithoutF.c_str(), NULL);
+        std::stringstream ss(strWithoutF);
+        float f;
+        if (!(ss >> f))
+        {
+            printChar(0, true);
+            printInt(0, true);
+            printFloat(0.0f, true);
+            printDouble(0.0, true);
+        }
+        else
+        {
+            printChar(static_cast<char>(f), (f != f || f < 0.0f || f > 127.0f));
+            bool intImp = (f != f || f < static_cast<float>(INT_MIN) || f > static_cast<float>(INT_MAX));
+            printInt(static_cast<int>(f), intImp);
+            printFloat(f, false);
+            printDouble(static_cast<double>(f), false);
+        }
     }
-
-    printChar(value);
-    printInt(value);
-    printFloat(value);
-    printDouble(value);
+    else if (type == TYPE_DOUBLE)
+    {
+        std::stringstream ss(str);
+        double d;        
+        if (!(ss >> d))
+        {
+            printChar(0, true);
+            printInt(0, true);
+            printFloat(0.0f, true);
+            printDouble(0.0, true);
+        }
+        else
+        {
+            printChar(static_cast<char>(d), (d != d || d < 0.0 || d > 127.0));
+            bool intImp = (d != d || d < static_cast<double>(INT_MIN) || d > static_cast<double>(INT_MAX));
+            printInt(static_cast<int>(d), intImp);
+            bool floatImp = (d < -FLT_MAX || d > FLT_MAX);
+            printFloat(static_cast<float>(d), floatImp);
+            printDouble(d, false);
+        }
+    }
 }

@@ -52,13 +52,17 @@ unsigned int Array<T>::size()
 template <class T>
 T& Array<T>::operator[](unsigned int index)
 {
-    
+    if (index >= _size || _elements == NULL) 
+            throw std::out_of_range("Index out of bounds");
+    return _elements[index];
 }
 
 template <class T>
 const T& Array<T>::operator[](unsigned int index) const // way we need this second const
 {
-    
+    if (index >= _size || _elements == NULL) 
+            throw std::out_of_range("Index out of bounds");
+    return _elements[index];
 }
 
 

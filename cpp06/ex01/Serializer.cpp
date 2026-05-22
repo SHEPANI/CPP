@@ -9,14 +9,12 @@ Serializer::~Serializer()
 {
 }
 
-Serializer::Serializer(const Serializer& Other)
+Serializer::Serializer(const Serializer&)
 {
-    *this = Other;
 }
 
-Serializer& Serializer::operator=(const Serializer& Other)
+Serializer& Serializer::operator=(const Serializer&)
 {
-    *this = Other;
     return *this;
 }
 

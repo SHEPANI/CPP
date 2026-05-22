@@ -1,6 +1,6 @@
 SRC = Base.cpp C.cpp B.cpp A.cpp main.cpp 
 OBJ = $(SRC:.cpp=.o)
-NAME = a.out
+NAME = Identify
 
 all: $(NAME)
 

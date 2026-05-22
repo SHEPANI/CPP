@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { margin: 0; padding: 16px; font-family: sans-serif; background: transparent; }
+  .section-label { font-size: 13px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px; }
+  .row { display: flex; gap: 12px; margin-bottom: 10px; align-items: stretch; }
+  .box { border-radius: 8px; padding: 8px 14px; font-size: 13px; line-height: 1.4; }
+  .box .title { font-weight: 600; font-size: 13px; }
+  .box .sub   { font-size: 11px; opacity: .8; margin-top: 1px; }
+
+  /* stack vars */
+  .blue   { background:#dbeafe; border:1px solid #93c5fd; color:#1e3a5f; }
+  .teal   { background:#ccfbf1; border:1px solid #5eead4; color:#0f4c3a; }
+  .coral  { background:#ffe4e6; border:1px solid #fca5a5; color:#6b1e24; }
+
+  /* heap / vtable rows */
+  .purple { background:#ede9fe; border:1px solid #c4b5fd; color:#3b2a72; }
+  .gray   { background:#f3f4f6; border:1px solid #d1d5db; color:#374151; }
+  .amber  { background:#fef3c7; border:1px solid #fcd34d; color:#6b4600; }
+
+  /* result panels */
+  .ok   { background:#d1fae5; border:1px solid #6ee7b7; color:#064e30; border-radius:8px; padding:10px 14px; margin-bottom:8px; font-size:13px; }
+  .fail { background:#fee2e2; border:1px solid #fca5a5; color:#6b1e24; border-radius:8px; padding:10px 14px; margin-bottom:8px; font-size:13px; }
+  .note { background:transparent; border:1px dashed #9ca3af; color:#555; border-radius:8px; padding:10px 14px; font-size:12px; }
+
+  .arrow { font-size:18px; color:#9ca3af; display:flex; align-items:center; }
+  .group { flex:1; min-width:0; }
+  .group-box { border:1px dashed #9ca3af; border-radius:10px; padding:10px; }
+
+  @media (prefers-color-scheme: dark) {
+    .blue   { background:#1e3a5f; border-color:#3b82f6; color:#bfdbfe; }
+    .teal   { background:#0f3d2e; border-color:#2dd4bf; color:#99f6e4; }
+    .coral  { background:#4c1a1e; border-color:#f87171; color:#fecaca; }
+    .purple { background:#2e1e5e; border-color:#a78bfa; color:#ddd6fe; }
+    .gray   { background:#1f2937; border-color:#4b5563; color:#d1d5db; }
+    .amber  { background:#451a03; border-color:#f59e0b; color:#fde68a; }
+    .ok     { background:#052e16; border-color:#4ade80; color:#bbf7d0; }
+    .fail   { background:#4c1a1e; border-color:#f87171; color:#fecaca; }
+    .note   { border-color:#4b5563; color:#9ca3af; }
+    .section-label { color:#6b7280; }
+    .arrow  { color:#4b5563; }
+  }
+</style>
+</head>
+<body>
+
+<div class="section-label">Stack variables</div>
+<div class="row">
+  <div class="box blue group">
+    <div class="title">bp &nbsp;(Base*)</div>
+    <div class="sub">holds address → 0x1A2B</div>
+  </div>
+  <div class="box teal group">
+    <div class="title">dp &nbsp;(Derived*)</div>
+    <div class="sub">same address 0x1A2B &nbsp;✓</div>
+  </div>
+  <div class="box coral group">
+    <div class="title">op &nbsp;(Other*)</div>
+    <div class="sub">nullptr &nbsp;✗</div>
+  </div>
+</div>
+
+<div class="row" style="align-items:center; margin: 4px 0 12px;">
+  <div class="arrow">↓ bp dereferences to</div>
+</div>
+
+<div class="section-label">Heap — the actual object (new Derived())</div>
+<div class="group-box" style="margin-bottom:16px;">
+  <div class="row">
+    <div class="box purple group">
+      <div class="title">vptr</div>
+      <div class="sub">hidden pointer → Derived's vtable</div>
+    </div>
+    <div class="box gray group">
+      <div class="title">Derived data members</div>
+      <div class="sub">any fields you declared</div>
+    </div>
+  </div>
+</div>
+
+<div class="row" style="align-items:center; margin: 4px 0 12px;">
+  <div class="arrow">↓ vptr points to</div>
+</div>
+
+<div class="section-label">Vtable — static, read-only, one per class</div>
+<div class="group-box" style="margin-bottom:20px;">
+  <div class="row">
+    <div class="box amber group">
+      <div class="title">type_info → "Derived"</div>
+      <div class="sub">RTTI: real type name + full inheritance chain</div>
+    </div>
+    <div class="box gray group">
+      <div class="title">virtual fn pointers</div>
+      <div class="sub">~Derived(), overrides…</div>
+    </div>
+  </div>
+</div>
+
+<div class="section-label">What dynamic_cast does at runtime</div>
+
+<div class="ok">
+  <strong>✓ dynamic_cast&lt;Derived*&gt;(bp) — succeeds</strong><br>
+  Follows vptr → reads type_info → <code>"Derived"</code> matches target → returns the same address as bp.
+</div>
+
+<div class="fail">
+  <strong>✗ dynamic_cast&lt;Other*&gt;(bp) — fails safely</strong><br>
+  Follows vptr → reads type_info → <code>"Derived"</code> is not <code>"Other"</code> and not in its hierarchy → returns <strong>nullptr</strong>. No crash, no undefined behavior.
+</div>
+
+<div class="note">
+  <strong>Why virtual ~Base() is required:</strong>
+  No virtual function → compiler emits no vtable → no vptr in the object → no RTTI pointer → <code>dynamic_cast</code> has nothing to follow and won't compile.
+</div>
+
+</body>
+</html>

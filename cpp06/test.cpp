@@ -363,6 +363,7 @@ int main()
 
         short a = 200;
         int b;
+        
         b = int(a); // function notation c++ version it like u say constructe an int from a
         b = (int)a; // C-like cast notation
         std::cout << "b : " << b<< "\n";
@@ -421,9 +422,34 @@ int main()
         Derived* dp   = static_cast<Derived*>(base);  // compiles — but YOU must guarantee
                                                     // base really points to a Derived
     }
-
+    
     // ------------- dynamic_cast -------------- //
     {
+        class Base {
+            public:
+                int i;
+                void a()
+                {
+                    std::cout << "hello\n";
+                }
+                Base(){i=10;};
+                virtual ~Base(){};
+                
+        };
+        class Derived : public Base {
+            public :
+            int i;
+            Derived(){i=100;}
+            void a()
+            {
+                std::cout << "helWWElo\n";
+            }
+        };
 
+        Derived* c;
+        Base b;
+        b.i +=1;
+        c = dynamic_cast<Derived*>(&b);
+        c->a();
     }
 }

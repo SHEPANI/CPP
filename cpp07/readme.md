@@ -155,3 +155,71 @@ even though j and l have different types, since the compiler can determine the a
 
 Class templates
 
+We also have the possibility to write class templates, so that a class can have members that use template parameters as types:
+
+cpp```
+template <class T>
+class myClass
+{
+    private:
+        T val [2];
+    public:
+        myClass (T first, T second)
+        {
+            val[0]=first;
+            val[1]=second;
+        }
+};
+```
+
+this class define serves to store two elements
+of any valid T type.
+
+cpp```
+myClass <int> myints (13,37);
+myClass <double> myfloats (42.42,13.37);
+myClass <char> mychar ('b','a');
+```
+
+The only member function in the previous class template has been defined inline within the class declaration itself. In case that we define a function member outside the declaration of the class template, we must always precede that definition with the template <...> prefix.
+
+template <class identifier> identifier class<identifier>::member_func_implement
+
+template <typename identifier> identifier class<identifier>::member_func_implement
+
+
+cpp```
+// class templates
+#include <iostream>
+using namespace std;
+
+template <class T>
+class mypair {
+    T a, b;
+  public:
+    mypair (T first, T second)
+      {a=first; b=second;}
+    T getmax ();
+};
+
+template <class T>
+T mypair<T>::getmax ()
+{
+  T retval;
+  retval = a>b? a : b;
+  return retval;
+}
+
+int main () {
+  mypair <int> myobject (100, 75);
+  cout << myobject.getmax();
+  return 0;
+}
+```
+
+Notice the syntax of the definition of member function getmax:
+
+cpp```
+    template <class T>
+    T mypair<T>::getmax ()
+```

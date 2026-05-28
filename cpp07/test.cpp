@@ -27,5 +27,6 @@ int main()
         std::cout << GetMax <std::string> (str1, str2) << "\n";
         // or this shulde set err
         // std::cout <<GetMax <std::string> (x, j) << "\n";
+        // std::cout <<GetMax  (x, j) << "\n";
     }
 }

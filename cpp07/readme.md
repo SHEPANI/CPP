@@ -132,6 +132,26 @@ cpp```
 This would not be correct, since our GetMax function template expects two arguments of the same type, and in this call to it we use objects of two different types.
 
 we can define func templates that accept 2 param,
-simply by specifying more template parameters between the angle brackets
-of diff types and returns an object of one of those 
-param.
+simply by specifying more template parameters between the angle brackets <> of diff types and returns an object of one of those param.
+
+cpp```
+template <class T, class U>
+T GetMin (T a, U b) {
+  return (a<b?a:b);
+}
+
+int main()
+{
+    int i,j;
+    long l;
+    i = GetMin<int,long> (j,l);
+    // or
+    i = GetMin (j,l);
+}
+```
+In this case, our function template GetMin() accepts two parameters of different types and returns an object of the same type as the first parameter (T) that is passed.
+
+even though j and l have different types, since the compiler can determine the appropriate instantiation anyway.
+
+Class templates
+

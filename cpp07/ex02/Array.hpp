@@ -19,5 +19,4 @@ class Array
 };
 
 
-
 #endif

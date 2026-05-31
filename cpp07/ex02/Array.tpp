@@ -1,7 +1,5 @@
 #include "Array.hpp"
-
-
-
+#include <stdexcept>
 
 template <typename T>
 Array<T>::Array() : arr(NULL), arrSize(0)
@@ -20,21 +18,21 @@ Array<T>::Array(unsigned int n) : arrSize(n)
 template <typename T>
 Array<T>::Array(const Array& Other) : arr(NULL), arrSize(0)
 {
-    *this = other;
+    *this = Other;
 }
 
 template <typename T>
 Array<T>& Array<T>::operator=(const Array& Other) // in the parameters way work without <T>
 {
-    if (this != &other) 
+    if (this != &Other) 
     {
         delete[] arr;
-        arrSize = other.arrSize;
+        arrSize = Other.arrSize;
         if (arrSize > 0) 
         {
             arr = new T[arrSize];
             for (unsigned int i = 0; i < arrSize; i++)
-                arr[i] = other.arr[i];
+                arr[i] = Other.arr[i];
         }
         else
             arr = NULL;
@@ -46,23 +44,23 @@ Array<T>& Array<T>::operator=(const Array& Other) // in the parameters way work 
 template <class T>
 unsigned int Array<T>::size()
 {
-    return this->size;
+    return this->arrSize;
 }
 
 template <class T>
 T& Array<T>::operator[](unsigned int index)
 {
-    if (index >= _size || _elements == NULL) 
+    if (index >= arrSize || arr == NULL) 
             throw std::out_of_range("Index out of bounds");
-    return _elements[index];
+    return arr[index];
 }
 
 template <class T>
 const T& Array<T>::operator[](unsigned int index) const // way we need this second const
 {
-    if (index >= _size || _elements == NULL) 
+    if (index >= arrSize || arr == NULL) 
             throw std::out_of_range("Index out of bounds");
-    return _elements[index];
+    return arr[index];
 }
 
 

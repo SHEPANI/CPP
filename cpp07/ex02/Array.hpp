@@ -1,7 +1,7 @@
 #ifndef ARRAY_HPP
 #define ARRAY_HPP
 
-template <typename T> 
+template <class T>
 class Array
 {
     private:
@@ -9,10 +9,10 @@ class Array
         unsigned int arrSize;
     public:
         Array();
-        Array(unsigned int n);
+        Array(unsigned int n); 
         Array(const Array& Other);
         Array& operator=(const Array& Other);
-        unsigned int size();
+        unsigned int size() const;
         T& operator[](unsigned int index);
         const T& operator[](unsigned int index) const;
         ~Array();

@@ -19,9 +19,11 @@ template <typename identifier> function_declaration;
 cpp```
 {
     template <class myType>
-    myType GetMax (myType a, myType b) {
-    return (a>b?a:b);
-}
+    myType GetMax (myType a, myType b)
+    {
+
+      return (a>b?a:b);
+    }
 }
 ```
 Here we have created a template function with myType as its template parameter. This template parameter represents a type that has not yet been specified, but that can be used in the template function as if it were a regular type.

@@ -11,7 +11,7 @@ int main()
    int intArr[] = {1,2,3,4};
    std::string strArr[] = {"ahmed", "30 ans", "Casablanca"};
 
-    std::cout << "------ printArrElement function ------\n";
+   std::cout << "------ printArrElement function ------\n";
 
    std::cout << "int Array element : ";
    iter(intArr, 4, printArrElement<int>);

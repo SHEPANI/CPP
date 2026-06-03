@@ -18,5 +18,6 @@ class Array
         ~Array();
 };
 
+#include "Array.tpp"
 
 #endif

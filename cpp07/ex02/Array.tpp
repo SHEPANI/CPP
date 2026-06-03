@@ -42,7 +42,7 @@ Array<T>& Array<T>::operator=(const Array& Other) // in the parameters way work 
 
 
 template <class T>
-unsigned int Array<T>::size()
+unsigned int Array<T>::size() const
 {
     return this->arrSize;
 }

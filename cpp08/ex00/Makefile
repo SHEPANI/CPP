@@ -1,5 +1,5 @@
 NAME = EasyFind
-SRCS = main.cpp easyfind.hpp
+SRCS = main.cpp
 FLAGS = -Wall -Wextra -Werror -std=c++98 -MMD
 OBJS = $(SRCS:.cpp=.o)
 DEPS = $(OBJS:.o=.d)
@@ -22,5 +22,7 @@ fclean: clean
 	$(RM) $(NAME)
 
 re : fclean all
+
+-include $(DEPS)
 
 .PHONY: all clean fclean re

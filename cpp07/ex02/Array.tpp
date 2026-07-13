@@ -1,41 +1,41 @@
-#include "Array.hpp"
 #include <stdexcept>
+#include <iostream>
 
-template <typename T>
+template <class T>
 Array<T>::Array() : arr(NULL), arrSize(0)
 {
 };
 
-template <typename T>
+template <class T>
 Array<T>::Array(unsigned int n) : arrSize(n)
 {
-    if (n <= 0)
-        arr = NULL;
-    else
+    if (n > 0)
         arr = new T[n]();
+    else
+        arr = NULL;
 };
 
-template <typename T>
-Array<T>::Array(const Array& Other) : arr(NULL), arrSize(0)
+template <class T>
+Array<T>::Array(const Array<T>& Other) : arr(NULL), arrSize(0)
 {
     *this = Other;
 }
 
-template <typename T>
-Array<T>& Array<T>::operator=(const Array& Other) // in the parameters way work without <T>
+template <class T>
+Array<T>& Array<T>::operator=(const Array<T>& Other)
 {
     if (this != &Other) 
     {
-        delete[] arr;
-        arrSize = Other.arrSize;
-        if (arrSize > 0) 
+        delete[] this->arr; 
+        this->arrSize = Other.arrSize;
+        if (this->arrSize > 0) 
         {
-            arr = new T[arrSize];
-            for (unsigned int i = 0; i < arrSize; i++)
-                arr[i] = Other.arr[i];
+            this->arr = new T[this->arrSize]();
+            for (unsigned int i = 0; i < this->arrSize; i++)
+                this->arr[i] = Other.arr[i];
         }
         else
-            arr = NULL;
+            this->arr = NULL;
     }
     return *this;
 }
@@ -56,7 +56,7 @@ T& Array<T>::operator[](unsigned int index)
 }
 
 template <class T>
-const T& Array<T>::operator[](unsigned int index) const // way we need this second const
+const T& Array<T>::operator[](unsigned int index) const
 {
     if (index >= arrSize || arr == NULL) 
             throw std::out_of_range("Index out of bounds");
@@ -64,7 +64,7 @@ const T& Array<T>::operator[](unsigned int index) const // way we need this seco
 }
 
 
-template <typename T>
+template <class T>
 Array<T>::~Array()
 {
     delete[] arr;

@@ -314,7 +314,7 @@ T X<T>::s = 0;    // definition
 X<int>   a;       // X<int>::s   is int,   initialized to 0
 X<char*> b;       // X<char*>::s is char*, initialized to 0
 ```
-
+// TODO : template instantiation.
 ---
 
 ## 4. Function Templates

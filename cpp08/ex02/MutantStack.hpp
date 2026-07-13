@@ -3,6 +3,8 @@
 
 #include <stack>
 #include <deque>
+#include <list>
+#include <vector>
 #include <iostream>
 
 template <typename T, typename Container = std::deque<T> >

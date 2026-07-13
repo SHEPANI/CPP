@@ -28,8 +28,10 @@ class Span
         template <typename iterator>  
         void add_Multiple_Numbers(iterator beginit,iterator endit)
         {
+            if (numbers.size() + (unsigned int)(std::distance(beginit, endit)) > N)
+                throw std::length_error("Span is full");
             for (iterator it = beginit; it != endit; it++)
-                addNumber(*it);
+                numbers.push_back(*it);
         }
 };
 

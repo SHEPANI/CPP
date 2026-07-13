@@ -1149,6 +1149,7 @@ In C++98, before `mutable` was widely used, `const_cast` was sometimes used insi
 class Buffer {
     char data[256];
     int  size;
+    .
 public:
     // Non-const version
     char* get_data() {

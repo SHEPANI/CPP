@@ -9,7 +9,7 @@ class ircserv
 {
     public:
         int port;
-        int serverSocket;
+        int serverSocketFd;
     public:
         ircserv();
         ~ircserv(){};

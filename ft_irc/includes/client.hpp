@@ -1,0 +1,43 @@
+#ifndef CLIENT_HPP
+#define CLIENT_HPP
+#include <string>
+#include <set>
+
+class client
+{
+    private:
+        int fd;
+        std::string nickName;
+		std::string userName;
+		std::string realName;
+        std::string IpAdd;
+		std::set<std::string> channelsJoined;
+        bool authentication;
+        bool passOk;
+        bool hasNick;
+        bool hasUser;
+    public:
+        std::string readBuffer;
+        std::string writeBuffer;
+        client();
+    	const std::string &getUserName() const;
+        const std::string &getNickName() const;
+    	const std::string &getRealName() const;
+		const std::string getClientName() const;
+
+        void setFD(int FD);
+        void setIpAdd(std::string CIpAdd);
+        void setAsAuthenticated();
+        void setPassStatusFalse();
+        void setNickName(std::string nickName);
+        void setUserName(std::string userName);
+        void setRealName(std::string realName);
+        const std::string getIpAdd() const;
+        int getFD();
+        bool isAuthenticat();
+        void setAuthenRequirment(int id);
+        bool checkAuthenRequirment(int i);
+
+        ~client();
+};
+#endif

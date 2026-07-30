@@ -12,5 +12,5 @@ class searchable_tree_bag : public searchable_bag , public tree_bag
 
 	bool has(int  v) const;
     private :
-        bool search_tree(node *n, int v) const; 
+        bool search_tree(node *node, int v) const; 
 };

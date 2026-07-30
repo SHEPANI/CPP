@@ -21,19 +21,32 @@
         }
         return *this;
     }
-    bool searchable_tree_bag::search_tree(node *n, int v) const
+    // bool searchable_tree_bag::search_tree(node *n, int v) const
+    // {
+    //     if(!n)
+    //         return false;
+    //     if(n->value == v)
+    //         return true;
+    //     if(n->value > v)
+    //         return search_tree(n->l, v);
+    //     else
+    //         return search_tree(n->r , v);
+    // }
+
+    bool searchable_tree_bag::search_tree(node* node,int v) const
     {
-        if(!n)
+        if (!tree)
             return false;
-        if(n->value == v)
+        if (tree->value == v)
             return true;
-        if(n->value > v)
-            return search_tree(n->l, v);
-        else
-            return search_tree(n->r , v);
+        if (tree->value > v)
+            return search_tree(node->l, v);
+        else  
+            return search_tree(node->r, v);
     }
 
 	bool searchable_tree_bag::has(int v) const
     {
         return search_tree(tree, v);
+
     }

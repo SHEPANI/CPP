@@ -37,7 +37,6 @@ int main()
         mstacklst.push(3);
         mstacklst.push(5);
         mstacklst.push(737);
-        //[...]
         mstacklst.push(0);
         MutantStack<int, std::list<int> >::iterator it = mstacklst.begin();
         MutantStack<int, std::list<int> >::iterator ite = mstacklst.end();
@@ -60,7 +59,6 @@ int main()
         mstackvec.push(3);
         mstackvec.push(5);
         mstackvec.push(737);
-        //[...]
         mstackvec.push(0);
         MutantStack<int, std::vector<int> >::iterator it = mstackvec.begin();
         MutantStack<int, std::vector<int> >::iterator ite = mstackvec.end();

@@ -13,7 +13,6 @@ int main(int c, char* av[])
     
         if (!ifile.is_open())
             throw "Error: could not open file.";
-        
 
         BitcoinExchange a;        
         a.getBtcVal(ifile);

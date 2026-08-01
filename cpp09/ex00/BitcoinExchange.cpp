@@ -67,9 +67,7 @@ void BitcoinExchange::getBtcVal(std::ifstream& inpuText)
 
                 it = dbmap.lower_bound(indate);
                 if (it == dbmap.begin())
-                {
-                        std::cout << "out of range\n";
-                }
+                    std::cout << "Error: bad input => " << indate << "\n";
                 else
                 {
                     it--;
@@ -96,15 +94,11 @@ void BitcoinExchange::getBtcVal(std::ifstream& inpuText)
                 ss << inVal;
                 ss >> inMultiNum;
                 std::cout << indate << " => " << inVal << " = "<< dbValNum * inMultiNum << "\n";
-                // std::cout << "key find\n";
             }
         }
     }
 }
 
-//Error: too large a number.
-// Error: not a positive number.
-// Error: bad input => 2001-42-42
 int BitcoinExchange::parseInput(std::string& iKey,std::string& iVal)
 {
     int dash = 0;

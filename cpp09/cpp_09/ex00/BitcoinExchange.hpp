@@ -19,6 +19,7 @@ class BitcoinExchange
         std::map<std::string, std::string> dbmap;
         void createMapDb(void);
         void getBtcVal(std::ifstream& inpuText);
+        int parseInput(std::string& iKey,std::string& iVal);
 };
 
 #endif

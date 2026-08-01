@@ -5,7 +5,6 @@
 #include <sstream>
 #include <float.h>
 
-
 ScalarConverter::ScalarConverter() {}
 ScalarConverter::ScalarConverter(const ScalarConverter &) {}
 ScalarConverter &ScalarConverter::operator=(const ScalarConverter &) { return *this; }
@@ -258,7 +257,7 @@ void ScalarConverter::convert(const std::string &str)
         else
         {
             printChar(static_cast<char>(f), (f != f || f < 0.0f || f > 127.0f));
-            bool intImp = (f != f || f < static_cast<float>(2147483647) || f > static_cast<float>(2147483647));
+            bool intImp = (f != f || f < static_cast<float>(INT_MIN) || f > static_cast<float>(INT_MAX));
             printInt(static_cast<int>(f), intImp);
             printFloat(f, false);
             printDouble(static_cast<double>(f), false);
@@ -278,7 +277,7 @@ void ScalarConverter::convert(const std::string &str)
         else
         {
             printChar(static_cast<char>(d), (d != d || d < 0.0 || d > 127.0));
-            bool intImp = (d != d || d < static_cast<double>(-2147483648) || d > static_cast<double>(-2147483648));
+            bool intImp = (d != d || d < static_cast<double>(INT_MIN) || d > static_cast<double>(INT_MAX));
             printInt(static_cast<int>(d), intImp);
             bool floatImp = (d < -FLT_MAX || d > FLT_MAX);
             printFloat(static_cast<float>(d), floatImp);

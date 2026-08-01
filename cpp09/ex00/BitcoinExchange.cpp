@@ -52,7 +52,8 @@ void BitcoinExchange::getBtcVal(std::ifstream& inpuText)
         std::string indate,inVal;
         
         if (std::getline(iss, indate, '|'))
-            indate.erase(indate.length() -1);
+            if (indate.size() > 10)
+                indate.erase(indate.end() -1);
         
         if (std::getline(iss, inVal, '|'))
             inVal.erase(inVal.begin());
@@ -61,13 +62,41 @@ void BitcoinExchange::getBtcVal(std::ifstream& inpuText)
         {
             std::map<std::string, std::string>::iterator it = dbmap.find(indate);
 
-            if (it != dbmap.end())
+            if (it == dbmap.end())
             {
-                std::cout << "key not find\n";
+
+                it = dbmap.lower_bound(indate);
+                if (it == dbmap.begin())
+                {
+                        std::cout << "out of range\n";
+                }
+                else
+                {
+                    it--;
+                    std::stringstream ss(it->second);
+                    double dbValNum = 0;
+                    ss >> dbValNum;
+                    ss.clear();
+                    ss.str("");
+                    double inMultiNum = 0;
+                    ss << inVal;
+                    ss >> inMultiNum;
+                    std::cout << indate << " => " << inVal << " = "<< dbValNum * inMultiNum << "\n";
+
+                }
             }
             else
             {
-                std::cout << "key find\n";
+                std::stringstream ss(it->second);
+                double dbValNum = 0;
+                ss >> dbValNum;
+                ss.clear();
+                ss.str("");
+                double inMultiNum = 0;
+                ss << inVal;
+                ss >> inMultiNum;
+                std::cout << indate << " => " << inVal << " = "<< dbValNum * inMultiNum << "\n";
+                // std::cout << "key find\n";
             }
         }
     }
@@ -107,7 +136,7 @@ int BitcoinExchange::parseInput(std::string& iKey,std::string& iVal)
                 return (std::cout << "Error: bad input => " << iVal << "\n", false);
             continue;
         }
-        if (!isalnum(iVal[i]))
+        if (iVal[0] != '-' && iVal[0] != '+' && !isalnum(iVal[i]))
             return (std::cout << "Error: bad input => " << iVal << "\n", false);
     }
 

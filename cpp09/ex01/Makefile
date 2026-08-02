@@ -1,9 +1,15 @@
 NAME = RPN
+
 SRCS = main.cpp RPN.cpp
+
 OBJS = $(SRCS:.cpp=.o)
+
 DEPS = $(OBJS:.o=.d)
+
 FLAGS = -Wall -Wextra -Werror -std=c++98 -MMD
+
 CXX = c++
+
 RM = rm -rf
 
 all: $(NAME)

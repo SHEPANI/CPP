@@ -111,7 +111,7 @@ int BitcoinExchange::parseInput(std::string& iKey,std::string& iVal)
     {
         if (iKey[i] == '-')
             continue;
-        if (!isalnum(iKey[i]))
+        if (!isdigit(iKey[i]))
             return (std::cout << "Error: bad input => " << iKey << "\n", false);
     }
     if (iKey[4] == '-' && iKey[7] == '-')
@@ -130,7 +130,7 @@ int BitcoinExchange::parseInput(std::string& iKey,std::string& iVal)
                 return (std::cout << "Error: bad input => " << iVal << "\n", false);
             continue;
         }
-        if (iVal[0] != '-' && iVal[0] != '+' && !isalnum(iVal[i]))
+        if (iVal[0] != '-' && iVal[0] != '+' && !isdigit(iVal[i]))
             return (std::cout << "Error: bad input => " << iVal << "\n", false);
     }
 

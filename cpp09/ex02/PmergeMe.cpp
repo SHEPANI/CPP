@@ -15,7 +15,6 @@ PmergeMe& PmergeMe::operator=(const PmergeMe& other)
     {
         vec_container  = other.vec_container;
         deck_container = other.deck_container;
-        basevec        = other.basevec;
     }
     return *this;
 };

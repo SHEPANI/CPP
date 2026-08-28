@@ -22,13 +22,18 @@ int main(int ac, char* av[])
         std::cout << "Before: ";
         printNumbers(obj.get_Vec_Con());
         vecstrat = exact_time();
+        obj.setVec(obj.get_Vec_Con());
         vecend = exact_time() - vecstrat;
-        (void)(vecend);
-        // (void)(vecend);
-        // double deckstrat = 0, deckend = 0;
-        // deckstrat = exact_time();
-        // deckend = exact_time() - deckend;
-
+        std::cout << "After:  ";
+        printNumbers(obj.get_Vec_Con());
+        double deckstrat = 0, deckend = 0;
+        deckstrat = exact_time();
+        obj.setdeck(obj.get_deck_Con());
+        deckend = exact_time() - deckstrat;
+        std::cout.setf(std::ios::fixed);
+        std::cout.precision(5);
+        std::cout << "Time to process a range of " << obj.get_Vec_Con().size() << " elements with std::vector : " << vecend << " us\n";
+        std::cout <<  "Time to process a range of " << obj.get_deck_Con().size() << " elements with std::list : " << deckend << " us\n";
     }
     catch(const std::exception& e)
     {

@@ -46,8 +46,8 @@ PmergeMe::PmergeMe(char** args, size_t size)
             if (std::find(vec_container.begin(), vec_container.end(), val) != vec_container.end())
                 throw std::runtime_error("duplicates arg");
 
-            vec_container.push_back(nm);
-            deck_container.push_back(nm);
+            vec_container.push_back(val);
+            deck_container.push_back(val);
         }
     }
 };
@@ -173,31 +173,31 @@ void PmergeMe::setdeck(std::deque<int> &deck)
     deck_container = sorteDeck(deck);
 }
 
-std::deque<size_t> PmergeMe::deckRight_order(size_t wSize)
-{
-    std::deque<size_t> other;
-    if (wSize < 2)
-        return (other); // needs explain
-    std::deque<size_t> jacobs;
-    jacobs.push_back(1);
-    jacobs.push_back(1);
-    size_t i = 1;
-    while (jacobs[i] < wSize)
-    {
-        i++;
-        jacobs.push_back(jacobs[i-1]+2*jacobs[i-2]);
-    }
-    size_t prev = 1;
-    size_t l = 0;
-    for (size_t i = 2; i < jacobs.size(); i++)
-    {
-        l = std::min(jacobs[i], wSize);
-        for (size_t j = l; j > prev; j--)
-            other.push_back(j);
-        prev = l;
-    }
-    return (other);
-}
+// std::deque<size_t> PmergeMe::deckRight_order(size_t wSize)
+// {
+//     std::deque<size_t> other;
+//     if (wSize < 2)
+//         return (other); // needs explain
+//     std::deque<size_t> jacobs;
+//     jacobs.push_back(1);
+//     jacobs.push_back(1);
+//     size_t i = 1;
+//     while (jacobs[i] < wSize)
+//     {
+//         i++;
+//         jacobs.push_back(jacobs[i-1]+2*jacobs[i-2]);
+//     }
+//     size_t prev = 1;
+//     size_t l = 0;
+//     for (size_t i = 2; i < jacobs.size(); i++)
+//     {
+//         l = std::min(jacobs[i], wSize);
+//         for (size_t j = l; j > prev; j--)
+//             other.push_back(j);
+//         prev = l;
+//     }
+//     return (other);
+// }
 
 
 std::deque<int> PmergeMe::sorteDeck(std::deque<int> &deckContainer)
@@ -261,7 +261,8 @@ std::deque<int> PmergeMe::sorteDeck(std::deque<int> &deckContainer)
             }
         }
     }
-    std::deque<size_t> loser_order = deckRight_order(winners.size());
+
+    std::vector<size_t> loser_order = vecRight_order(winners.size());
 
     for (size_t i = 0; i < loser_order.size(); i++)
     {

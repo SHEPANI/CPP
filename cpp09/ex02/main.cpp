@@ -33,7 +33,7 @@ int main(int ac, char* av[])
         std::cout.setf(std::ios::fixed);
         std::cout.precision(5);
         std::cout << "Time to process a range of " << obj.get_Vec_Con().size() << " elements with std::vector : " << vecend << " us\n";
-        std::cout <<  "Time to process a range of " << obj.get_deck_Con().size() << " elements with std::list : " << deckend << " us\n";
+        std::cout <<  "Time to process a range of " << obj.get_deck_Con().size() << " elements with std::deque : " << deckend << " us\n";
     }
     catch(const std::exception& e)
     {

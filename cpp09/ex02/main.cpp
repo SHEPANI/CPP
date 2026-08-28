@@ -10,7 +10,9 @@ int main(int ac, char* av[])
     try
     {
         size_t size = static_cast<size_t>(ac);
-        PmergeMe(av, size);
+        PmergeMe obj(av, size);
+        std::cout << "Before: ";
+        printNumbers(obj.get_Vec_Con());
     }
     catch(const std::exception& e)
     {

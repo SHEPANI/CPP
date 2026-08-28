@@ -22,5 +22,17 @@ class PmergeMe
         ~PmergeMe();
 };
 
+template <typename T>
+void printNumbers(T &numbers)
+{
+    typename T::iterator it = numbers.begin();
+    for (;it != numbers.end();it++)
+    {
+        if (it != numbers.begin())
+            std::cout << " ";
+        std::cout << *it;
+    }
+    std::cout << "\n";
+}
 
 #endif

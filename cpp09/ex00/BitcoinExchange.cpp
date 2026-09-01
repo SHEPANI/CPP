@@ -137,7 +137,7 @@ int BitcoinExchange::parseInput(std::string& iKey,std::string& iVal)
     if (!(ss >> valNum) || (valNum > 1000))
         return (std::cout << "Error: too large a number." << "\n", false);
     if (valNum < 0)
-        return (std::cout << "Error: not a positive number. " << "\n", false);
+        return (std::cout << "Error: not a positive number." << "\n", false);
     return true;
 }
 

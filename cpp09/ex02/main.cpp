@@ -24,7 +24,7 @@ int main(int ac, char* av[])
         vecstrat = exact_time();
         obj.setVec(obj.get_Vec_Con());
         vecend = exact_time() - vecstrat;
-        std::cout << "After:  ";
+        std::cout << "After: ";
         printNumbers(obj.get_Vec_Con());
         double deckstrat = 0, deckend = 0;
         deckstrat = exact_time();

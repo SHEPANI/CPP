@@ -5,6 +5,7 @@
 #include <sstream>
 #include <fstream>
 #include <map>
+#include <stdlib.h>
 
 class BitcoinExchange
 {
@@ -17,6 +18,7 @@ class BitcoinExchange
         ~BitcoinExchange();
 
         std::map<std::string, std::string> dbmap;
+        std::string strim(const std::string& ip);
         void createMapDb(void);
         void getBtcVal(std::ifstream& inpuText);
         int parseInput(std::string& iKey,std::string& iVal);

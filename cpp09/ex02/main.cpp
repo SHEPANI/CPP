@@ -13,7 +13,6 @@ int main(int ac, char* av[])
 {
     if (ac == 1)
         return (std::cerr << "not enough numbers\n", 1);
-    
     try
     {
         double vecstrat = 0, vecend = 0;

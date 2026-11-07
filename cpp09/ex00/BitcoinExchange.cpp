@@ -40,10 +40,27 @@ void BitcoinExchange::createMapDb(void)
     }
 }
 
+std::string BitcoinExchange::strim(const std::string& val)
+{
+    size_t end = val.size();
+    size_t start = 0;
+
+    while (start < end && std::isspace(val[start]))
+    {
+        start++;
+    }
+
+    while (end > start && std::isspace(val[end -1]))
+    {
+        end--;
+    }
+    return val.substr(start, end - start);
+}
+
+
 void BitcoinExchange::getBtcVal(std::ifstream& inpuText)
 {
     std::string line;
-    std::getline(inpuText, line);
     while (std::getline(inpuText, line))
     {
         if (line.empty()) continue;
@@ -52,12 +69,12 @@ void BitcoinExchange::getBtcVal(std::ifstream& inpuText)
         std::string indate,inVal;
         
         if (std::getline(iss, indate, '|'))
-            if (indate.size() > 10)
-                indate.erase(indate.end() -1);
+            indate.erase(indate.end() -1);
         
         if (std::getline(iss, inVal, '|'))
             inVal.erase(inVal.begin());
-
+        indate = strim(indate);
+        inVal = strim(inVal);
         if (parseInput(indate, inVal))
         {
             std::map<std::string, std::string>::iterator it = dbmap.find(indate);
@@ -102,21 +119,41 @@ void BitcoinExchange::getBtcVal(std::ifstream& inpuText)
 int BitcoinExchange::parseInput(std::string& iKey,std::string& iVal)
 {
     int dash = 0;
+    int dayMax = 31;
     int dot = 0;
     int valSize = iVal.size();
+    int keySize = iKey.size();
     std::stringstream ss(iVal);
     int valNum;
 
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < keySize; i++)
     {
-        if (iKey[i] == '-')
+        if (i == 4 || i == 7)
             continue;
         if (!isdigit(iKey[i]))
             return (std::cout << "Error: bad input => " << iKey << "\n", false);
     }
     if (iKey[4] == '-' && iKey[7] == '-')
         dash = 2;
-    if (dash != 2 || iKey[5] > (3 + '0')  || iKey[8] > (3 + '0') || iKey.empty())
+
+    int day = std::atoi(iKey.substr(8, 2).c_str());
+    int month = std::atoi(iKey.substr(5, 2).c_str());
+    int yr = std::atoi(iKey.substr(0, 4).c_str());
+
+    if (dash != 2 || keySize != 10 || iKey.empty() || yr < 0 || month < 1 || month > 12 || day < 1 || day > 31)
+        return (std::cout << "Error: bad input => " << iKey << "\n", false);
+    else if (month == 11 || month == 9 || month == 6 || month == 4)
+        dayMax = 30;
+    else if (month == 2)
+    {
+        bool leapYear = (yr % 4 == 0 && yr % 100 != 0) || (yr % 400 == 0);
+        if (leapYear)
+            dayMax = 29;
+        else
+            dayMax = 28;
+    }
+
+    if (day > dayMax)
         return (std::cout << "Error: bad input => " << iKey << "\n", false);
 
     if (iVal.empty())
@@ -130,14 +167,12 @@ int BitcoinExchange::parseInput(std::string& iKey,std::string& iVal)
                 return (std::cout << "Error: bad input => " << iVal << "\n", false);
             continue;
         }
-        if (iVal[0] != '-' && iVal[0] != '+' && !isdigit(iVal[i]))
+        if (!isdigit(iVal[i]))
             return (std::cout << "Error: bad input => " << iVal << "\n", false);
     }
 
     if (!(ss >> valNum) || (valNum > 1000))
         return (std::cout << "Error: too large a number." << "\n", false);
-    if (valNum < 0)
-        return (std::cout << "Error: not a positive number. " << "\n", false);
     return true;
 }
 

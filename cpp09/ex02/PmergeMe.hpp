@@ -25,7 +25,6 @@ class PmergeMe
         std::vector<int>& get_Vec_Con(); 
         std::deque<int>& get_deck_Con();
         std::vector<size_t> vecRight_order(size_t wSize);
-        // std::deque<size_t> deckRight_order(size_t wSize);
         ~PmergeMe();
 };
 

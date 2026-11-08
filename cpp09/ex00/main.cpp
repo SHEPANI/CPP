@@ -14,12 +14,14 @@ int main(int c, char* av[])
         if (!ifile.is_open())
             throw "Error: could not open file.";
 
+
+            
         BitcoinExchange a;        
         a.getBtcVal(ifile);
 
     }
     catch (const char *error)
     {
-        std::cout << error << "\n";
+        std::cerr << error << "\n";
     }
 }

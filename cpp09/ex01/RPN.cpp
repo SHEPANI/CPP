@@ -34,50 +34,36 @@ void RNP::rnp(std::string exp)
             throw "Error\n";
     }
     if (stk.size() > 1)
-        throw "Error\n";
+        throw "Error calculation uncorrect\n";
 }
 
 void RNP::calculation(char op)
 {
-    int val1 = stk.top();
+    double val2 = stk.top();
     stk.pop();
-    int val2 = stk.top();
+    double val1 = stk.top();
     stk.pop();
-    int res;
+    double res = 0;
     if (op == '+')
-    {
-        std::stringstream ss(val1 + val2);
-        if (!(ss >> res))
-            throw "Error\n";
-
-    }
+        res = val1 + val2;
     else if (op == '-')
-    {
-        std::stringstream ss(val1 - val2);
-        if (!(ss >> res))
-            throw "Error\n";
-
-    }
+        res = val1 - val2;
+    else if (op == '*')
+        res = val1 * val2;
     else if (op == '/')
     {
-        std::stringstream ss(val1 / val2);
-        if (!(ss >> res))
-            throw "Error\n";
-
-    }
-    else
-    {
-        std::stringstream ss(val1 * val2);
-        if (!(ss >> res))
-            throw "Error\n";
-
+        if (val2 == 0)
+            throw "Error division by zero\n";
+        res = val1 / val2;
     }
     stk.push(res);
 }
 
-int RNP::getStkRes()
+double RNP::getStkRes()
 {
-    int res = stk.top();
+    if (stk.empty())
+        throw "Error\n";
+    double res = stk.top();
     return (res);
 }
 

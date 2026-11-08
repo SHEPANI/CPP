@@ -63,18 +63,18 @@ void BitcoinExchange::getBtcVal(std::ifstream& inpuText)
     std::string line;
     while (std::getline(inpuText, line))
     {
+        line = strim(line);
         if (line.empty()) continue;
         std::istringstream iss(line);
-
         std::string indate,inVal;
         
-        if (std::getline(iss, indate, '|'))
-            indate.erase(indate.end() -1);
-        
-        if (std::getline(iss, inVal, '|'))
-            inVal.erase(inVal.begin());
+        std::getline(iss, indate, '|');
+        std::getline(iss, inVal, '|');
+    
         indate = strim(indate);
         inVal = strim(inVal);
+        if (indate == "date" && inVal == "value")
+            continue;
         if (parseInput(indate, inVal))
         {
             std::map<std::string, std::string>::iterator it = dbmap.find(indate);
@@ -84,7 +84,7 @@ void BitcoinExchange::getBtcVal(std::ifstream& inpuText)
 
                 it = dbmap.lower_bound(indate);
                 if (it == dbmap.begin())
-                    std::cout << "Error: bad input => " << indate << "\n";
+                    std::cerr << "Error: bad input => " << indate << "\n";
                 else
                 {
                     it--;
@@ -124,15 +124,19 @@ int BitcoinExchange::parseInput(std::string& iKey,std::string& iVal)
     int valSize = iVal.size();
     int keySize = iKey.size();
     std::stringstream ss(iVal);
-    int valNum;
+    double valNum;
+    
+    if (keySize != 10)
+        return (std::cerr << "Error: bad input => " << iKey << "\n", false);
 
     for (int i = 0; i < keySize; i++)
     {
         if (i == 4 || i == 7)
             continue;
         if (!isdigit(iKey[i]))
-            return (std::cout << "Error: bad input => " << iKey << "\n", false);
+            return (std::cerr << "Error: bad input => " << iKey << "\n", false);
     }
+
     if (iKey[4] == '-' && iKey[7] == '-')
         dash = 2;
 
@@ -140,8 +144,8 @@ int BitcoinExchange::parseInput(std::string& iKey,std::string& iVal)
     int month = std::atoi(iKey.substr(5, 2).c_str());
     int yr = std::atoi(iKey.substr(0, 4).c_str());
 
-    if (dash != 2 || keySize != 10 || iKey.empty() || yr < 0 || month < 1 || month > 12 || day < 1 || day > 31)
-        return (std::cout << "Error: bad input => " << iKey << "\n", false);
+    if (dash != 2 || iKey.empty() || yr < 0 || month < 1 || month > 12 || day < 1 || day > 31)
+        return (std::cerr << "Error: bad input => " << iKey << "\n", false);
     else if (month == 11 || month == 9 || month == 6 || month == 4)
         dayMax = 30;
     else if (month == 2)
@@ -154,25 +158,33 @@ int BitcoinExchange::parseInput(std::string& iKey,std::string& iVal)
     }
 
     if (day > dayMax)
-        return (std::cout << "Error: bad input => " << iKey << "\n", false);
+        return (std::cerr << "Error: bad input => " << iKey << "\n", false);
 
     if (iVal.empty())
-        return (std::cout << "Error: bad input => " << iVal << "\n", false);
+        return (std::cerr << "Error: bad input => " << iVal << "\n", false);
 
     for (int i = 0; i < valSize; i++)
     {
         if (iVal[i] == '.')
         {
-            if (++dot > 1)
-                return (std::cout << "Error: bad input => " << iVal << "\n", false);
+            if (++dot > 1 || iVal[0] == '.' || iVal[valSize-1]=='.')
+                return (std::cerr << "Error: bad input => " << iVal << "\n", false);
             continue;
         }
         if (!isdigit(iVal[i]))
-            return (std::cout << "Error: bad input => " << iVal << "\n", false);
+        {
+            if (i == 0 && (iVal[0] == '-' || iVal[0] == '+'))
+                continue;
+            return (std::cerr << "Error: bad input => " << iVal << "\n", false);
+        }
     }
 
-    if (!(ss >> valNum) || (valNum > 1000))
-        return (std::cout << "Error: too large a number." << "\n", false);
+    if (!(ss >> valNum))
+        return (std::cerr << "Error: too large a number. " << "\n", false);
+    if (valNum < 0)
+        return (std::cerr << "Error: not a positive number." << "\n", false);
+    if (valNum > 1000)
+        return (std::cerr << "Error: too large a number." << "\n", false);
     return true;
 }
 

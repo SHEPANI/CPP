@@ -8,7 +8,7 @@
 class RNP
 {
     private:
-        std::stack<int> stk;
+        std::stack<double> stk;
     public:
         RNP();
         RNP(const RNP& Other);
@@ -16,7 +16,7 @@ class RNP
         ~RNP();
         void rnp(std::string exp);
         void calculation(char op);
-        int getStkRes();
+        double getStkRes();
 
 };
 
